@@ -4,11 +4,11 @@
 
 | Date | Time | Content |
 | ---- | ---- | ------- |
-| 第 1 天 | 上午 | lab-01 OpenStack API |
-| | 下午 | lab-02 Automated Operations and Maintenance Framework|
-| 第 2 天 | 上午 | lab-03 OpenStack Ansible Provider |
-| | 下午 | lab-04 OpenStack kolla-ansible |
-| | | lab-05 OpenStack Debug |
+| 第 1 天 | 上午 | [lab-01 OpenStack API](https://github.com/99cloud/lab-openstack#lab-01-openstack-api) |
+| | 下午 | [lab-02 Automated Operations and Maintenance Framework](https://github.com/99cloud/lab-openstack#lab-02-automated-operations-and-maintenance-framework) |
+| 第 2 天 | 上午 | [lab-03 OpenStack Ansible Provider](https://github.com/99cloud/lab-openstack#lab-03-openstack-ansible-provider) |
+| | 下午 | [lab-04 OpenStack kolla-ansible](https://github.com/99cloud/lab-openstack#lab-04-openstack-kolla-ansible) |
+| | | [lab-05 OpenStack Debug](https://github.com/99cloud/lab-openstack#lab-05-openstack-debug) |
 
 ## lab-01 OpenStack API
 
