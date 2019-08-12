@@ -1,0 +1,176 @@
+---
+
+- name: Install dependency packages
+  yum:
+    name:
+      - cobbler
+      - cobbler-web
+      - dhcp
+      - debmirror
+      - pykickstart
+      - fence-agents
+      - xinetd
+    state: present
+
+- name: Copy cobbler config to target
+  template:
+    src: "{{ role_path }}/templates/settings"
+    dest: /etc/cobbler/settings
+
+- name: Copy dhcp config to target
+  template:
+    src: "{{ role_path }}/templates/dhcp.template"
+    dest: /etc/cobbler/dhcp.template
+
+- name: Copy tftp config to target
+  template:
+    src: "{{ role_path }}/templates/tftp"
+    dest: /etc/xinetd.d/tftp
+
+- name: Copy debmirror.conf config to target
+  template:
+    src: "{{ role_path }}/templates/debmirror.conf.j2"
+    dest: /etc/debmirror.conf
+
+- name: Copy kickstart script config to target
+  template:
+    src: "{{ role_path }}/templates/openshift-node-template.ks"
+    dest: /var/lib/cobbler/kickstarts/openshift-node-template.ks
+
+- name: disable selinux
+  selinux:
+    state: disabled
+
+- name: Enable service
+  service:
+    name: "{{ item }}"
+    enabled: yes
+  loop:
+    - httpd
+    - cobblerd
+    - rsyncd.service
+    - xinetd
+    - dhcpd
+
+- name: Start service
+  service:
+    name: "{{ item }}"
+    state: started
+  loop:
+    - httpd
+    - cobblerd
+    - rsyncd.service
+    - xinetd
+
+- name: Download releated packages
+  shell: cobbler get-loaders
+
+- name: set selinux policy to allow httpd_can_network_connect
+  shell: setsebool -P httpd_can_network_connect true
+  ignore_errors: yes
+
+- name: Mount installation iso read-only
+  mount:
+    path: "{{ mount_image_target_url }}"
+    src: "{{ local_image_url }}"
+    fstype: iso9660
+    opts: ro
+    state: mounted
+
+- name: Download releated packages
+  shell: cobbler get-loaders
+
+- name: Cobbler sync
+  shell: cobbler sync
+
+- name: Restart cobbler
+  service:
+    name: cobblerd
+    state: restarted
+
+- name: Get cobbler distro list
+  shell: cobbler distro list
+  register: distro_list
+
+- name: Setup centos system
+  shell: "cobbler import --name=centos7 --arch=x86_64 --path={{ mount_image_target_url }}"
+  when: distro_list.stdout|trim != "centos7-x86_64"
+
+# https://docs.ansible.com/ansible/latest/modules/cobbler_system_module.html
+- name: Copy vm-config.sh
+  template:
+    src: "vm-config.sh.j2"
+    dest: "/tmp/vm-config.sh"
+    mode: 755
+
+- name: Run vm-config.sh
+  shell: "/tmp/vm-config.sh"
+  ignore_errors: yes
+
+- name: Get vm list
+  virt:
+    command: list_vms
+  register: vms
+
+- name: Dump vm list
+  debug:
+    msg: "{{ vms }}"
+
+- name: Create config file for linux bridge
+  shell: "ifup {{ item }}"
+  loop:
+    - br-ext
+    - br-mgt
+    - br-pod
+    - br-str
+
+# "--cpu host" means <cpu mode='host-model'>
+# https://www.linuxtechi.com/enable-nested-virtualization-kvm-centos-7-rhel-7/
+# https://manpages.debian.org/jessie/virtinst/virt-install.1.en.html
+- name: Create vms
+  command: >
+           virt-install --name {{ hostvars[item]['hostname'] }}
+           --cpu host
+           --ram {{ hostvars[item]['ram_size'] }} --vcpus {{ hostvars[item]['vcpu_num'] }}
+           --disk {{ vm_system_path }}/{{ hostvars[item]['hostname'] }}.qcow2,format=qcow2
+           --disk {{ vmdisk_path }}/{{ hostvars[item]['hostname'] }}-storage.qcow2,format=qcow2
+           --vnc --noautoconsole --os-type=linux
+           --network bridge=br-mgt,model=virtio,mac={{ hostvars[item]['interface1_mac'] }}
+           --network bridge=br-pod,model=virtio
+           --network bridge=br-str,model=virtio 
+           --network bridge=br-ext,model=virtio
+           --noautoconsole --pxe
+  register: test
+  when: hostvars[item]['hostname'] not in vms.list_vms
+  loop: "{{ groups['nodes'] }}"
+
+- name: Waitting for vm create
+  virt:
+    name: "{{ hostvars[item]['hostname'] }}"
+    command: status
+  register: result
+  until: result.status == 'shutdown'
+  when: hostvars[item]['hostname'] not in vms.list_vms
+  loop: "{{ groups['nodes'] }}"
+  retries: 128
+  delay: 10
+
+- name: Create init snapshot
+  shell: "virsh snapshot-create-as {{ hostvars[item]['hostname'] }} {{ hostvars[item]['hostname'] }}.init"
+  ignore_errors: yes
+  loop: "{{ groups['nodes'] }}"
+
+- name: Start vms
+  virt:
+    name: "{{ hostvars[item]['hostname'] }}"
+    state: running
+  loop: "{{ groups['nodes'] }}"
+
+- name: Waitting connect vm
+  wait_for:
+    host: "{{ hostvars[item]['interface1_ip'] }}"
+    port: 22
+    state: started
+    delay: 3
+    timeout: 600
+  loop: "{{ groups['nodes'] }}"

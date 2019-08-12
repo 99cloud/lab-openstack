@@ -1,0 +1,16 @@
+---
+
+- name: pip install
+  shell: "pip install python-openstackclient --ignore-installed ipaddress"
+
+- name: generate /etc/kolla/admin-openrc.sh
+  shell: "kolla-ansible post-deploy"
+
+- name: config bash_profile to source /etc/kolla/admin-openrc.sh
+  lineinfile:
+    path: "~/.bash_profile"
+    state: present
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  loop:
+    - {regexp: '^\s*\.\s+.*openrc', line: '. /etc/kolla/admin-openrc.sh'}

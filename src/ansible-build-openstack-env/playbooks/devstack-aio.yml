@@ -1,0 +1,16 @@
+---
+
+- hosts: bastion
+  roles:
+    - init00-mount-vmdisk
+    - init01-pre-install
+    - init02-bastion-config
+    - init03-cobbler
+  become: yes
+
+- hosts: aio_node
+  roles:
+    - init01-pre-install
+    - init04-aio-config-common
+    - init05-before-installation
+  become: yes

@@ -1,0 +1,17 @@
+---
+
+# - name: Delete before installtaion snapshot
+#   shell: "virsh list --all | grep -P '^\\s+[\\d\\-]+\\s+' | awk '{print $2}' | xargs -i virsh snapshot-delete {} --snapshotname {}.before"
+#   ignore_errors: yes
+
+# virsh list --all | grep -P '^\s*[\d\-]+\s+' | awk '{print $2}' | xargs -i virsh snapshot-revert {} --snapshotname {}.before
+
+# virsh list --all | grep -P '^\s*[\d\-]+\s+' | awk '{print $2}' | xargs -i virsh destroy {}
+# virsh list --all | grep -P '^\s+[\d\-]+\s+' | awk '{print $2}' | xargs -i virsh snapshot-delete {} --snapshotname {}.init
+# virsh list --all | grep -P '^\s+[\d\-]+\s+' | awk '{print $2}' | xargs -i virsh snapshot-delete {} --snapshotname {}.before
+# virsh list --all | grep -P '^\s*[\d\-]+\s+' | awk '{print $2}' | xargs -i virsh undefine {}
+
+- name: Create before installation snapshot
+  shell: "virsh snapshot-create-as {{ hostvars[item]['hostname'] }} {{ hostvars[item]['hostname'] }}.before"
+  ignore_errors: yes
+  loop: "{{ groups['nodes'] }}"

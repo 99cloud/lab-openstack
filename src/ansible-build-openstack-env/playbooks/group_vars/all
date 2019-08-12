@@ -1,0 +1,39 @@
+---
+
+network_prefix_mgt: 172.25.0
+network_prefix_pod: 10.0.2
+network_prefix_str: 192.168.100
+network_prefix_ext: 200.0.0
+
+interface1_name: eth0
+interface2_name: eth1
+interface3_name: eth2
+interface4_name: eth3
+
+password: trystack
+root_password: $1$lOBuvarx$gaaOk8nRsxaQus1zQx3Wq0
+
+pxe_interface_ip: 172.25.0.1
+pxe_interface_router_ip: 172.25.0.1
+dhcp_subnet: 172.25.0.0
+deploy_dns_server: 114.114.114.114
+allocation_pool_start: 172.25.0.220
+allocation_pool_end: 172.25.0.240
+gateway_ip: 172.25.0.1
+netmask: 255.255.255.0
+
+cluster_hostname: paas.99cloud.home
+paas_infra_cidr_99cloud: 200.0.0.0/24
+
+remote_image_url: http://mirror-hk.koddos.net/centos/7.6.1810/isos/x86_64/CentOS-7-x86_64-Minimal-1810.iso
+# remote_iamge_url: http://mirrors.aliyun.com/centos/7.6.1810/isos/x86_64/CentOS-7-x86_64-Minimal-1810.iso
+# remote_iamge_url: http://ap.stykers.moe/centos/7.6.1810/isos/x86_64/CentOS-7-x86_64-Minimal-1810.iso
+local_image_url: /var/lib/libvirt/images/CentOS-7-x86_64-Minimal-1810.iso
+mount_image_target_url: /mnt
+
+ansible_ver: 2.7.11
+internal_ssh_port: 8600
+fs_type: xfs
+
+kolla_ansible_url: https://github.com/openstack/kolla-ansible.git
+kolla_ansible_branch: stable/stein

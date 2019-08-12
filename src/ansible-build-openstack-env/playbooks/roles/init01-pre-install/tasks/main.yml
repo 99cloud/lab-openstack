@@ -1,0 +1,89 @@
+---
+
+- name: Install epel release
+  yum:
+    name: epel-release
+
+- name: Yum update all
+  yum:
+    name: '*'
+    state: latest
+    exclude: kernel*
+
+- name: Install dependency packages
+  yum:
+    name:
+      - git
+      - python-pip
+      - vim
+      - telnet
+      - httpd-tools
+      - java-1.8.0-openjdk-headless
+      - wget
+      - net-tools
+      - telnet
+      - curl
+      - firewalld
+      - bind-utils
+    state: present
+
+- name: Update pip
+  shell: "pip install --upgrade pip"
+
+- name: Disable service firewalld
+  service:
+    name: firewalld
+    enabled: no
+    state: stopped
+    masked: yes
+
+- name: "Push ~/.gitconfig file"
+  template:
+    src: gitconfig
+    dest: "~/.gitconfig"
+    mode: "0644"
+  become: False
+
+- name: Install hosts file
+  template:
+    src: hosts.j2
+    dest: /etc/hosts
+
+- name: "Config sshd"
+  lineinfile:
+    path: "/etc/ssh/sshd_config"
+    state: present
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  loop:
+    - {regexp: '^\s*ClientAliveInterval\s+', line: 'ClientAliveInterval 120'}
+    - {regexp: '^\s*ClientAliveCountMax\s+', line: 'ClientAliveCountMax 720'}
+
+- name: "Restart sshd"
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: sshd
+
+# NetworkManager will overwrite it, so useless
+# - name: "Update resolve.conf"
+#   lineinfile:
+#     path: "/etc/resolv.conf"
+#     state: present
+#     regexp: "{{ item.regexp }}"
+#     line: "{{ item.line }}"
+#   loop:
+#     - {regexp: '^search\s+', line: "search {{ cluster_hostname }}"}
+#     - {regexp: '^options\s+ndots', line: 'options ndots:5'}
+
+- name: Install ssh private keygen
+  copy:
+    src: "{{ ssh_private_key_path }}"
+    dest: "~/.ssh/id_rsa"
+    mode: '0600'
+
+- name: Install ssh public keygen
+  copy:
+    src: "{{ ssh_public_key_path }}"
+    dest: "~/.ssh/id_rsa.pub"
+    mode: '0600'

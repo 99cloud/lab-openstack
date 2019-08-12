@@ -1,0 +1,8 @@
+# [ node config ]
+{% for item in groups['nodes'] %}
+cobbler system add --name={{ hostvars[item]['hostname'] }} --profile=centos7-x86_64 --kickstart=/var/lib/cobbler/kickstarts/openshift-node-template.ks
+cobbler system edit --name={{ hostvars[item]['hostname'] }} --hostname={{ hostvars[item]['hostname'] }} --interface={{ interface1_name }} --mac={{ hostvars[item]['interface1_mac'] }} --ip-address={{ hostvars[item]['interface1_ip'] }} --netmask={{ netmask }} --name-servers={{ deploy_dns_server }}  --if-gateway={{ gateway_ip }} --static=1
+cobbler system edit --name={{ hostvars[item]['hostname'] }} --interface={{ interface2_name }} --ip-address={{ hostvars[item]['interface2_ip'] }} --netmask={{ netmask }} --static=1
+cobbler system edit --name={{ hostvars[item]['hostname'] }} --interface={{ interface3_name }} --ip-address={{ hostvars[item]['interface3_ip'] }} --netmask={{ netmask }} --static=1
+cobbler system edit --name={{ hostvars[item]['hostname'] }} --interface={{ interface4_name }} --ip-address={{ hostvars[item]['interface4_ip'] }} --netmask={{ netmask }} --static=1
+{% endfor %}

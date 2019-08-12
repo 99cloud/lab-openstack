@@ -1,0 +1,11 @@
+# [config system disk ]
+{% for item in groups['nodes'] %}
+[ ! -f "{{ vm_system_path }}/{{ hostvars[item]['hostname'] }}.qcow2" ] && qemu-img create -f qcow2 -o size={{ hostvars[item]['system_disk_size'] }} {{ vm_system_path }}/{{ hostvars[item]['hostname'] }}.qcow2
+{% endfor %}
+
+# [ config storage disk ]
+{% for item in groups['nodes'] %}
+[ ! -f "{{ vmdisk_path }}/{{ hostvars[item]['hostname'] }}-storage.qcow2" ] && qemu-img create -f qcow2 -o size={{ hostvars[item]['storage_disk_size'] }} {{ vmdisk_path }}/{{ hostvars[item]['hostname'] }}-storage.qcow2
+{% endfor %}
+
+exit 0

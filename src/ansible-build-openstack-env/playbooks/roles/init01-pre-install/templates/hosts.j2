@@ -1,0 +1,7 @@
+127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+
+{% for host in groups['nodes'] %}
+{{ hostvars[host].interface1_ip }}  {{ hostvars[host].hostname }}
+{% endfor %}
+{{ public_ip }}   {{ resource_group_name }} {{ resource_group_name }}.{{ public_cluster_hostname }}

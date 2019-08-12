@@ -1,0 +1,11 @@
+---
+
+- hosts: aio_node
+  roles:
+    - post01-aio-config-kolla
+  become: yes
+
+- hosts: bastion
+  roles:
+    - post02-after-installation
+  become: yes

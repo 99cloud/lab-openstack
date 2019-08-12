@@ -1,0 +1,13 @@
+[color]
+	ui = auto
+[alias]
+	ci = commit
+	co = checkout
+	st = status
+	br = branch
+[core]
+	editor = vim
+[merge]
+	tool = kdiff3
+[push]
+	default = simple

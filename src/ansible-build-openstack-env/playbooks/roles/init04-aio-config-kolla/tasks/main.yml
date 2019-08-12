@@ -1,0 +1,53 @@
+---
+
+- name: Git clone kolla-ansible
+  git:
+    repo: "{{ kolla_ansible_url }}"
+    dest: "~/kolla-ansible"
+    version: "{{ kolla_ansible_branch }}"
+  ignore_errors: true
+  become: False
+
+- name: Install kolla-ansible
+  shell: "pip install --ignore-installed PyYAML && pip install ."
+  args:
+    chdir: ~/kolla-ansible
+
+- name: mkdir -p /etc/kolla
+  file:
+    path: /etc/kolla
+    state: directory
+
+- name: "chown $USER:$USER /etc/kolla"
+  shell: "chown $USER:$USER /etc/kolla"
+
+- name: copy etc_examples/kolla/* to /etc/kolla
+  shell: "cp -r /usr/share/kolla-ansible/etc_examples/kolla/* /etc/kolla && cp /usr/share/kolla-ansible/ansible/inventory/* ~/"
+
+- name: "Backup /etc/kolla/globals.yml"
+  shell: 'cp /etc/kolla/globals.yml /etc/kolla/globals-$(date +"%Y%m%d%H%M%S").yml'
+
+- name: "Config /etc/kolla/globals.yml"
+  lineinfile:
+    path: "/etc/kolla/globals.yml"
+    state: present
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  loop:
+    - {regexp: '^\s*kolla_install_type:\s+', line: 'kolla_install_type: "source"'}
+    - {regexp: '^\s*openstack_release:\s+', line: 'openstack_release: "stein"'}
+    - {regexp: '^\s*kolla_internal_vip_address:\s+', line: 'kolla_internal_vip_address: "{{ openstack_internal_vip_address }}"'}
+    - {regexp: '^\s*network_interface:\s+', line: 'network_interface: "eth0"'}
+    - {regexp: '^\s*neutron_external_interface:\s+', line: 'neutron_external_interface: "eth1"'}
+    - {regexp: '^\s*enable_cinder:\s+', line: 'enable_cinder: "yes"'}
+    - {regexp: '^\s*enable_cinder_backend_lvm:\s+', line: 'enable_cinder_backend_lvm: "yes"'}
+
+- name: "Config cinder backend"
+  shell: "{{ item }}"
+  ignore_errors: yes
+  loop:
+    - "pvcreate {{ cinder_device }}"
+    - "vgcreate cinder-volumes {{ cinder_device }}"
+
+- name: kolla-ansible bootstrap-servers
+  shell: "kolla-ansible bootstrap-servers && kolla-genpwd"

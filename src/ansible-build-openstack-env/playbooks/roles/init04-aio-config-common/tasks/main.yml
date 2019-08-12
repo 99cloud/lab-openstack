@@ -1,0 +1,79 @@
+---
+
+# - name: Add repository
+#   command: "yum-config-manager --add-repo https://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo"
+
+- name: Check cpu acceleration
+  shell: "grep -qE '(vmx|svm)' /proc/cpuinfo;echo $?"
+  register: cpu_acceleration
+
+- name: Fail if acc is not enabled and supported
+  fail:
+    msg: "acc is not enabled and supported"
+  when: cpu_acceleration.stdout != "0"
+
+- name: Install dependency packages
+  yum:
+    name:
+      - bind-utils
+      - python34
+      - yum-utils
+      - device-mapper-persistent-data
+      - lvm2
+      - python-devel
+      - libffi-devel
+      - gcc
+      - openssl-devel
+      - libselinux-python
+      - python-virtualenv
+
+- name: Create pip config directory
+  file:
+    path: /root/.config/pip
+    state: directory
+    mode: 0755
+
+- name: Install pip config
+  copy:
+    src: pip.conf
+    dest: /root/.config/pip/pip.conf
+    mode: 0755
+
+- name: Upgrade pip
+  command: pip install --upgrade pip
+
+- name: pip install
+  pip:
+    name:
+      - "ansible=={{ ansible_ver }}"
+      - msrestazure
+      - packaging
+      - passlib
+      - htpasswd
+
+- name: Disable firewalld
+  service:
+    name: firewalld
+    state: stopped
+    enabled: no
+
+- name: Restart NetworkManager
+  service:
+    name: NetworkManager
+    state: restarted
+
+- name: Restart network
+  service:
+    name: network
+    state: restarted
+  ignore_errors: yes
+
+- name: Create /etc/ansible dir if not present
+  file:
+    name: "/etc/ansible"
+    state: directory
+
+- name: Push ansible config file to deploy node
+  copy:
+    src: "ansible.cfg"
+    dest: "/etc/ansible/ansible.cfg"
