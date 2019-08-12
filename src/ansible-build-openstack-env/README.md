@@ -1,6 +1,10 @@
-# lab-ansible
+# Build Openstack Lab Environment
 
 ## Prepare
+
+1. Topo 结构图
+
+	![](img/openstack-env-architecture.png)
 
 1. 配置 SSH 客户端
 

@@ -127,6 +127,10 @@
 			    Port            8600
 			    User            root
 			    IdentityFile    ~/.ssh/id_rsa_openstack
+	- SSH Proxy
+
+			ProxyCommand    ssh fq -W %h:%p
+			ProxyCommand    bash -c 'h=%h;ssh bastion -W ${h##prefix-}:%p'
 	- Fabric Hello World
 
 			$ cat fabfile.py
@@ -212,14 +216,21 @@
 1. Docker Quick Start
 	- Docker Hello World
 	- Docker Concepts
+		- Virtualization Evolution
 
-		![](img/virtualization-evolution.svg)
-		
-		![](img/linux-container-namespaces.png)
-		
-		![](img/docker-underlying-tech.png)
-		
-		![](img/docker-architecture.png)
+			![](img/virtualization-evolution.svg)
+
+		- Docker Underlying Tech
+
+			![](img/docker-underlying-tech.png)
+
+		- Linux Container Namespaces
+
+			![](img/linux-container-namespaces.png)
+
+		- Docker Architecture
+
+			![](img/docker-architecture.png)
 1. Debug in Docker Container
 	- [Demo]: Check Docker logs
 	- [Demo]: Start Container with different cmds
@@ -228,7 +239,7 @@
 	- Build an environment with Ansible
 		- Topology
 
-			![image](img/lab-ansible.png)
+			![image](src/ansible-build-openstack-env/img/openstack-env-architecture.png)
 		- [Ansible Scripts: Build OpenStack Environment](https://github.com/99cloud/lab-openstack/tree/master/src/ansible-build-openstack-env)
 	- Install kolla-ansible in all-in-one mode
 1. Kolla-Ansible Maintenance
