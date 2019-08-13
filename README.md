@@ -62,33 +62,133 @@
 	- [Authentication](https://docs.openstack.org/api-ref/identity/v3/), [stein version](https://docs.openstack.org/keystone/stein/api_curl_examples.html)
 		- [Demo]: Get unscope token
 
-				curl -i \
-				  -H "Content-Type: application/json" \
-				  -d '
-				{ "auth": {
-				    "identity": {
-				      "methods": ["password"],
-				      "password": {
-				        "user": {
-				          "name": "admin",
-				          "domain": { "id": "default" },
-				          "password": "94DAVjeokdwZ9OKmJ7cVmw9Gfb9aLlDbpddPYNdo"
-				        }
-				      }
-				    }
-				  }
-				}' \
-				  "http://172.25.0.100:35357/v3/auth/tokens"
+			```bash
+			curl -i \
+			  -H "Content-Type: application/json" \
+			  -d '
+			{ "auth": {
+			    "identity": {
+			      "methods": ["password"],
+			      "password": {
+			        "user": {
+			          "name": "admin",
+			          "domain": { "id": "default" },
+			          "password": "94DAVjeokdwZ9OKmJ7cVmw9Gfb9aLlDbpddPYNdo"
+			        }
+			      }
+			    }
+			  }
+			}' \
+			  "http://172.25.0.100:35357/v3/auth/tokens"
+			```
 		- [Demo]: Get endpoint list with unscope token
+
+			```bash
+			curl -s  -H "X-Auth-Token: ${TOKEN}"  http://192.168.1.25:5000/v3/endpoints | python -m json.tool
+			```
 	- [Compute](https://docs.openstack.org/api-ref/compute/)
 		- [Demo]: List servers
+
+			```bash
+			[root@openstack ~]# curl -s  -H "X-Auth-Token: ${TOKEN}"  http://192.168.1.25:8774/v2.1/ed009b94405443b393a132bb75ae1de8/servers | python -m json.tool
+			#http://192.168.1.25:8774/v2.1/ is your nova endponit
+			#ed009b94405443b393a132bb75ae1de8 is your project id
+			```
 		- [Demo]: Launch a new server
+
+			```bash
+			curl -X POST \
+			  http://10.211.55.100:8774/v2.1/f3816430aded4dbd92b3faeda1a87e0b/servers \
+			  -H 'Content-Type: application/json' \
+			  -H 'X-Auth-Token: ${TOKEN}' \
+			  -d '{
+			    "server" : {
+			        "accessIPv4": "1.2.3.4",
+			        "accessIPv6": "80fe::",
+			        "name" : "new-server-test",
+			        "imageRef" : "eb901df6-801f-466f-8983-b55454b17cf5",
+			        "flavorRef" : "8ffeec2e-fc2d-496a-af53-5020849d630a",
+			        "networks" : [{
+			            "uuid" : "0f2d90bc-da6d-4a0d-867e-e1a204e11f9f"
+			        }],
+			        "security_groups": [
+			            {
+			                "name": "default"
+			            }
+			        ]
+				}
+			}'
+			```
 	- [Block Storage](https://docs.openstack.org/api-ref/block-storage/v3/index.html)
 		- [Demo]: Create a block storage
+
+			```bash
+			curl -X POST \
+			  http://10.211.55.100:8776/v3/f3816430aded4dbd92b3faeda1a87e0b/volumes \
+			  -H 'Content-Type: application/json' \
+			  -H 'X-Auth-Token: ${TOKEN}' \
+			  -d '{
+			    "volume": {
+			        "size": 10,
+			        "availability_zone": null,
+			        "source_volid": null,
+			        "description": "test volume",
+			        "multiattach": false,
+			        "snapshot_id": null,
+			        "backup_id": null,
+			        "name": null,
+			        "imageRef": null,
+			        "volume_type": null,
+			        "metadata": {},
+			        "consistencygroup_id": null
+			    }
+			}'
+			```
 		- [Demo]: Attach to a specific server instance
+
+			```bash
+			curl -X POST \
+			  http://10.211.55.100:8776/v3/f3816430aded4dbd92b3faeda1a87e0b/volumes/07178089-7017-4d53-bb02-65b0a1b02bb5/action \
+			  -H 'Content-Type: application/json' \
+			  -H 'X-Auth-Token: ${TOKEN}' \
+			  -d '{
+			    "os-attach": {
+			        "instance_uuid": "173d8d22-ce8e-4414-b286-008e33471d74",
+			        "mountpoint": "/dev/vdb"
+			    }
+			}'
+			```
 	- [Network](https://docs.openstack.org/api-ref/network/v2/index.html)
 		- [Demo]: Create a network
+
+			```bash
+			curl -X POST \
+			  http://10.211.55.100:9696/v2.0/networks \
+			  -H 'Content-Type: application/json' \
+			  -H 'X-Auth-Token: ${TOKEN}' \
+			  -d '{
+			    "network": {
+			        "name": "sample_network",
+			        "admin_state_up": true,
+			        "mtu": 1400
+			    }
+			}'
+			```
 		- [Demo]: Create a subnet
+
+			```bash
+			curl -X POST \
+			  http://10.211.55.100:9696/v2.0/subnets \
+			  -H 'Content-Type: application/json' \
+			  -H 'X-Auth-Token: ${TOKEN}' \
+			  -d '{
+			    "subnet": {
+			        "network_id": "6f0b2c56-48ae-4981-89b2-bb5d1decb7ed",
+			        "ip_version": 4,
+			        "cidr": "192.168.199.0/24"
+			    }
+			}'
+			```
 		- [Question]: Create a router
 1. Network Monitor Tools
 	- Chrome Developer tools
