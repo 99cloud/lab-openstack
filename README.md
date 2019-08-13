@@ -210,11 +210,11 @@
 	- Auto-Maintenance Frameworks
 		- Ansible vs Others
 
-			![](https://img2018.cnblogs.com/blog/853519/201811/853519-20181114211712841-70773152.png)
+			![](img/puppet-chef-ansible-saltstack.png)
 
 		- Framework Differences
 
-			![](https://miro.medium.com/max/1000/1*VDiEQvt_5WpywOY22WW6dw.png)
+			![](img/auto-maintenance-difference.png)
 	- SSH client configuration
 
 			Host training-01
@@ -473,7 +473,7 @@ Maybe the most powerful all-around tool in your kit, the exec command allows you
 1. Kolla-Ansible Quick Start
 	- Kolla-Achitecture, reference: [Building a Containerized OpenStack Lab](https://networkop.co.uk/blog/2017/09/08/os-lab-docker/)
 
-		![](https://networkop.co.uk/img/kolla-lab.png)
+		![](img/kolla-lab.png)
 	- Build an environment with Ansible
 		- Topology map
 
