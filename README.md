@@ -221,7 +221,7 @@
 			    HostName        training-01.maodouzi.net
 			    User            root
 			    IdentityFile    ~/.ssh/id_rsa_openstack
-	
+
 			Host training-01_aio
 			    HostName        training-01.maodouzi.net
 			    Port            8600
@@ -234,16 +234,16 @@
 	- Fabric Hello World
 
 			$ cat fabfile.py
-			
-			from fabric.api import run 
-			def hello(): 
-			    run("hostname") 
+
+			from fabric.api import run
+			def hello():
+			    run("hostname")
 
 			$ fab -H testhost hello
-			
+
 			[testhost] Executing task 'hello'
 			[testhost] run: hostname
-			[testhost] out: example.hostname.com 
+			[testhost] out: example.hostname.com
 			Done.
 1. Fabric in Details
 	- Fabric Concepts
@@ -252,7 +252,7 @@
 	- Fabric Common Steps
 
 		![](img/fabric-methods.png)
-		
+
 		![](img/fabric-steps.png)
 	- [Demo]: [Deploy a website with Fabric](https://github.com/wu-wenxiang/Project-Python-Webdev/tree/master/u1604-fabric)
 1. Ansible as a Plus
@@ -302,13 +302,77 @@
 1. OpenStack Ansible Provider
 	- OpenStack Ansible Hello World
 		- [Demo]: Get token
-		- [Demo]: List endpoints
+
+			```yaml
+			- name: Get token
+			  hosts: localhost
+			  tasks:
+				- name: Retrieve an auth token
+				  auth:
+					auth_url: http://172.25.0.100:35357/v3
+					username: admin
+					password: 94DAVjeokdwZ9OKmJ7cVmw9Gfb9aLlDbpddPYNdo
+					user_domain_name: default
+				- name: Show auth token
+				  debug:
+				    var: auth_token
+			```
 	- Compute
 		- [Demo]: Create a server instance
+
+			```yaml
+			- name: Create a server instance
+			  hosts: localhost
+			  tasks:
+			    - name: Launch a instance
+				  os_server:
+				  	auth:
+				  	  auth_url: http://172.25.0.100:35357/v3
+				  	  username: admin
+				  	  password: 94DAVjeokdwZ9OKmJ7cVmw9Gfb9aLlDbpddPYNdo
+				  	  user_domain_name: default
+				  	state: present
+				  	name: new-server-test
+				  	image: eb901df6-801f-466f-8983-b55454b17cf5
+				  	flavor: 8ffeec2e-fc2d-496a-af53-5020849d630a
+				  	network: 0f2d90bc-da6d-4a0d-867e-e1a204e11f9f
+					security_groups: default
+			```
 	- Block Storage
 		- [Demo]: Create a block storage
+
+			```yaml
+			- name: Create a block storage
+			  hosts: localhost
+			  tasks:
+			    - name: Create a volume
+				  os_volume:
+				  	auth:
+					  auth_url: http://172.25.0.100:35357/v3
+					  username: admin
+					  password: 94DAVjeokdwZ9OKmJ7cVmw9Gfb9aLlDbpddPYNdo
+					  user_domain_name: default
+				  	state: present
+				  	size: 10
+				  	display_name: "test volume"
+			```
 	- Network
 		- [Demo]: Create a network
+
+			```yaml
+			- name: Create a network
+			  hosts: localhost
+			  tasks:
+				- name: Create a network
+				  os_network:
+					auth:
+					  auth_url: http://172.25.0.100:35357/v3
+				  	  username: admin
+				  	  password: 94DAVjeokdwZ9OKmJ7cVmw9Gfb9aLlDbpddPYNdo
+					  user_domain_name: default
+					state: present
+					name: sample_network
+			```
 1. Demo: Deploy OpenShift in OpenStack
 
 ## lab-04 OpenStack kolla-ansible
@@ -344,8 +408,8 @@
 			... etc ...
 
 		- This history is available even after the container exits
-		- as long as its file system is still present on disk (until it is removed with docker rm). 
-		- The data is stored in a json file buried under /var/lib/docker. 
+		- as long as its file system is still present on disk (until it is removed with docker rm).
+		- The data is stored in a json file buried under /var/lib/docker.
 		- The log command takes options that allow you to follow this file, basically tail -f, as well as choose how many lines the command returns (tail -n).
 	1. Stream stdout with the attach command.
 If you want to see what is written to stdout in real time then the attach command is your friend.
