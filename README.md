@@ -193,8 +193,49 @@
 1. Network Monitor Tools
     - Chrome Developer tools
         - [Demo]: Capture & Parse the HTTP requests
+
+            ![chrome](img/chrome1.png)
+
+            ![chrome](img/chrome2.png)
+
+            ![chrome](img/chrome3.png)
     - Postman
         - [Demo]: Send HTTP requests
+
+            ![postman](img/postman1.png)
+
+            ![postman](img/postman2.png)
+
+            ![postman](img/postman3.png)
+
+            ![postman](img/postman4.png)
+
+            ![postman](img/postman5.png)
+
+            ```bash
+            #head内容如下
+            X-Auth-Toke: gAAAAABdQqoqaMFBasJV1p-mv9B0o3xQVCTdhGQDp3cBTuD2Wz0OJIA_xjmZG9XzTw7H7Za1dv-PAyacGe6StIkdrE1sj8P9C4fS0wTp9gDExt1m1QZ2RSj0im5OLwF0fX14VH7fiQvytS3D3aaMkQ
+            # token 可以通过openstack token issue 获取
+            # Content-Type是postman自动添加的
+            # 请求地址如下
+            POST http://10.211.55.100:9696/v2.0/routers
+            # http://10.211.55.100:9696 为neutron的endpoint，可以通以openstack endpoint list获取
+            # /v2.0/routers 是api接口 可以通过openstack网站上获取
+            # 请求的body如下
+            {
+                "router": {
+                    "name": "router1",
+                    "external_gateway_info": {
+                        "network_id"7c431bd4-985b-4a1a-ab21-166fa8",
+                        "enable_snat": true
+                    },
+                    "admin_state_up": true
+                }
+            }
+            # network_id 为provider网络的id，可以通过openstack network list 获取到
+            # 其他的属性可以参考openstack的neutron api获取
+            ```
+
         - [Question]: Get a token & Query endpoint list
     - Fiddler
         - [Demo]: Collect trace
@@ -577,7 +618,12 @@ Maybe the most powerful all-around tool in your kit, the exec command allows you
 1. Debug with Kolla-Ansible
     - Kolla-Ansible Logs
         - [Demo]: Check logs
+            - 常用的查看log方法是查看 docker logs container_name 来查看容器的前台进程日志
+            - 所有的log存在`/var/lib/docker/volumes/kolla_logs/_data/{project_name}`也就是服务进程的后台日志
     - Kolla-Ansible Debugging
         - [Demo]: Kolla-Ansible Debugging
+            - 如果是bootstrap容器失败，那么需要检查数据库连接，并且手动登录到数据库，删除对应的库，重新deploy
+            - kolla-ansible部署中，加上一个tee或者保存一下日志是个比较好的方法
+            - 当容器起不来的时候，可以修改/etc/kolla/{service}/下面的config.json,把command中的启动命令修改成sleep infinity等命令，那么可以exec到容器里进行代码的调试
 1. [Optional] RDO
     - [Demo]: [RDO Installation](https://github.com/99cloud/lab-openstack/blob/master/doc/installation-rdo-all-in-one.md)
