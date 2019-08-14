@@ -2,13 +2,28 @@
 
 ## Plan Table
 
-| Date | Time | Content |
-| ---- | ---- | ------- |
-| 第 1 天 | 上午 | [lab-01 OpenStack API](https://github.com/99cloud/lab-openstack#lab-01-openstack-api) |
-| | 下午 | [lab-02 Automated Operations and Maintenance Framework](https://github.com/99cloud/lab-openstack#lab-02-automated-operations-and-maintenance-framework) |
-| 第 2 天 | 上午 | [lab-03 OpenStack Ansible Provider](https://github.com/99cloud/lab-openstack#lab-03-openstack-ansible-provider) |
-| | 下午 | [lab-04 OpenStack kolla-ansible](https://github.com/99cloud/lab-openstack#lab-04-openstack-kolla-ansible) |
-| | | [lab-05 OpenStack Debug](https://github.com/99cloud/lab-openstack#lab-05-openstack-debug) |
+| Date | Time | Title | Content |
+| ---- | ---- | ----- | ------- |
+| 第 1 天 | 上午 | [lab-01 OpenStack API](#lab-01-openstack-api) | [API Quick Start](#api-quick-start) |
+| | | | [ API Design ](https://github.com/99cloud/lab-openstack#api-design) |
+| | | | [ Network Monitor Tools ](https://github.com/99cloud/lab-openstack#network-monitor-tools) |
+| | 下午 | [lab-02 Automation Frameworks](https://github.com/99cloud/lab-openstack#lab-02-automation-frameworks) | [ Fabric Quick Start ](https://github.com/99cloud/lab-openstack#network-monitor-tools) |
+| | | | [ Fabric in Details ]() |
+| | | | [ Ansible as a Plus ]() |
+| | | | [ Ansible Common Concepts ]() |
+| | | | [ Ansible Common Modules ]() |
+| | | | [ Ansible Demo ]() |
+| | | | [ [Optional] AWX ]() |
+| | | | [ Tereform ]() |
+| 第 2 天 | 上午 | [lab-03 OpenStack Ansible Provider](https://github.com/99cloud/lab-openstack#lab-03-openstack-ansible-provider) | [ Ansible Cloud Provider ]() |
+| | | | [ OpenStack Ansible Provider ]() |
+| | 下午 | [lab-04 OpenStack kolla-ansible](https://github.com/99cloud/lab-openstack#lab-04-openstack-kolla-ansible) | [ Docker Quick Start ]() |
+| | | | [ Debug in Docker Container ]() |
+| | | | [ Kolla-Ansible Quick Start ]() |
+| | | | [ Kolla-Ansible Installation & Maintenance ]() |
+| | | [lab-05 OpenStack Debug](https://github.com/99cloud/lab-openstack#lab-05-openstack-debug) | [ Debug with DevStack ]() |
+| | | | [ Debug with Kolla-Ansible ]() |
+| | | | [ [Optional] RDO ]() |
 
 ## lab-01 OpenStack API
 
@@ -250,7 +265,7 @@
     - [Demo]: TLS handshake
     - [Demo]: HTTP response data parser
 
-## lab-02 Automated Operations and Maintenance Framework
+## lab-02 Automation Frameworks
 
 ### Fabric Quick Start
 
@@ -340,8 +355,9 @@
 ### Ansible Demo
 
 1. [Demo]: [Deploy a website with Ansible](https://github.com/wu-wenxiang/Project-Python-Webdev/tree/master/u1604-ansible)
+1. [Demo]: Deploy OpenShift
 
-### AWX
+### [Optional] AWX
 
 1. AWX & Tower
 
@@ -453,8 +469,6 @@
                 state: present
                 name: sample_network
         ```
-
-### Demo: Deploy OpenShift in OpenStack
 
 ## lab-04 OpenStack kolla-ansible
 
