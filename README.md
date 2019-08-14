@@ -219,20 +219,20 @@
 			# Content-Type是自动添加的
 			# 请求地址如下
 			POST http://10.211.55.100:9696/v2.0/routers
-			# http://10.211.55.100:9696为neutrendpoint 可			openstack endpoint list 获取
-			# /v2.0/routers 是api接口 可以通过opensta站
+			# http://10.211.55.100:9696为neutrendpoint 可以通以openstack endpoint list获取
+			# /v2.0/routers 是api接口 可以通过openstack网站上获取
 			# 请求的body如下
 			{
 			    "router": {
 			        "name": "router1",
 			        "external_gateway_info": {
-			            "network_id": 			"7c431bd4-985b-4a1a-ab21-16641afa8",
+			            "network_id": "7c431bd4-985b-4a1a-ab21-16641afa8",
 			            "enable_snat": true
 			        },
 			        "admin_state_up": true
 			    }
 			}
-			# network_id 为provider网络的id，可openstack network	list 获取到
+			# network_id 为provider网络的id，可以通过openstack network list 获取到
 			# 其他的属性可以参考openstack的neutron api获取
 			```
 		- [Question]: Get a token & Query endpoint list
