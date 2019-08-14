@@ -302,13 +302,93 @@
 1. OpenStack Ansible Provider
     - OpenStack Ansible Hello World
         - [Demo]: Get token
-        - [Demo]: List endpoints
+
+            ```yaml
+            - name:
+                hosts: localhost
+                tasks: Get token
+                - name: Retrieve an auth token
+                    auth:
+                    auth_url: http://172.16.120.251:5000/v3
+                    username: admin
+                    password: 94DAVjeokdwZ9OKmJ7cVmw9Gfb9aLlDbpddPYNdo
+                    user_domain_name: default
+                - name: Show auth token
+                    debug:
+                    var: auth_token
+            ```
+
     - Compute
         - [Demo]: Create a server instance
+
+            ```yaml
+            - name: Create a server instance
+              hosts: localhost
+              tasks:
+                - name: Launch a instance
+                  os_server:
+                    auth:
+                      auth_url: http://172.16.120.251:5000/v3
+                      username: admin
+                      password: 94DAVjeokdwZ9OKmJ7cVmw9Gfb9aLlDbpddPYNdo
+                      user_domain_name: default
+                    state: present
+                    name: new-server-test
+                    image: eb901df6-801f-466f-8983-b55454b17cf5
+                    flavor: 8ffeec2e-fc2d-496a-af53-5020849d630a
+                    network: 0f2d90bc-da6d-4a0d-867e-e1a204e11f9f
+                    security_groups: default
+            ```
+        - [Demo]: List server instance
+
+            ```yaml
+            - name: List server instance
+              hosts: localhost
+              tasks:
+                - name: List server instance
+                  os_server_facts:
+                    auth:
+                      auth_url: http://172.16.120.251:5000/v3
+                      username: admin
+                      password: 94DAVjeokdwZ9OKmJ7cVmw9Gfb9aLlDbpddPYNdo
+                      user_domain_name: default
+                    server: new-server-test
+            ```
     - Block Storage
         - [Demo]: Create a block storage
+
+            ```yaml
+            - name: Create a block storage
+              hosts: localhost
+              tasks:
+                - name: Create a volume
+                  os_volume:
+                    auth:
+                      auth_url: http://172.16.120.251:5000/v3
+                      username: admin
+                      password: 94DAVjeokdwZ9OKmJ7cVmw9Gfb9aLlDbpddPYNdo
+                      user_domain_name: default
+                    state: present
+                    size: 10
+                    display_name: "test volume"
+            ```
     - Network
         - [Demo]: Create a network
+
+            ```yaml
+            - name: Create a network
+                hosts: localhost
+                tasks:
+                - name: Create a network
+                    os_network:
+                    auth:
+                        auth_url: http://172.16.120.251:5000/v3
+                        username: admin
+                        password: 94DAVjeokdwZ9OKmJ7cVmw9Gfb9aLlDbpddPYNdo
+                        user_domain_name: default
+                    state: present
+                    name: sample_network
+            ```
 1. Demo: Deploy OpenShift in OpenStack
 
 ## lab-04 OpenStack kolla-ansible
