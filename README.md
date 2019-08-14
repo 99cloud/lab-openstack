@@ -5,25 +5,25 @@
 | Date | Time | Title | Content |
 | ---- | ---- | ----- | ------- |
 | 第 1 天 | 上午 | [lab-01 OpenStack API](#lab-01-openstack-api) | [API Quick Start](#api-quick-start) |
-| | | | [ API Design ](https://github.com/99cloud/lab-openstack#api-design) |
-| | | | [ Network Monitor Tools ](https://github.com/99cloud/lab-openstack#network-monitor-tools) |
-| | 下午 | [lab-02 Automation Frameworks](https://github.com/99cloud/lab-openstack#lab-02-automation-frameworks) | [ Fabric Quick Start ](https://github.com/99cloud/lab-openstack#network-monitor-tools) |
-| | | | [ Fabric in Details ]() |
-| | | | [ Ansible as a Plus ]() |
-| | | | [ Ansible Common Concepts ]() |
-| | | | [ Ansible Common Modules ]() |
-| | | | [ Ansible Demo ]() |
-| | | | [ [Optional] AWX ]() |
-| | | | [ Tereform ]() |
-| 第 2 天 | 上午 | [lab-03 OpenStack Ansible Provider](https://github.com/99cloud/lab-openstack#lab-03-openstack-ansible-provider) | [ Ansible Cloud Provider ]() |
-| | | | [ OpenStack Ansible Provider ]() |
-| | 下午 | [lab-04 OpenStack kolla-ansible](https://github.com/99cloud/lab-openstack#lab-04-openstack-kolla-ansible) | [ Docker Quick Start ]() |
-| | | | [ Debug in Docker Container ]() |
-| | | | [ Kolla-Ansible Quick Start ]() |
-| | | | [ Kolla-Ansible Installation & Maintenance ]() |
-| | | [lab-05 OpenStack Debug](https://github.com/99cloud/lab-openstack#lab-05-openstack-debug) | [ Debug with DevStack ]() |
-| | | | [ Debug with Kolla-Ansible ]() |
-| | | | [ [Optional] RDO ]() |
+| | | | [API Design](#api-design) |
+| | | | [Network Monitor Tools](#network-monitor-tools) |
+| | 下午 | [lab-02 Automation Frameworks](#lab-02-automation-frameworks) | [Fabric Quick Start](#fabric-quick-start) |
+| | | | [Fabric in Details](#fabric-in-details) |
+| | | | [Ansible as a Plus](#ansible-as-a-plus) |
+| | | | [Ansible Common Concepts](#ansible-common-concepts) |
+| | | | [Ansible Common Modules](#ansible-common-modules) |
+| | | | [Ansible Demo](#ansible-demo) |
+| | | | [[Optional] AWX](#optional-awx) |
+| | | | [Tereform](#tereform) |
+| 第 2 天 | 上午 | [lab-03 OpenStack Ansible Provider](#lab-03-openstack-ansible-provider) | [Ansible Cloud Provider](#ansible-cloud-provider) |
+| | | | [OpenStack Ansible Provider](#openstack-ansible-provider) |
+| | 下午 | [lab-04 OpenStack kolla-ansible](#lab-04-openstack-kolla-ansible) | [Docker Quick Start](#docker-quick-start) |
+| | | | [Debug in Docker Container](#debug-in-docker-container) |
+| | | | [Kolla-Ansible Quick Start](#kolla-ansible-quick-start) |
+| | | | [Kolla-Ansible Installation & Maintenance](#kolla-ansible-installation--maintenance) |
+| | | [lab-05 OpenStack Debug](#lab-05-openstack-debug) | [Debug with DevStack](#debug-with-devstack) |
+| | | | [Debug with Kolla-Ansible](#debug-with-kolla-ansible) |
+| | | | [[Optional] RDO](#optional-rdo) |
 
 ## lab-01 OpenStack API
 
