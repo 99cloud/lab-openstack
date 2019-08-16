@@ -1,6 +1,0 @@
----
-
-- name: Create before installation snapshot
-  shell: "virsh snapshot-create-as {{ hostvars[item]['hostname'] }} {{ hostvars[item]['hostname'] }}.after"
-  ignore_errors: yes
-  loop: "{{ groups['nodes'] }}"

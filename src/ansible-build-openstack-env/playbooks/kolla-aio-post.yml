@@ -7,5 +7,7 @@
 
 - hosts: bastion
   roles:
-    - post02-after-installation
+    - init06-snapshot
+  vars:
+    snapshot_postfix: "after_install_kolla"
   become: yes
