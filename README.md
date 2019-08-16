@@ -4,7 +4,9 @@
 
 | Date | Time | Title | Content |
 | ---- | ---- | ----- | ------- |
-| 第 1 天 | 上午 | [lab-01 OpenStack API](#lab-01-openstack-api--catalog-) | [API Quick Start](#api-quick-start--catalog-) |
+| 第 1 天 | 上午 | [lab-00 Prerequisites](#lab-00-prerequisites--catalog-) | [KVM Commands](#kvm-commands--catalog-) |
+| | | | [SSH Tools](#ssh-tools--catalog-) |
+| | | [lab-01 OpenStack API](#lab-01-openstack-api--catalog-) | [API Quick Start](#api-quick-start--catalog-) |
 | | | | [API Design](#api-design--catalog-) |
 | | | | [Network Monitor Tools](#network-monitor-tools--catalog-) |
 | | 下午 | [lab-02 Automation Frameworks](#lab-02-automation-frameworks--catalog-) | [Fabric Quick Start](#fabric-quick-start--catalog-) |
@@ -25,9 +27,55 @@
 | | | | [Debug with Kolla-Ansible](#debug-with-kolla-ansible--catalog-) |
 | | | | [[Optional] RDO](#optional-rdo--catalog-) |
 
-## lab-01 OpenStack API （ [Catalog](#catalog) ）
+## lab-00 Prerequisites ( [Catalog](#catalog) )
 
-### API Quick Start （ [Catalog](#catalog) ）
+### KVM Commands ( [Catalog](#catalog) )
+
+1. List all vms
+
+        virsh list --all
+
+1. List a specific vm's snaphosts
+
+        virsh snapshot-list <vm_name>
+        virsh snapshot-list kolla-aio
+
+1. Revert a vm by a specific snapshots
+
+        virsh snapshot-revert <vm_name> --snapshotname <snapshot_name>
+        virsh snapshot-revert kolla-aio --snapshotname kolla-aio.common_aio
+
+1. Delete a vm by a specific snapshots with its name
+
+        virsh snapshot-delete <vm_name> --snapshotname <snapshot_name>
+        virsh snapshot-delete kolla-aio --snapshotname kolla-aio.common_aio
+
+1. Remove a vm
+
+        # Destroy a vm
+        virsh snapshot-destroy <vm_name>
+        virsh snapshot-destroy kolla-aio
+
+        # Clear a specific vm's all snapshots
+
+        virsh snapshot-list <vm_name> | awk '{print $1}' | xargs -i virsh snapshot-delete <vm_name> --snapshotname {}
+        virsh snapshot-list kolla-aio | awk '{print $1}' | xargs -i virsh snapshot-delete kolla-aio --snapshotname {}
+
+        # Remove a vm
+        virsh undefine <vm_name>
+        virsh undefine kolla-aio
+
+### SSH Tools ( [Catalog](#catalog) )
+
+1. [Putty](https://www.putty.org/) Config
+    - Text font
+    - Console log line number
+    - Login user
+    - [Optional]: Private cert
+
+## lab-01 OpenStack API ( [Catalog](#catalog) )
+
+### API Quick Start ( [Catalog](#catalog) )
 
 1. [OpenStack CLI Overview](https://docs.openstack.org/newton/user-guide/common/cli-overview.html)
     - [Install the OpenStack command-line clients](https://docs.openstack.org/newton/user-guide/common/cli-install-openstack-command-line-clients.html)
@@ -75,7 +123,7 @@
             tcpdump -A -s 0 'tcp port 80 and (((ip[2:2] - ((ip[0]&0xf)<<2)) - ((tcp[12]&0xf0)>>2)) != 0)'
             tcpdump -X -s 0 'tcp port 80 and (((ip[2:2] - ((ip[0]&0xf)<<2)) - ((tcp[12]&0xf0)>>2)) != 0)'
 
-### API Design （ [Catalog](#catalog) ）
+### API Design ( [Catalog](#catalog) )
 
 1. [Authentication](https://docs.openstack.org/api-ref/identity/v3/), [stein version](https://docs.openstack.org/keystone/stein/api_curl_examples.html)
     - [Demo]: Get unscope token
@@ -209,7 +257,7 @@
         ```
     - [Question]: Create a router
 
-### Network Monitor Tools （ [Catalog](#catalog) ）
+### Network Monitor Tools ( [Catalog](#catalog) )
 
 1. Chrome Developer tools
     - [Demo]: Capture & Parse the HTTP requests
@@ -265,9 +313,9 @@
     - [Demo]: TLS handshake
     - [Demo]: HTTP response data parser
 
-## lab-02 Automation Frameworks （ [Catalog](#catalog) ）
+## lab-02 Automation Frameworks ( [Catalog](#catalog) )
 
-### Fabric Quick Start （ [Catalog](#catalog) ）
+### Fabric Quick Start ( [Catalog](#catalog) )
 
 1. Auto-Maintenance Frameworks
     - Ansible vs Others
@@ -308,7 +356,7 @@
         [testhost] out: example.hostname.com
         Done.
 
-### Fabric in Details （ [Catalog](#catalog) ）
+### Fabric in Details ( [Catalog](#catalog) )
 
 1. Fabric Concepts
 
@@ -320,7 +368,7 @@
     ![](img/fabric-steps.png)
 1. [Demo]: [Deploy a website with Fabric](https://github.com/wu-wenxiang/Project-Python-Webdev/tree/master/u1604-fabric)
 
-### Ansible as a Plus （ [Catalog](#catalog) ）
+### Ansible as a Plus ( [Catalog](#catalog) )
 
 1. Ansible Architecture
 
@@ -328,7 +376,7 @@
 1. Ansible Hello World
 1. Idempotency
 
-### Ansible Common Concepts （ [Catalog](#catalog) ）
+### Ansible Common Concepts ( [Catalog](#catalog) )
 
 1. Inventory
 1. Playbook
@@ -337,7 +385,7 @@
 1. Templates / Files
 1. Handler
 
-### Ansible Common Modules （ [Catalog](#catalog) ）
+### Ansible Common Modules ( [Catalog](#catalog) )
 
 1. ping
 1. shell
@@ -352,33 +400,33 @@
 1. get_url
 1. yum/apt
 
-### Ansible Demo （ [Catalog](#catalog) ）
+### Ansible Demo ( [Catalog](#catalog) )
 
 1. [Demo]: [Deploy a website with Ansible](https://github.com/wu-wenxiang/Project-Python-Webdev/tree/master/u1604-ansible)
 1. [Demo]: Deploy OpenShift
 
-### [Optional] AWX （ [Catalog](#catalog) ）
+### [Optional] AWX ( [Catalog](#catalog) )
 
 1. AWX & Tower
 
     ![](img/ansible-awx.png)
 1. AWX Hello World
 
-### Tereform （ [Catalog](#catalog) ）
+### Tereform ( [Catalog](#catalog) )
 
 1. Tereform Hello World
     - [Demo]: OpenStack launch an instance
 
-## lab-03 OpenStack Ansible Provider （ [Catalog](#catalog) ）
+## lab-03 OpenStack Ansible Provider ( [Catalog](#catalog) )
 
-### [Ansible Cloud Provider](https://docs.ansible.com/ansible/latest/modules/list_of_cloud_modules.html) （ [Catalog](#catalog) ）
+### [Ansible Cloud Provider](https://docs.ansible.com/ansible/latest/modules/list_of_cloud_modules.html) ( [Catalog](#catalog) )
 
 1. Azure
     - [Demo]: Register DNS in Azure
     - [Demo]: Deploy openshift in Azure
 1. Aliyun
 
-### OpenStack Ansible Provider （ [Catalog](#catalog) ）
+### OpenStack Ansible Provider ( [Catalog](#catalog) )
 
 1. OpenStack Ansible Hello World
     - [Demo]: Get token
@@ -470,9 +518,9 @@
                 name: sample_network
         ```
 
-## lab-04 OpenStack kolla-ansible （ [Catalog](#catalog) ）
+## lab-04 OpenStack kolla-ansible ( [Catalog](#catalog) )
 
-### Docker Quick Start （ [Catalog](#catalog) ）
+### Docker Quick Start ( [Catalog](#catalog) )
 
 1. Docker Hello World
 1. Docker Concepts
@@ -492,7 +540,7 @@
 
         ![](img/docker-architecture.png)
 
-### Debug in Docker Container （ [Catalog](#catalog) ）
+### Debug in Docker Container ( [Catalog](#catalog) )
 
 1. View stdout history with the logs command.
 
@@ -633,7 +681,7 @@ Maybe the most powerful all-around tool in your kit, the exec command allows you
     - This last one is less of a debugging tip, and more of a best practice that will definitely make debugging, and reasoning about the state of your container a lot easier. Docker containers are meant to run a single process that is PID 1 inside the sandbox. You can make that process a shell and spin up a bunch of stuff in the background, or you can make it supervisord and do the same, but it’s not really what containers are good at and it hobbles systems meant to manage and monitor them.
     - The main benefit of running one process per container is that it’s easier to reason about the state of the container at run time. The container comes up when the process comes up and dies when it dies, and platforms like Docker Compose, kubernetes, and Amazon ECS can see that and restart it. They can also monitor the health (liveness and readiness) of a single-process container, but it is much more difficult to define declaratively what either of those things means when they depend on multiple processes being in good health inside the container.
 
-### Kolla-Ansible Quick Start （ [Catalog](#catalog) ）
+### Kolla-Ansible Quick Start ( [Catalog](#catalog) )
 
 1. Kolla-Achitecture, reference: [Building a Containerized OpenStack Lab](https://networkop.co.uk/blog/2017/09/08/os-lab-docker/)
 
@@ -644,7 +692,7 @@ Maybe the most powerful all-around tool in your kit, the exec command allows you
         ![](src/ansible-build-openstack-env/img/openstack-env-architecture.png)
     - [Ansible Scripts: Build OpenStack Environment](https://github.com/99cloud/lab-openstack/tree/master/src/ansible-build-openstack-env)
 
-### Kolla-Ansible Installation & Maintenance （ [Catalog](#catalog) ）
+### Kolla-Ansible Installation & Maintenance ( [Catalog](#catalog) )
 
 1. [OpenStack Stein Kolla Reference](https://docs.openstack.org/kolla-ansible/stein/)
 1. [Demo]: [kolla-ansible installation in all-in-one mode](https://github.com/99cloud/lab-openstack/blob/master/doc/installation-kolla-all-in-one.md)
@@ -653,16 +701,16 @@ Maybe the most powerful all-around tool in your kit, the exec command allows you
     - OpenStack Upgrade
     - OpenStack Nodes Scaling up
 
-## lab-05 OpenStack Debug （ [Catalog](#catalog) ）
+## lab-05 OpenStack Debug ( [Catalog](#catalog) )
 
-### Debug with DevStack （ [Catalog](#catalog) ）
+### Debug with DevStack ( [Catalog](#catalog) )
 
 1. DevStack Installation
     - [Demo]: Devstack Installation
 1. DevStack Debugging
     - [Demo]: Debug with DevStack
 
-### Debug with Kolla-Ansible （ [Catalog](#catalog) ）
+### Debug with Kolla-Ansible ( [Catalog](#catalog) )
 
 1. Kolla-Ansible Logs
     - [Demo]: Check logs
@@ -674,6 +722,6 @@ Maybe the most powerful all-around tool in your kit, the exec command allows you
         - kolla-ansible部署中，加上一个tee或者保存一下日志是个比较好的方法
         - 当容器起不来的时候，可以修改/etc/kolla/{service}/下面的config.json,把command中的启动命令修改成sleep infinity等命令，那么可以exec到容器里进行代码的调试
 
-### [Optional] RDO （ [Catalog](#catalog) ）
+### [Optional] RDO ( [Catalog](#catalog) )
 
 1. [Demo]: [RDO Installation](https://github.com/99cloud/lab-openstack/blob/master/doc/installation-rdo-all-in-one.md)
