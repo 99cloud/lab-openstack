@@ -12,6 +12,6 @@
 # virsh list --all | grep -P '^\s*[\d\-]+\s+' | awk '{print $2}' | xargs -i virsh undefine {}
 
 - name: Create before installation snapshot
-  shell: "virsh snapshot-create-as {{ hostvars[item]['hostname'] }} {{ hostvars[item]['hostname'] }}.before"
+  shell: "virsh snapshot-create-as {{ hostvars[item]['hostname'] }} {{ hostvars[item]['hostname'] }}.{{ snapshot_postfix }}"
   ignore_errors: yes
   loop: "{{ groups['nodes'] }}"

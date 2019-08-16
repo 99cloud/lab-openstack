@@ -12,5 +12,12 @@
   roles:
     - init01-pre-install
     - init04-aio-config-common
-    - init05-before-installation
   become: yes
+
+- hosts: bastion
+  roles:
+    - init06-snapshot
+  vars:
+    snapshot_postfix: "common_aio"
+  become: yes
+  
