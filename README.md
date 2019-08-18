@@ -31,11 +31,20 @@
 
 ### SSH Tools ( [Catalog](#catalog) )
 
+1. Target Machine
+
+        ssh root@training-01.demotheworld.com
+        ...
+        ssh root@training-15.demotheworld.com
+
 1. [Putty](https://www.putty.org/) Config
     - Text font
     - Console log line number
     - Login user
     - [Optional]: Private cert
+1. Questions
+    1. Config Putty client, to connect to lab target hosts
+    1. [Optional]: Connect to lab target hosts without type the password
 
 ### KVM Commands ( [Catalog](#catalog) )
 
@@ -58,20 +67,24 @@
         virsh snapshot-delete <vm_name> --snapshotname <snapshot_name>
         virsh snapshot-delete kolla-aio --snapshotname kolla-aio.common_aio
 
-1. Remove a vm
+1. [Attention][Do not run]: Remove a vm
 
         # Destroy a vm
         virsh snapshot-destroy <vm_name>
         virsh snapshot-destroy kolla-aio
 
         # Clear a specific vm's all snapshots
-
         virsh snapshot-list <vm_name> | awk '{print $1}' | xargs -i virsh snapshot-delete <vm_name> --snapshotname {}
         virsh snapshot-list kolla-aio | awk '{print $1}' | xargs -i virsh snapshot-delete kolla-aio --snapshotname {}
 
         # Remove a vm
         virsh undefine <vm_name>
         virsh undefine kolla-aio
+
+1. Questions
+    1. Create a snaphost for test
+    1. Revert vm instances by a specific snapshot
+    1. Delete the test snapshot
 
 ## lab-01 OpenStack API ( [Catalog](#catalog) )
 
@@ -80,14 +93,12 @@
 1. [OpenStack CLI Overview](https://docs.openstack.org/newton/user-guide/common/cli-overview.html)
     - [Install the OpenStack command-line clients](https://docs.openstack.org/newton/user-guide/common/cli-install-openstack-command-line-clients.html)
 
-            # Ubuntu or Debian
-            apt install python-dev python-pip
+            # Intall python-pip: Red Hat Enterprise Linux, CentOS, or Fedora
+            yum install python36 python36-devel python36-pip gcc openssl-devel -y
 
-            # Red Hat Enterprise Linux, CentOS, or Fedora
-            yum install python-devel python-pip
+            # Install openstack-client
+            pip3 install python-openstackclient
 
-            # pip
-            pip install python-openstackclient
     - [Set environment variables using the OpenStack RC file](https://docs.openstack.org/newton/user-guide/common/cli-set-environment-variables-using-openstack-rc.html)
 
             export OS_USERNAME=username
@@ -98,30 +109,42 @@
             export OS_TENANT_ID=tenantIDString
             export OS_REGION_NAME=regionName
             export OS_CACERT=/path/to/cacertFile
+
+    - [Demo]: Config OpenStack client environment
+
+            ssh kolla-aio "cat /etc/kolla/admin-openrc.sh"
+            vi ~/.bash_profile
+            . ~/.bash_profile
+
     - [Demo]: List endpoints
 
             openstack endpoint list
-    - [Demo]: List vm instances
 
-            openstack server list
-    - [Question]: How to create a server in a specific network?
+    - Questions
+        - Create a server instance in Horizon dashboard
+        - List vm instances: `openstack server list`
 1. API vs CLI
     - [Demo]: Show CLI's backend requests
 
             openstack endpoint list -v --debug
+
     - [Demo]: TcpDump examples
 
+            yum install tcpdump -y
             man tcpdump | less -Ip examples
 
+            # TCP
+            tcpdump -i br-mgt -s 0 -A 'tcp'
+
             # HTTP GET
-            tcpdump -s 0 -A 'tcp dst port 80 and tcp[((tcp[12:1] & 0xf0) >> 2):4] = 0x47455420'
+            tcpdump -i br-mgt -s 0 -A 'tcp[((tcp[12:1] & 0xf0) >> 2):4] = 0x47455420'
 
             # HTTP POST
-            tcpdump -s 0 -A 'tcp dst port 80 and (tcp[((tcp[12:1] & 0xf0) >> 2):4] = 0x504f5354)'
+            tcpdump -i br-mgt -s 0 -A 'tcp[((tcp[12:1] & 0xf0) >> 2):4] = 0x504f5354'
 
             # HTTP Response Head & Data
-            tcpdump -A -s 0 'tcp port 80 and (((ip[2:2] - ((ip[0]&0xf)<<2)) - ((tcp[12]&0xf0)>>2)) != 0)'
-            tcpdump -X -s 0 'tcp port 80 and (((ip[2:2] - ((ip[0]&0xf)<<2)) - ((tcp[12]&0xf0)>>2)) != 0)'
+            tcpdump -i br-mgt -s 0 -A '(((ip[2:2] - ((ip[0]&0xf)<<2)) - ((tcp[12]&0xf0)>>2)) != 0)'
+            tcpdump -i br-mgt -s 0 -X '(((ip[2:2] - ((ip[0]&0xf)<<2)) - ((tcp[12]&0xf0)>>2)) != 0)'
 
 ### API Design ( [Catalog](#catalog) )
 
@@ -255,7 +278,8 @@
             }
         }'
         ```
-    - [Question]: Create a router
+    - Questions
+        - Create a router
 
 ### Network Monitor Tools ( [Catalog](#catalog) )
 
@@ -304,7 +328,8 @@
         # 其他的属性可以参考openstack的neutron api获取
         ```
 
-    - [Question]: Get a token & Query endpoint list
+    - Questions
+        - Get a token & Query endpoint list
 1. Fiddler
     - [Demo]: Collect trace
     - [Demo]: Play back
