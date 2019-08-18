@@ -4,8 +4,8 @@
 
 | Date | Time | Title | Content |
 | ---- | ---- | ----- | ------- |
-| 第 1 天 | 上午 | [lab-00 Prerequisites](#lab-00-prerequisites--catalog-) | [KVM Commands](#kvm-commands--catalog-) |
-| | | | [SSH Tools](#ssh-tools--catalog-) |
+| 第 1 天 | 上午 | [lab-00 Prerequisites](#lab-00-prerequisites--catalog-) | [SSH Tools](#ssh-tools--catalog-) |
+| | | | [KVM Commands](#kvm-commands--catalog-) |
 | | | [lab-01 OpenStack API](#lab-01-openstack-api--catalog-) | [API Quick Start](#api-quick-start--catalog-) |
 | | | | [API Design](#api-design--catalog-) |
 | | | | [Network Monitor Tools](#network-monitor-tools--catalog-) |
@@ -28,6 +28,14 @@
 | | | | [[Optional] RDO](#optional-rdo--catalog-) |
 
 ## lab-00 Prerequisites ( [Catalog](#catalog) )
+
+### SSH Tools ( [Catalog](#catalog) )
+
+1. [Putty](https://www.putty.org/) Config
+    - Text font
+    - Console log line number
+    - Login user
+    - [Optional]: Private cert
 
 ### KVM Commands ( [Catalog](#catalog) )
 
@@ -64,14 +72,6 @@
         # Remove a vm
         virsh undefine <vm_name>
         virsh undefine kolla-aio
-
-### SSH Tools ( [Catalog](#catalog) )
-
-1. [Putty](https://www.putty.org/) Config
-    - Text font
-    - Console log line number
-    - Login user
-    - [Optional]: Private cert
 
 ## lab-01 OpenStack API ( [Catalog](#catalog) )
 
