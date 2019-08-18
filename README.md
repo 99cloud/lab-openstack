@@ -16,7 +16,7 @@
 | | | | [Ansible Common Modules](#ansible-common-modules--catalog-) |
 | | | | [Ansible Demo](#ansible-demo--catalog-) |
 | | | | [[Optional] AWX](#optional-awx--catalog-) |
-| | | | [Tereform](#tereform--catalog-) |
+| | | | [[Optional] Tereform](#optional-tereform--catalog-) |
 | 第 2 天 | 上午 | [lab-03 OpenStack Ansible Provider](#lab-03-openstack-ansible-provider--catalog-) | [Ansible Cloud Provider](#ansible-cloud-provider--catalog-) |
 | | | | [OpenStack Ansible Provider](#openstack-ansible-provider--catalog-) |
 | | 下午 | [lab-04 OpenStack kolla-ansible](#lab-04-openstack-kolla-ansible--catalog-) | [Docker Quick Start](#docker-quick-start--catalog-) |
@@ -284,7 +284,7 @@
         ![chrome](img/chrome2.png)
 
         ![chrome](img/chrome3.png)
-1. Postman
+1. [Postman](https://www.getpostman.com/downloads/)
     - [Demo]: Send HTTP requests
 
         ![postman](img/postman1.png)
@@ -297,36 +297,92 @@
 
         ![postman](img/postman5.png)
 
-        ```bash
-        #head内容如下
-        X-Auth-Toke: gAAAAABdQqoqaMFBasJV1p-mv9B0o3xQVCTdhGQDp3cBTuD2Wz0OJIA_xjmZG9XzTw7H7Za1dv-PAyacGe6StIkdrE1sj8P9C4fS0wTp9gDExt1m1QZ2RSj0im5OLwF0fX14VH7fiQvytS3D3aaMkQ
-        # token 可以通过openstack token issue 获取
-        # Content-Type是postman自动添加的
-        # 请求地址如下
-        POST http://10.211.55.100:9696/v2.0/routers
-        # http://10.211.55.100:9696 为neutron的endpoint，可以通以openstack endpoint list获取
-        # /v2.0/routers 是api接口 可以通过openstack网站上获取
-        # 请求的body如下
-        {
-            "router": {
-                "name": "router1",
-                "external_gateway_info": {
-                    "network_id"7c431bd4-985b-4a1a-ab21-166fa8",
-                    "enable_snat": true
-                },
-                "admin_state_up": true
-            }
-        }
-        # network_id 为provider网络的id，可以通过openstack network list 获取到
-        # 其他的属性可以参考openstack的neutron api获取
-        ```
+            #head内容如下
+            X-Auth-Toke: gAAAAABdQqoqaMFBasJV1p-mv9B0o3xQVCTdhGQDp3cBTuD2Wz0OJIA_xjmZG9XzTw7H7Za1dv-PAyacGe6StIkdrE1sj8P9C4fS0wTp9gDExt1m1QZ2RSj0im5OLwF0fX14VH7fiQvytS3D3aaMkQ
 
-    - Questions
-        - Get a token & Query endpoint list
-1. Fiddler
+            # token 可以通过openstack token issue 获取
+            # Content-Type是postman自动添加的
+            # 请求地址如下
+            POST http://10.211.55.100:9696/v2.0/routers
+
+            # http://10.211.55.100:9696 为neutron的endpoint，可以通以openstack endpoint list获取
+            # /v2.0/routers 是api接口 可以通过openstack网站上获取
+            # 请求的body如下
+            {
+                "router": {
+                    "name": "router1",
+                    "external_gateway_info": {
+                        "network_id"7c431bd4-985b-4a1a-ab21-166fa8",
+                        "enable_snat": true
+                    },
+                    "admin_state_up": true
+                }
+            }
+
+            # network_id 为provider网络的id，可以通过openstack network list 获取到
+            # 其他的属性可以参考openstack的neutron api获取
+
+1. [Fiddler](https://www.telerik.com/fiddler)
     - [Demo]: Collect trace
     - [Demo]: Play back
-1. Netmon & Wireshark
+1. Windows 下的 OSI 七层模型的实现结构
+
+		          +-------------------------------+
+		          |           Ws2_32.dll          |
+		          +-------------------------------+
+		 User               |           |
+		          +-------------------------------+
+		          |           msafd.dll           |
+		          +-------------------------------+
+		                  |   System Call  |
+		                  | File Operation |
+		----------------------------------------------------------------------
+		                  |                |
+		          +-------------------------------+
+		          |           afd.sys             |
+		          |         \Device\Afd           |
+		          +-------------------------------+
+		 Kernel           | File Operation |
+		                  |      IRP       |
+		       +----------------------------------------+
+		       |                tcpip.sys               | ( Tdi layer )     --- 传输层
+		       | \Device\Tcp \Device\Udp \Device\RawIp  | ( Ndis Protocol ) --- 网络层
+		       +----------------------------------------+
+		                  |   Ndis lib     |
+		                  |                |
+		           +-------------------------------+
+		           |           k57xp32.sys         |      ( Miniport )      --- 链路层
+		           +-------------------------------+
+		           |       Net Interface Card      |                        --- 物理层
+		           +-------------------------------+
+
+- 参考：[描述](http://blog.csdn.net/Henzox/article/details/38846117#)
+	- 简单来讲，Windows 对网络部分的实现分为两部分，用户态部分和内核态部分。
+		- 用户态部分为标准的`socket`调用，一般情况下可以认为有`ws2_32.dll`和`msafd.dll`组成，`msafd.dll`为一个服务提供者，主要完成`socket`用户层的代码实现
+		- 在内核态`socket`的实现由`afd.sys`实现，它主要创建设备`\Device\Afd`来与`msafd.dll`进行交互，完成`socket`的创建等其它操作。
+	- tcp/ip协议的传输层和网络层实现是在`tcpip.sys`里完成的，它主要完成两部分工作：传输层和网络层实现
+		- 在传输层部分完成`TCP`,`UDP`,`RawIp`的绑定，连接等功能，主要服务于afd.sys发下来的`TDI`命令
+		- 然后进入到网络层，来完成路由以及IP包的构成，网络层部分相当于一个Ndis协议驱动，一般来讲它会绑定所有的网卡来监听和发送IP包。
+	- 链路层在笔者的电脑上是由`k57xp32.sys`驱动完成，不同的网卡此驱动可能不同，它相当于一个`Ndis Miniport`驱动，和Ndis协议驱动一样，都是运行在Ndis库营造的一个运行环境中，主要完成例如以内网数据包的构成，操作网卡发送数据包，以及注册中断接收数据包以及其它信息的工作。
+	- 物理层，当然由网卡硬件来实现。
+	- 有了上面清晰的结构之后，我们要开发一些业务就会非常明白的知道它工作在哪里
+		- 比如TDI防火墙，就可以直接附加到`tcpip.sys`创建的几个命名设备对象上面，就可以监听到`afd.sys`发下来的TDI命令，进而可以拦截，一些`socket`创建，绑定，发送和接收的命令，从而完成防火墙的功能。当然，如果别人直接注册一个协议驱动，然后直接进行发包，那么这个防火墙就不能对这样的操作对待监控，比如直接发ARP包到局域网中，就可以造成攻击。但是如果你的防火墙工作在链表层上面，即注册一个中间层驱动来完成防火墙的功能，那么就又可以拦截掉我刚才假设的那种操作，所以如果一个Ndis中间层驱动来完成防火墙功能，那么就可以有更大的监控范围。
+		- 再比如，想实现一个虚拟网卡，那么就可以完成一个Ndis小端口驱动，来让其它协议对你进行绑定，一些应用程序就可以直接选择这张网卡进行数据处理，便可完成一些特殊工作了。
+- Netmon
+	- ![Netmon-Layer.jpg](https://raw.githubusercontent.com/wu-wenxiang/Media-WebLink/master/qiniu/9e7c39ba1fa54c17b394a1918e4a0f3d-Netmon-Layer.jpg)
+	- Netmon is between ndis and tcpip layer
+	- TCP 包从APP到网卡最后发送之前，是需要经过几层：`NIC-ndis-tcpip-afd-userMode`
+	- Application如果有杀毒软件，filter driver会load到其中的两个地方：`nic-ndis-<filter_driver>-tcpip-<filter_driver>-afd-userModeApp`
+	- NDIS：Network Driver Interface Specification，这个是网卡的驱动接口。我们的netmom capture的包是从TCP/IP 到NDSI的，在某些情况下不能代表真正从NIC出去的包。
+- Wireshark
+	- 参考
+		- [抓各种包](https://wiki.wireshark.org/CaptureSetup/)
+		- Architecture
+			- [WinPcap structure](https://www.winpcap.org/docs/docs_40_2/html/group__internals.html)
+			- ![internals-arch.gif](https://raw.githubusercontent.com/wu-wenxiang/Media-WebLink/master/qiniu/37369909dc8d43308cb7d298bf998297-internals-arch.gif)
+			- [Detail](https://www.winpcap.org/docs/iscc01-wpcap.pdf)
+			- ![winpcap.png](https://raw.githubusercontent.com/wu-wenxiang/Media-WebLink/master/qiniu/37369909dc8d43308cb7d298bf998297-winpcap.png)
+1. 操作：[Netmon](https://www.microsoft.com/en-us/download/details.aspx?id=4865) & [Wireshark](https://www.wireshark.org/download.html)
     - [Demo]: TCP handshake
     - [Demo]: TLS handshake
     - [Demo]: HTTP response data parser
@@ -392,6 +448,16 @@
 
     ![](img/ansible-architecture.png)
 1. Ansible Hello World
+
+        $ cat /etc/ansible/hosts
+        [testservers]
+        test1
+        test2
+
+        ansible localhost -m ping
+        ansible testservers -m ping
+
+        ansible testservers -m shell -a "echo hello world"
 1. Idempotency
 
 ### Ansible Common Concepts ( [Catalog](#catalog) )
@@ -401,22 +467,22 @@
 1. Role
 1. Variables ( Global / Default )
 1. Templates / Files
-1. Handler
+1. [Optional] Handler
 
 ### Ansible Common Modules ( [Catalog](#catalog) )
 
-1. ping
-1. shell
-1. template
-1. copy
-1. cron
-1. mount
-1. service
-1. sysctl
-1. user
-1. stat
-1. get_url
-1. yum/apt
+1. [ping](https://docs.ansible.com/ansible/latest/modules/ping_module.html)
+1. [shell](https://docs.ansible.com/ansible/latest/modules/shell_module.html)
+1. [template](https://docs.ansible.com/ansible/latest/modules/template_module.html)
+1. [copy](https://docs.ansible.com/ansible/latest/modules/copy_module.html)
+1. [cron](https://docs.ansible.com/ansible/latest/modules/cron_module.html)
+1. [mount](https://docs.ansible.com/ansible/latest/modules/mount_module.html)
+1. [service](https://docs.ansible.com/ansible/latest/modules/service_module.html)
+1. [sysctl](https://docs.ansible.com/ansible/latest/modules/sysctl_module.html)
+1. [user](https://docs.ansible.com/ansible/latest/modules/user_module.html)
+1. [stat](https://docs.ansible.com/ansible/latest/modules/stat_module.html)
+1. [get_url](https://docs.ansible.com/ansible/latest/modules/get_url_module.html)
+1. [yum](https://docs.ansible.com/ansible/latest/modules/yum_module.html)/[apt](https://docs.ansible.com/ansible/latest/modules/apt_module.html)
 
 ### Ansible Demo ( [Catalog](#catalog) )
 
@@ -430,7 +496,7 @@
     ![](img/ansible-awx.png)
 1. AWX Hello World
 
-### Tereform ( [Catalog](#catalog) )
+### [Optional] Tereform ( [Catalog](#catalog) )
 
 1. Tereform Hello World
     - [Demo]: OpenStack launch an instance
