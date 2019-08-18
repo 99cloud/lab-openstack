@@ -4,9 +4,6 @@
   get_url:
     url: "{{ remote_image_url }}"
     dest: "{{ local_image_url }}"
-  async: 3600
-  poll: 0
-  register: async_result_get_url_centos_iso
 
 - name: Stopped and disable firewalld, if firewalld installed
   service:
@@ -231,11 +228,3 @@
 - name: Enable KVM nested
   shell: "modprobe -r kvm_intel && modprobe -a kvm_intel"
   ignore_errors: yes
-
-- name: 'Check sync status: Download centos iso'
-  async_status:
-    jid: "{{ async_result_get_url_centos_iso.ansible_job_id }}"
-  register: job_result
-  until: job_result.finished
-  retries: 360
-  delay: 10
