@@ -173,6 +173,9 @@
 
             TOKEN=$(openstack token issue | grep -E '^\|\s*id\s+' | awk '{print $4}')
             curl -s -H "X-Auth-Token: ${TOKEN}" http://172.25.0.100:5000/v3/endpoints | python -m json.tool
+    - Questions
+        - Issue a project scope token by CURL tool
+        - Use this token to list endpoints
 
 1. [Compute](https://docs.openstack.org/api-ref/compute/)
     - [Demo]: List servers
@@ -411,10 +414,12 @@
             Port            8600
             User            root
             IdentityFile    ~/.ssh/id_rsa_openstack
+
 1. SSH Proxy
 
         ProxyCommand    ssh fq -W %h:%p
         ProxyCommand    bash -c 'h=%h;ssh bastion -W ${h##prefix-}:%p'
+
 1. Fabric Hello World
 
         $ cat fabfile.py
