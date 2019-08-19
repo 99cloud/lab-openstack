@@ -467,8 +467,8 @@
 
 ### Ansible Common Concepts ( [Catalog](#catalog) )
 
-1. Inventory
-1. Playbook
+1. Inventory ( ini )
+1. Playbook ( yaml ) - Python data structure: number / string / list / dict
 1. Role
 1. Variables ( Global / Default )
 1. Templates / Files
