@@ -45,6 +45,7 @@
 1. Questions
     1. Config Putty client, to connect to lab target hosts
     1. [Optional]: Connect to lab target hosts without type the password
+    1. `http://training-15.demotheworld.com`
 
 ### KVM Commands ( [Catalog](#catalog) )
 
@@ -538,100 +539,140 @@
 
 1. Azure
     - [Demo]: Register DNS in Azure
+
+            $ cat dns-sp.yml
+            tenantId: "e967c2f0-fd97-47ce-89be-26cd63a261AA"
+            subscriptionId: "d909fe64-bc51-4377-9907-29a63692cfAA"
+            aadClientId: "97d30cbe-f7e3-4785-bdc2-dc6c4753a5AA"
+            aadClientSecret: "27f60511-4680-4ff0-aadb-5202d6402aAA"
+            resourceGroup: "openshift-dns"
+            cloud: "AzureCloud"
+
+            $ cat set-dns.yml
+            - hosts: localhost
+              tasks:
+                - name: Get dns_yml
+                  include_vars:
+                    file: "dns-sp.yml"
+                    name: dns_sp
+                - name: Dump dns_sp
+                  debug:
+                    msg: "{{ dns_sp }}"
+                - name: Dump hosts
+                  debug:
+                    msg: "{{ item }}"
+                  loop: "{{ vultr_hosts }}"
+                - name: Add Records to Azure Zone
+                  azure_rm_dnsrecordset:
+                    resource_group: "openshift-dns"
+                    relative_name: "{{ item.hostname }}"
+                    zone_name: "maodouzi.net"
+                    record_type: A
+                    state: present
+                    records:
+                      - entry: "{{ item.ipaddr }}"
+                    cloud_environment: "{{ dns_sp.cloud }}"
+                    subscription_id: "{{ dns_sp.subscriptionId }}"
+                    client_id: "{{ dns_sp.aadClientId }}"
+                    secret: "{{ dns_sp.aadClientSecret }}"
+                    tenant: "{{ dns_sp.tenantId }}"
+                  loop: "{{ vultr_hosts }}"
+              vars:
+                - vultr_hosts:
+                  - {'hostname': 'training-01', 'ipaddr': '149.248.18.239'}
+                  - {'hostname': 'training-02', 'ipaddr': '8.6.8.15'}
+                  - {'hostname': 'training-03', 'ipaddr': '104.207.152.126'}
+                  - {'hostname': 'training-04', 'ipaddr': '144.202.127.252'}
+                  - {'hostname': 'training-05', 'ipaddr': '149.28.74.219'}
+                  - {'hostname': 'training-06', 'ipaddr': '45.77.120.38'}
+                  - {'hostname': 'training-07', 'ipaddr': '45.32.85.81'}
+                  - {'hostname': 'training-08', 'ipaddr': '207.246.99.128'}
+                  - {'hostname': 'training-09', 'ipaddr': '66.42.109.203'}
+                  - {'hostname': 'training-10', 'ipaddr': '149.28.78.167'}
+                  - {'hostname': 'training-11', 'ipaddr': '140.82.18.5'}
+                  - {'hostname': 'training-12', 'ipaddr': '66.42.105.38'}
+                  - {'hostname': 'training-13', 'ipaddr': '149.248.5.42'}
+                  - {'hostname': 'training-14', 'ipaddr': '45.63.60.228'}
+                  - {'hostname': 'training-15', 'ipaddr': '45.76.75.76'}
+                  - {'hostname': 'training-16', 'ipaddr': '45.32.64.92'}
+
+            $ ansible-playbook set-dns.yml
+
     - [Demo]: Deploy openshift in Azure
-1. Aliyun
+1. [Optional] Aliyun
 
 ### OpenStack Ansible Provider ( [Catalog](#catalog) )
 
 1. OpenStack Ansible Hello World
     - [Demo]: Get token
 
-        ```yaml
-        - name:
-            hosts: localhost
-            tasks: Get token
-            - name: Retrieve an auth token
-                auth:
-                auth_url: http://172.16.120.251:5000/v3
-                username: admin
-                password: 94DAVjeokdwZ9OKmJ7cVmw9Gfb9aLlDbpddPYNdo
-                user_domain_name: default
-            - name: Show auth token
-                debug:
-                var: auth_token
-        ```
+            - hosts: localhost
+              tasks:
+                - name: Retrieve an auth token
+                  os_auth:
+                    auth:
+                      auth_url: http://172.25.0.100:5000/v3
+                      username: admin
+                      project_name: admin
+                      password: mo0xgPEqDDdWoYk2oxnlB60STu4MdFDNPXr0sUuh
+                      user_domain_name: Default
+                - name: Show auth token
+                  debug:
+                    var: auth_token
 
 1. Compute
     - [Demo]: Create a server instance
 
-        ```yaml
-        - name: Create a server instance
-          hosts: localhost
-          tasks:
-            - name: Launch a instance
-              os_server:
-                auth:
-                  auth_url: http://172.16.120.251:5000/v3
-                  username: admin
-                  password: 94DAVjeokdwZ9OKmJ7cVmw9Gfb9aLlDbpddPYNdo
-                  user_domain_name: default
-                state: present
-                name: new-server-test
-                image: eb901df6-801f-466f-8983-b55454b17cf5
-                flavor: 8ffeec2e-fc2d-496a-af53-5020849d630a
-                network: 0f2d90bc-da6d-4a0d-867e-e1a204e11f9f
-                security_groups: default
-        ```
+            - name: Create a server instance
+              hosts: localhost
+              tasks:
+                - name: Launch a instance
+                  os_server:
+                    auth:
+                      auth_url: http://172.25.0.100:5000/v3
+                      username: admin
+                      project_name: admin
+                      password: mo0xgPEqDDdWoYk2oxnlB60STu4MdFDNPXr0sUuh
+                      user_domain_name: Default
+                    state: present
+                    name: new-server-test
+                    image: 6cc537b7-dba4-4c2a-a25b-af19b6055979
+                    flavor: 1
+                    network: 1a657834-2bdc-4677-b513-aaf88f60a8cd
+                    security_groups: default
+
     - [Demo]: List server instance
 
-        ```yaml
-        - name: List server instance
-          hosts: localhost
-          tasks:
             - name: List server instance
-              os_server_facts:
-                auth:
-                  auth_url: http://172.16.120.251:5000/v3
-                  username: admin
-                  password: 94DAVjeokdwZ9OKmJ7cVmw9Gfb9aLlDbpddPYNdo
-                  user_domain_name: default
-                server: new-server-test
-        ```
+              hosts: localhost
+              tasks:
+                - name: List server instance
+                  os_server_facts:
+                - debug:
+                    var: openstack_servers
+
 1. Block Storage
     - [Demo]: Create a block storage
 
-        ```yaml
-        - name: Create a block storage
-          hosts: localhost
-          tasks:
-            - name: Create a volume
-              os_volume:
-                auth:
-                  auth_url: http://172.16.120.251:5000/v3
-                  username: admin
-                  password: 94DAVjeokdwZ9OKmJ7cVmw9Gfb9aLlDbpddPYNdo
-                  user_domain_name: default
-                state: present
-                size: 10
-                display_name: "test volume"
-        ```
+            - name: Create a block storage
+              hosts: localhost
+              tasks:
+                - name: Create a volume
+                  os_volume:
+                    state: present
+                    size: 10
+                    display_name: "test volume"
+
 1. Network
     - [Demo]: Create a network
 
-        ```yaml
-        - name: Create a network
-            hosts: localhost
-            tasks:
             - name: Create a network
-                os_network:
-                auth:
-                    auth_url: http://172.16.120.251:5000/v3
-                    username: admin
-                    password: 94DAVjeokdwZ9OKmJ7cVmw9Gfb9aLlDbpddPYNdo
-                    user_domain_name: default
-                state: present
-                name: sample_network
-        ```
+                hosts: localhost
+                tasks:
+                - name: Create a network
+                  os_network:
+                    state: present
+                    name: sample_network
 
 ## lab-04 OpenStack kolla-ansible ( [Catalog](#catalog) )
 
