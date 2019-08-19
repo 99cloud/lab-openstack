@@ -70,8 +70,8 @@
 1. [Attention][Do not run]: Remove a vm
 
         # Destroy a vm
-        virsh snapshot-destroy <vm_name>
-        virsh snapshot-destroy kolla-aio
+        virsh destroy <vm_name>
+        virsh destroy kolla-aio
 
         # Clear a specific vm's all snapshots
         virsh snapshot-list <vm_name> | awk '{print $1}' | xargs -i virsh snapshot-delete <vm_name> --snapshotname {}
