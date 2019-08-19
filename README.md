@@ -498,6 +498,23 @@
 
 ### Ansible Demo ( [Catalog](#catalog) )
 
+1. [Demo]: Template, copy files to target host with template
+
+        # cat config.ini.j2 
+        hosts = 172.25.0.200
+        user = root
+        password = {{ password }}
+
+        # cat playbook.yml 
+        - hosts: testservers
+          vars:
+            password: "hello"
+          tasks:
+          - name: Create a DOS-style text file from a template
+            template:
+              src: /root/config.ini.j2
+              dest: /root/config.ini
+
 1. [Demo]: [Deploy a website with Ansible](https://github.com/wu-wenxiang/Project-Python-Webdev/tree/master/u1604-ansible)
 1. [Demo]: Deploy OpenShift
 
