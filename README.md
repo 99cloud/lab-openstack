@@ -424,14 +424,17 @@
 
         pip3 install fabric3
 	
+        $ cat fabricrc
+        hosts = 172.25.0.200
+        user = root
+        password = 123456
+	
         $ cat fabfile.py
-
         from fabric.api import run
         def hello():
             run("hostname")
 
-        $ fab -H testhost hello
-
+        $ fab -c fabricrc hello
         [testhost] Executing task 'hello'
         [testhost] run: hostname
         [testhost] out: example.hostname.com
