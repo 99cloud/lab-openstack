@@ -459,6 +459,8 @@
     ![](img/ansible-architecture.png)
 1. Ansible Hello World
 
+        pip3 install ansible==2.7.11
+
         $ cat /etc/ansible/hosts
         [testservers]
         test1
