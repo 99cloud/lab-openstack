@@ -422,6 +422,8 @@
 
 1. Fabric Hello World
 
+        pip3 install fabric3
+	
         $ cat fabfile.py
 
         from fabric.api import run
