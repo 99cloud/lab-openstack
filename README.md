@@ -515,6 +515,8 @@
               src: /root/config.ini.j2
               dest: /root/config.ini
 
+        # ansible-playbook -i /etc/ansible/hosts playbook.yml
+
 1. [Demo]: [Deploy a website with Ansible](https://github.com/wu-wenxiang/Project-Python-Webdev/tree/master/u1604-ansible)
 1. [Demo]: Deploy OpenShift
 
