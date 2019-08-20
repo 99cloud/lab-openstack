@@ -616,6 +616,7 @@
                       project_name: admin
                       password: mo0xgPEqDDdWoYk2oxnlB60STu4MdFDNPXr0sUuh
                       user_domain_name: Default
+                      project_domain_name: Default
                 - name: Show auth token
                   debug:
                     var: auth_token
@@ -634,6 +635,7 @@
                       project_name: admin
                       password: mo0xgPEqDDdWoYk2oxnlB60STu4MdFDNPXr0sUuh
                       user_domain_name: Default
+                      project_domain_name: Default
                     state: present
                     name: new-server-test
                     image: 6cc537b7-dba4-4c2a-a25b-af19b6055979
