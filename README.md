@@ -681,7 +681,7 @@
 1. Docker Hello World
     - Quick Start
 
-            $ yum install docker
+            $ yum install docker -y
             $ systemctl start docker
             $ docker run hello-world
 
@@ -753,7 +753,7 @@
 
 1. View stdout history with the logs command.
 
-        $ docker run -d --name=logtest alpine /bin/sh -c “while true; do sleep 2; df -h; done”
+        $ docker run -d --name=logtest alpine /bin/sh -c "while true; do sleep 5; df -h; done"
         35f6353d2e47ab1f6c34073475014f4ab5e0b131043dca4454f67be9d8ef1253
         $ docker logs logtest
         Filesystem Size Used Available Use% Mounted on
@@ -769,7 +769,7 @@
 1. Stream stdout with the attach command.
 If you want to see what is written to stdout in real time then the attach command is your friend.
 
-        $ docker run -d --name=logtest alpine /bin/sh -c “while true; do sleep 2; df -h; done”
+        $ docker run -d --name=logtest alpine /bin/sh -c "while true; do sleep 5; df -h; done"
         26a329f1e7074f0c0f89caf266ad145ab427b1bcb35f82557e78bafe053faf44
         $ docker attach logtest
         Filesystem Size Used Available Use% Mounted on
@@ -784,7 +784,13 @@ If you want to see what is written to stdout in real time then the attach comman
         … etc …
     - By default this command attaches stdin and proxies signals to the remote process. Options are available to control both of these behaviors.
     - To detach from the process use the default `ctrl-p ctrl-q` sequence.
-    - Note that running a command in a loop the way I am above can make detaching a little wonky, but it works fine for normal stuff.
+    - If couldn't detach in this way, try kill :-)
+
+            # ps -ef | grep docker.*attach
+            root     12224 10895  0 00:04 pts/2    00:00:00 /usr/bin/docker-current attach logtest3
+            root     12239 10017  0 00:05 pts/0    00:00:00 grep --color=auto docker.*attach
+            # kill -9 12224
+
 1. Execute arbitrary commands with exec.
 Maybe the most powerful all-around tool in your kit, the exec command allows you to run arbitrary commands inside a running container.
 
@@ -798,7 +804,7 @@ Maybe the most powerful all-around tool in your kit, the exec command allows you
 
         # You can even use exec to get an interactive shell in the container.
 
-        $ docker run -d --name=exectest alpine watch “echo ‘This is a test.’ >> /var/log/test.log”
+        $ docker run -d --name=exectest alpine watch "echo 'This is a test.' >> /var/log/test.log"
         91e46bf5d19d4239a2f30af06669d4263580a01187d2290c33d7dee110f76356
         $ docker exec -it exectest /bin/sh
         / # ls -al /var/log
@@ -828,7 +834,7 @@ Maybe the most powerful all-around tool in your kit, the exec command allows you
 1. Pause and unpause a container.
     - I doubt you’ll have use for this one very often, but it’s cool so I’m throwing it in here anyway. Using the docker pause command you can pause all of the processes inside a container.
 
-            $ docker run -d --name=pausetest alpine /bin/sh -c “while true; do sleep 2; date; done”
+            $ docker run -d --name=pausetest alpine /bin/sh -c "while true; do sleep 2; date; done"
             e81e1bc519e4eb2e30a1c1e57198f0060147fa749ff8f93ba4f69bdf8a114311
     - The container is just echoing the date to stdout, so we can watch it with the attach command.
 
@@ -843,7 +849,7 @@ Maybe the most powerful all-around tool in your kit, the exec command allows you
             pausetest
     - And back in our other window where attach is running…
 
-            mark@viking:~/workspace/cluster-iperf$ docker attach pausetest
+            $ docker attach pausetest
             Wed Mar 23 06:21:40 UTC 2016
             Wed Mar 23 06:21:42 UTC 2016
             Wed Mar 23 06:22:06 UTC 2016
@@ -852,11 +858,11 @@ Maybe the most powerful all-around tool in your kit, the exec command allows you
 1. Get process stats with the top command.
     - The docker top command is exactly what it sounds like: top that runs in the container.
 
-            $ docker run -d — name=toptest alpine:3.1 watch “echo ‘Testing top’”
+            $ docker run -d —-name=toptest alpine:3.1 watch "echo 'Testing top'"
             fc54369116fe993ae45620415fb5a6376a3069cdab7c206ac5ce3b57006d4241
             $ docker top toptest
             UID PID … TIME CMD
-            root 26339 … 00:00:00 watch “echo ‘Testing top’”
+            root 26339 … 00:00:00 watch "echo 'Testing top'"
             root 26370 … 00:00:00 sleep 2
     - Some columns removed to make it fit here. There is also a docker stats command that is basically top for all the containers running on a host.
 1. View container details with the inspect command.
@@ -865,21 +871,21 @@ Maybe the most powerful all-around tool in your kit, the exec command allows you
             $ docker inspect toptest
             [
               {
-                “Id”: “fdb3008e70892e14d183f8 ... 020cc34fec9703c821”,
-                “Created”: “2016–03–23T17:45:01.876121835Z”,
-                “Path”: “/bin/sh”,
-                “Args”: [
-                  “-c”,
-                  “while true; do sleep 2; echo ‘Testing top’; done”
+                "Id": "fdb3008e70892e14d183f8 ... 020cc34fec9703c821",
+                "Created": "2016–03–23T17:45:01.876121835Z",
+                "Path": "/bin/sh",
+                "Args": [
+                  "-c",
+                  "while true; do sleep 2; echo 'Testing top'; done"
                 ],
                 … and lots, lots more.
               }
             ]
     - I’ve skipped the bulk of the output because there’s a lot of it. Some of the more valuable bits of intelligence you can get are:
-        - Current state of the container. (In the “State” property.)
-        - Path to the log history file. (In the “LogPath” field.)
-        - Values of set environment vars. (In the “Config.Env” field.)
-        - Mapped ports. (In the “NetworkSettings.Ports” field.)
+        - Current state of the container. (In the "State" property.)
+        - Path to the log history file. (In the "LogPath" field.)
+        - Values of set environment vars. (In the "Config.Env" field.)
+        - Mapped ports. (In the "NetworkSettings.Ports" field.)
         - Probably the most valuable use of inspect for me in the past has been getting the values of environment vars.
         - Even with largely automated deployments I’ve run into issues in the past where the wrong arg was passed to a command and a container ended up running with vars set to incorrect values. When one of your cloud containers starts choking commands like inspect can be a quick cure.
 1. View image layers with the history command.
@@ -924,12 +930,12 @@ Maybe the most powerful all-around tool in your kit, the exec command allows you
 1. Kolla-Ansible Logs
     - [Demo]: Check logs
         - 常用的查看log方法是查看 docker logs container_name 来查看容器的前台进程日志
-        - 所有的log存在`/var/lib/docker/volumes/kolla_logs/_data/{project_name}`也就是服务进程的后台日志
+        - 所有的log存在 `/var/lib/docker/volumes/kolla_logs/_data/{project_name}` 也就是服务进程的后台日志
 1. Kolla-Ansible Debugging
     - [Demo]: Kolla-Ansible Debugging
         - 如果是bootstrap容器失败，那么需要检查数据库连接，并且手动登录到数据库，删除对应的库，重新deploy
         - kolla-ansible部署中，加上一个tee或者保存一下日志是个比较好的方法
-        - 当容器起不来的时候，可以修改/etc/kolla/{service}/下面的config.json,把command中的启动命令修改成sleep infinity等命令，那么可以exec到容器里进行代码的调试
+        - 当容器起不来的时候，可以修改 `/etc/kolla/{service}/` 下面的 `config.json`，把command中的启动命令修改成sleep infinity等命令，那么可以exec到容器里进行代码的调试
 
 ### [Optional] RDO ( [Catalog](#catalog) )
 
