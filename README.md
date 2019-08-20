@@ -678,6 +678,27 @@
 
 ### Docker Quick Start ( [Catalog](#catalog) )
 
+1. Python Virtual Environment
+
+        # pip3 install virtualenv
+
+        # virtualenv -p python3 .env
+        Running virtualenv with interpreter /usr/bin/python3
+        Already using interpreter /usr/bin/python3
+        Using base prefix '/usr'
+          No LICENSE.txt / LICENSE found in source
+        New python executable in /root/.env/bin/python3
+        Also creating executable in /root/.env/bin/python
+        Installing setuptools, pip, wheel...
+        done.
+
+        # . .env/bin/activate
+        (.env) [root@openstack-01 ~]# python
+        Python 3.6.8 (default, Apr 25 2019, 21:02:35)
+        [GCC 4.8.5 20150623 (Red Hat 4.8.5-36)] on linux
+        Type "help", "copyright", "credits" or "license" for more information.
+        >>> exit()
+
 1. Docker Hello World
     - Quick Start
 
@@ -788,7 +809,7 @@ If you want to see what is written to stdout in real time then the attach comman
 
             # ps -ef | grep docker.*attach
             root     12224 10895  0 00:04 pts/2    00:00:00 /usr/bin/docker-current attach logtest3
-            root     12239 10017  0 00:05 pts/0    00:00:00 grep --color=auto docker.*attach
+
             # kill -9 12224
 
 1. Execute arbitrary commands with exec.
