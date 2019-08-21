@@ -1,2 +1,2 @@
-inventory/*.yml
+inventory/*.ini
 playbooks/*.retry

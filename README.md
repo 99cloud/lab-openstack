@@ -19,8 +19,8 @@
 | | | | [[Optional] Tereform](#optional-tereform--catalog-) |
 | 第 2 天 | 上午 | [lab-03 OpenStack Ansible Provider](#lab-03-openstack-ansible-provider--catalog-) | [Ansible Cloud Provider](#ansible-cloud-provider--catalog-) |
 | | | | [OpenStack Ansible Provider](#openstack-ansible-provider--catalog-) |
-| | 下午 | [lab-04 OpenStack kolla-ansible](#lab-04-openstack-kolla-ansible--catalog-) | [Docker Quick Start](#docker-quick-start--catalog-) |
-| | | | [Debug in Docker Container](#debug-in-docker-container--catalog-) |
+| | | [lab-04 OpenStack kolla-ansible](#lab-04-openstack-kolla-ansible--catalog-) | [Docker Quick Start](#docker-quick-start--catalog-) |
+| | 下午 | | [Debug in Docker Container](#debug-in-docker-container--catalog-) |
 | | | | [Kolla-Ansible Quick Start](#kolla-ansible-quick-start--catalog-) |
 | | | | [Kolla-Ansible Installation & Maintenance](#kolla-ansible-installation--maintenance--catalog-) |
 | | | [lab-05 OpenStack Debug](#lab-05-openstack-debug--catalog-) | [Debug with DevStack](#debug-with-devstack--catalog-) |
@@ -726,7 +726,7 @@
 
     - Python docker API
 
-            $ pip3 install docker
+            $ pip3 install docker-py
 
             $ python3
             Python 3.6.8 (default, Apr 25 2019, 21:02:35)

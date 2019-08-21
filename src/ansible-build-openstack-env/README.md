@@ -22,7 +22,7 @@
 1. kolla-aio lab 环境安装步骤：
     1. 笔记本上，初始化宿主机环境，以及安装前准备
 
-            ansible-playbook -i kolla-aio-training-01.yml playbooks/kolla-aio-init.yml
+            ansible-playbook -i kolla-aio-training-01.ini playbooks/kolla-aio-init.yml
 
     1. 登陆 training-01_aio 机器，安装 openstack
 
@@ -30,7 +30,7 @@
 
     1. 笔记本上，安装后配置
 
-            ansible-playbook -i kolla-aio-training-01.yml playbooks/kolla-aio-post.yml
+            ansible-playbook -i kolla-aio-training-01.ini playbooks/kolla-aio-post.yml
 
     1. 登陆 training-01_aio 机器，初始化 openstack
 
