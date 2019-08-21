@@ -726,7 +726,7 @@
 
     - Python docker API
 
-            $ pip3 install docker-py
+            $ pip3 install docker
 
             $ python3
             Python 3.6.8 (default, Apr 25 2019, 21:02:35)
