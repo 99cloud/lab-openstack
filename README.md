@@ -190,7 +190,7 @@
             curl -X POST \
               http://172.25.0.100:8774/v2.1/f3816430aded4dbd92b3faeda1a87e0b/servers \
               -H 'Content-Type: application/json' \
-              -H 'X-Auth-Token: ${TOKEN}' \
+              -H "X-Auth-Token: ${TOKEN}" \
               -d '{
                 "server" : {
                     "accessIPv4": "1.2.3.4",
@@ -215,7 +215,7 @@
             curl -X POST \
               http://172.25.0.100:8776/v3/f3816430aded4dbd92b3faeda1a87e0b/volumes \
               -H 'Content-Type: application/json' \
-              -H 'X-Auth-Token: ${TOKEN}' \
+              -H "X-Auth-Token: ${TOKEN}" \
               -d '{
                 "volume": {
                     "size": 10,
@@ -238,7 +238,7 @@
             curl -X POST \
               http://172.25.0.100:8776/v3/f3816430aded4dbd92b3faeda1a87e0b/volumes/07178089-7017-4d53-bb02-65b0a1b02bb5/action \
               -H 'Content-Type: application/json' \
-              -H 'X-Auth-Token: ${TOKEN}' \
+              -H "X-Auth-Token: ${TOKEN}" \
               -d '{
                 "os-attach": {
                     "instance_uuid": "173d8d22-ce8e-4414-b286-008e33471d74",
@@ -252,7 +252,7 @@
             curl -X POST \
               http://172.25.0.100:9696/v2.0/networks \
               -H 'Content-Type: application/json' \
-              -H 'X-Auth-Token: ${TOKEN}' \
+              -H "X-Auth-Token: ${TOKEN}" \
               -d '{
                 "network": {
                     "name": "sample_network",
@@ -266,7 +266,7 @@
             curl -X POST \
               http://172.25.0.100:9696/v2.0/subnets \
               -H 'Content-Type: application/json' \
-              -H 'X-Auth-Token: ${TOKEN}' \
+              -H "X-Auth-Token: ${TOKEN}" \
               -d '{
                 "subnet": {
                     "network_id": "6f0b2c56-48ae-4981-89b2-bb5d1decb7ed",
