@@ -16,7 +16,7 @@
 | | | | [Ansible Common Modules](#ansible-common-modules--catalog-) |
 | | | | [Ansible Demo](#ansible-demo--catalog-) |
 | | | | [[Optional] AWX](#optional-awx--catalog-) |
-| | | | [[Optional] Tereform](#optional-tereform--catalog-) |
+| | | | [[Optional] Terraform](#optional-terraform--catalog-) |
 | 第 2 天 | 上午 | [lab-03 OpenStack Ansible Provider](#lab-03-openstack-ansible-provider--catalog-) | [Ansible Cloud Provider](#ansible-cloud-provider--catalog-) |
 | | | | [OpenStack Ansible Provider](#openstack-ansible-provider--catalog-) |
 | | | [lab-04 OpenStack kolla-ansible](#lab-04-openstack-kolla-ansible--catalog-) | [Docker Quick Start](#docker-quick-start--catalog-) |
@@ -528,9 +528,9 @@
     ![](img/ansible-awx.png)
 1. AWX Hello World
 
-### [Optional] Tereform ( [Catalog](#catalog) )
+### [Optional] Terraform ( [Catalog](#catalog) )
 
-1. Tereform Hello World
+1. Terraform Hello World
     - [Demo]: OpenStack launch an instance
 
 ## lab-03 OpenStack Ansible Provider ( [Catalog](#catalog) )
