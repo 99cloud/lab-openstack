@@ -8,8 +8,8 @@
 | | | | [KVM Commands](#kvm-commands--catalog-) |
 | | | [lab-01 OpenStack API](#lab-01-openstack-api--catalog-) | [API Quick Start](#api-quick-start--catalog-) |
 | | | | [API Design](#api-design--catalog-) |
-| | | | [Network Monitor Tools](#network-monitor-tools--catalog-) |
-| | 下午 | [lab-02 Automation Frameworks](#lab-02-automation-frameworks--catalog-) | [Fabric Quick Start](#fabric-quick-start--catalog-) |
+| | 下午 | | [Network Monitor Tools](#network-monitor-tools--catalog-) |
+| | | [lab-02 Automation Frameworks](#lab-02-automation-frameworks--catalog-) | [Fabric Quick Start](#fabric-quick-start--catalog-) |
 | | | | [Fabric in Details](#fabric-in-details--catalog-) |
 | | | | [Ansible as a Plus](#ansible-as-a-plus--catalog-) |
 | | | | [Ansible Common Concepts](#ansible-common-concepts--catalog-) |
