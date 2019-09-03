@@ -154,23 +154,3 @@
   loop: "{{ groups['nodes'] }}"
   retries: 128
   delay: 10
-
-- name: Create init snapshot
-  shell: "virsh snapshot-create-as {{ hostvars[item]['hostname'] }} {{ hostvars[item]['hostname'] }}.init"
-  ignore_errors: yes
-  loop: "{{ groups['nodes'] }}"
-
-- name: Start vms
-  virt:
-    name: "{{ hostvars[item]['hostname'] }}"
-    state: running
-  loop: "{{ groups['nodes'] }}"
-
-- name: Waitting connect vm
-  wait_for:
-    host: "{{ hostvars[item]['interface1_ip'] }}"
-    port: 22
-    state: started
-    delay: 3
-    timeout: 600
-  loop: "{{ groups['nodes'] }}"

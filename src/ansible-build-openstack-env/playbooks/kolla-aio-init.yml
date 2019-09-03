@@ -6,6 +6,9 @@
     - init01-pre-install
     - init02-bastion-config
     - init03-cobbler
+    - init06-snapshot
+  vars:
+    snapshot_postfix: "init"
   become: yes
 
 - hosts: aio_node
