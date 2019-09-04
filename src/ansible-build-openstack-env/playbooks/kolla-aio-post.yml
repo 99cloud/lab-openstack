@@ -11,3 +11,10 @@
   vars:
     snapshot_postfix: "after_install_kolla"
   become: yes
+
+- hosts: aio_node
+  tasks:
+    - name: Defense for centos-source-nova-scheduler container stop
+      shell: "docker ps -a | grep centos-source-nova-scheduler | awk '{print $1}' | xargs docker start"
+      ignore_errors: yes
+  become: yes
