@@ -1,7 +1,7 @@
 # lab-openstack
 
-## 课程1: OpenStack基本操作
+## class-01-OpenStack-Administration
 
-## 课程2. OpenStack运维和二次开发：API & Ansible ( [OpenStack运维和二次开发](https://github.com/xcracker/lab-openstack/blob/master/2.OpenStack运维和二次开发：API%20%26%20Ansible.md) )
+## class-02-OpenStack-operations-and-secondary-development ( [OpenStack-operations-and-secondary-development](https://github.com/xcracker/lab-openstack/blob/master/class-02-OpenStack-operations-and-secondary-development.md) )
 
-## 课程  3: OpenStack 基础组件：Ceph、Zabbix
+## class-03-OpenStack-Basic-component-Ceph-and-Zabbix
