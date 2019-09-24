@@ -17,7 +17,7 @@
     state: shutdown
   loop: "{{ groups['nodes'] }}"
 
-- name: Waitting for vm create
+- name: Waitting for vm shutdown
   virt:
     name: "{{ hostvars[item]['hostname'] }}"
     command: status
