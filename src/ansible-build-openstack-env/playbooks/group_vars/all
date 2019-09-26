@@ -25,10 +25,10 @@ netmask: 255.255.255.0
 cluster_hostname: paas.99cloud.home
 paas_infra_cidr_99cloud: 200.0.0.0/24
 
-remote_image_url: http://mirror-hk.koddos.net/centos/7.6.1810/isos/x86_64/CentOS-7-x86_64-Minimal-1810.iso
-# remote_iamge_url: http://mirrors.aliyun.com/centos/7.6.1810/isos/x86_64/CentOS-7-x86_64-Minimal-1810.iso
-# remote_iamge_url: http://ap.stykers.moe/centos/7.6.1810/isos/x86_64/CentOS-7-x86_64-Minimal-1810.iso
-local_image_url: /var/lib/libvirt/images/CentOS-7-x86_64-Minimal-1810.iso
+remote_image_url: http://mirror-hk.koddos.net/centos/7.7.1908/isos/x86_64/CentOS-7-x86_64-Minimal-1908.iso
+# remote_iamge_url: http://mirrors.aliyun.com/centos/7.7.1908/isos/x86_64/CentOS-7-x86_64-Minimal-1908.iso
+# remote_iamge_url: https://ap.stykers.moe/centos/7.7.1908/isos/x86_64/CentOS-7-x86_64-Minimal-1908.iso
+local_image_url: /var/lib/libvirt/images/CentOS-7-x86_64-Minimal-1908.iso
 mount_image_target_url: /mnt
 
 ansible_ver: 2.7.11
