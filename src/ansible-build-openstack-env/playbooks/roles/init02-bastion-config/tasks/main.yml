@@ -1,5 +1,11 @@
 ---
 
+- name: ensure direcroty exists
+  file:
+    path: /var/lib/libvirt/images
+    state: "directory"
+    mode: "0777"
+
 - name: Download centos iso
   get_url:
     url: "{{ remote_image_url }}"
