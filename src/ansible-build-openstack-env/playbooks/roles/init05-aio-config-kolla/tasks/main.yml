@@ -40,14 +40,42 @@
     - {regexp: '^\s*network_interface:\s+', line: 'network_interface: "eth0"'}
     - {regexp: '^\s*neutron_external_interface:\s+', line: 'neutron_external_interface: "eth1"'}
     - {regexp: '^\s*enable_cinder:\s+', line: 'enable_cinder: "yes"'}
-    - {regexp: '^\s*enable_cinder_backend_lvm:\s+', line: 'enable_cinder_backend_lvm: "yes"'}
+    - {regexp: '^\s*enable_ceph:\s+', line: 'enable_ceph: "yes"'}
+    - {regexp: '^\s*enable_ceph_dashboard:\s+', line: 'enable_ceph_dashboard: "no"'}
 
-- name: "Config cinder backend"
-  shell: "{{ item }}"
+#configure ceph
+- name: "Use filestore for ceph"
+  lineinfile:
+    path: "/etc/kolla/globals.yml"
+    state: present
+    line: 'ceph_osd_store_type: "filestore"'
+
+- name: check osd label
+  shell: blkid | grep KOLLA_CEPH
+  changed_when: false
+  failed_when: false
+  register: label_result
+
+- name: "label for osd disks"
+  shell: "parted {{ item }} -s -- mklabel gpt mkpart KOLLA_CEPH_OSD_BOOTSTRAP 1 -1"
   ignore_errors: yes
   loop:
-    - "pvcreate {{ cinder_device }}"
-    - "vgcreate cinder-volumes {{ cinder_device }}"
+    - "/dev/sdb"
+    - "/dev/sdc"
+    - "/dev/sdd"
+  when: label_result.rc != 0
+
+- name: Create kolla-config directory
+  file:
+    path: /etc/kolla/config
+    state: "directory"
+    mode: "0770"
+
+- name: configure ceph size
+  template:
+    src: ceph.conf.j2
+    dest: /etc/kolla/config/ceph.conf
+    mode: '0644'
 
 - name: kolla-ansible bootstrap-servers
   shell: "kolla-ansible bootstrap-servers && kolla-genpwd"
