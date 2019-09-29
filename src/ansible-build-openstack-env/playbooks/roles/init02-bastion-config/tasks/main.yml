@@ -4,7 +4,7 @@
   file:
     path: /var/lib/libvirt/images
     state: "directory"
-    mode: "0770"
+    mode: "0777"
 
 - name: Download centos iso
   get_url:

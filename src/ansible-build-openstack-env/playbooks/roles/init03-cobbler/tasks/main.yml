@@ -128,15 +128,15 @@
 # https://www.linuxtechi.com/enable-nested-virtualization-kvm-centos-7-rhel-7/
 # https://manpages.debian.org/jessie/virtinst/virt-install.1.en.html
 # add three disks for ceph osd 
-- name: Create vms
+- name: Create ceph vms
   command: >
            virt-install --name {{ hostvars[item]['hostname'] }}
            --cpu host
            --ram {{ hostvars[item]['ram_size'] }} --vcpus {{ hostvars[item]['vcpu_num'] }}
            --disk {{ vm_system_path }}/{{ hostvars[item]['hostname'] }}.qcow2,format=qcow2,bus=scsi
-           --disk size=30,bus=scsi
-           --disk size=30,bus=scsi
-           --disk size=30,bus=scsi
+           --disk size={{ osd_disk_size }},bus=scsi
+           --disk size={{ osd_disk_size }},bus=scsi
+           --disk size={{ osd_disk_size }},bus=scsi
            --vnc --noautoconsole --os-type=linux
            --network bridge=br-mgt,model=virtio,mac={{ hostvars[item]['interface1_mac'] }}
            --network bridge=br-pod,model=virtio
@@ -144,7 +144,28 @@
            --network bridge=br-ext,model=virtio
            --noautoconsole --pxe
   register: test
-  when: hostvars[item]['hostname'] not in vms.list_vms
+  when:
+    - hostvars[item]['hostname'] not in vms.list_vms
+    - cinder_backend == "ceph"
+  loop: "{{ groups['nodes'] }}"
+
+- name: Create lvm vms
+  command: >
+           virt-install --name {{ hostvars[item]['hostname'] }}
+           --cpu host
+           --ram {{ hostvars[item]['ram_size'] }} --vcpus {{ hostvars[item]['vcpu_num'] }}
+           --disk {{ vm_system_path }}/{{ hostvars[item]['hostname'] }}.qcow2,format=qcow2,bus=scsi
+           --disk size={{ lvm_disk_size }},bus=scsi
+           --vnc --noautoconsole --os-type=linux
+           --network bridge=br-mgt,model=virtio,mac={{ hostvars[item]['interface1_mac'] }}
+           --network bridge=br-pod,model=virtio
+           --network bridge=br-str,model=virtio
+           --network bridge=br-ext,model=virtio
+           --noautoconsole --pxe
+  register: test
+  when:
+    - hostvars[item]['hostname'] not in vms.list_vms
+    - cinder_backend == "lvm"
   loop: "{{ groups['nodes'] }}"
 
 - name: Waitting for vm create
