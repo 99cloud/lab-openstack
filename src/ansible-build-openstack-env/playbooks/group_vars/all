@@ -40,6 +40,5 @@ kolla_ansible_branch: stable/stein
 
 # configure kolla
 # cinder_backend support lvm and ceph
-cinder_backend: "ceph"
 osd_disk_size: "30"
 lvm_disk_size: "100"
