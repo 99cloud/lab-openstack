@@ -19,6 +19,8 @@ vm_system_path="/var/lib/libvirt/vmdisk"
 
 internal_ssh_ip=200.0.0.200
 cluster_portal_ip=200.0.0.200
+# available value "lvm" or "ceph"
+cinder_backend="ceph"
 cinder_device="/dev/sdb"
 openstack_internal_vip_address=172.25.0.100
 

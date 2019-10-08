@@ -2,7 +2,7 @@
 
 - name: ensure direcroty exists
   file:
-    path: /var/lib/libvirt/images
+    path: "{{ local_image_url | dirname }}"
     state: "directory"
     mode: "0777"
 
