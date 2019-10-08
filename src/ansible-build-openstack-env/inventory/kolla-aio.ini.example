@@ -19,7 +19,7 @@ vm_system_path="/var/lib/libvirt/vmdisk"
 
 internal_ssh_ip=200.0.0.200
 cluster_portal_ip=200.0.0.200
-cinder_device="/dev/sdb"
+cinder_backend: "ceph"
 openstack_internal_vip_address=172.25.0.100
 
 [bastion]
