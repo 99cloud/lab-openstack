@@ -53,36 +53,46 @@
 
 1. List all vms
 
-        virsh list --all
+    ```bash
+    virsh list --all
+    ```
 
 1. List a specific vm's snaphosts
 
-        virsh snapshot-list <vm_name>
-        virsh snapshot-list kolla-aio
+    ```bash
+    virsh snapshot-list <vm_name>
+    virsh snapshot-list kolla-aio
+    ```
 
 1. Revert a vm by a specific snapshots
 
-        virsh snapshot-revert <vm_name> --snapshotname <snapshot_name>
-        virsh snapshot-revert kolla-aio --snapshotname kolla-aio.common_aio
+    ```bash
+    virsh snapshot-revert <vm_name> --snapshotname <snapshot_name>
+    virsh snapshot-revert kolla-aio --snapshotname kolla-aio.common_aio
+    ```
 
 1. Delete a vm by a specific snapshots with its name
 
-        virsh snapshot-delete <vm_name> --snapshotname <snapshot_name>
-        virsh snapshot-delete kolla-aio --snapshotname kolla-aio.common_aio
+    ```bash
+    virsh snapshot-delete <vm_name> --snapshotname <snapshot_name>
+    virsh snapshot-delete kolla-aio --snapshotname kolla-aio.common_aio
+    ```
 
 1. [Attention][Do not run]: Remove a vm
 
-        # Destroy a vm
-        virsh destroy <vm_name>
-        virsh destroy kolla-aio
+    ```bash
+    # Destroy a vm
+    virsh destroy <vm_name>
+    virsh destroy kolla-aio
 
-        # Clear a specific vm's all snapshots
-        virsh snapshot-list <vm_name> | awk '{print $1}' | xargs -i virsh snapshot-delete <vm_name> --snapshotname {}
-        virsh snapshot-list kolla-aio | awk '{print $1}' | xargs -i virsh snapshot-delete kolla-aio --snapshotname {}
+    # Clear a specific vm's all snapshots
+    virsh snapshot-list <vm_name> | awk '{print $1}' | xargs -i virsh snapshot-delete <vm_name> --snapshotname {}
+    virsh snapshot-list kolla-aio | awk '{print $1}' | xargs -i virsh snapshot-delete kolla-aio --snapshotname {}
 
-        # Remove a vm
-        virsh undefine <vm_name>
-        virsh undefine kolla-aio
+    # Remove a vm
+    virsh undefine <vm_name>
+    virsh undefine kolla-aio
+    ```
 
 1. Questions
     1. Create a snaphost for test
@@ -96,32 +106,40 @@
 1. [OpenStack CLI Overview](https://docs.openstack.org/newton/user-guide/common/cli-overview.html)
     - [Install the OpenStack command-line clients](https://docs.openstack.org/newton/user-guide/common/cli-install-openstack-command-line-clients.html)
 
-            # Intall python-pip: Red Hat Enterprise Linux, CentOS, or Fedora
-            yum install python36 python36-devel python36-pip gcc openssl-devel -y
+        ```bash
+        # Intall python-pip: Red Hat Enterprise Linux, CentOS, or Fedora
+        yum install python36 python36-devel python36-pip gcc openssl-devel -y
 
-            # Install openstack-client
-            pip3 install python-openstackclient
+        # Install openstack-client
+        pip3 install python-openstackclient
+        ```
 
     - [Set environment variables using the OpenStack RC file](https://docs.openstack.org/newton/user-guide/common/cli-set-environment-variables-using-openstack-rc.html)
 
-            export OS_USERNAME=username
-            export OS_PASSWORD=password
-            export OS_TENANT_NAME=projectName
-            export OS_AUTH_URL=https://identityHost:portNumber/v2.0
-            # The following lines can be omitted
-            export OS_TENANT_ID=tenantIDString
-            export OS_REGION_NAME=regionName
-            export OS_CACERT=/path/to/cacertFile
+        ```bash
+        export OS_USERNAME=username
+        export OS_PASSWORD=password
+        export OS_TENANT_NAME=projectName
+        export OS_AUTH_URL=https://identityHost:portNumber/v2.0
+        # The following lines can be omitted
+        export OS_TENANT_ID=tenantIDString
+        export OS_REGION_NAME=regionName
+        export OS_CACERT=/path/to/cacertFile
+        ```
 
     - [Demo]: Config OpenStack client environment
 
-            ssh kolla-aio "cat /etc/kolla/admin-openrc.sh"
-            vi ~/.bash_profile
-            . ~/.bash_profile
+        ```bash
+        ssh kolla-aio "cat /etc/kolla/admin-openrc.sh"
+        vi ~/.bash_profile
+        . ~/.bash_profile
+        ```
 
     - [Demo]: List endpoints
 
-            openstack endpoint list
+        ```bash
+        openstack endpoint list
+        ```
 
     - Questions
         - Create a server instance in Horizon dashboard
@@ -129,53 +147,62 @@
 1. API vs CLI
     - [Demo]: Show CLI's backend requests
 
-            openstack endpoint list -v --debug
+        ```bash
+        openstack endpoint list -v --debug
+        ```
 
     - [Demo]: TcpDump examples
 
-            yum install tcpdump -y
-            man tcpdump | less -Ip examples
+        ```
+        yum install tcpdump -y
+        man tcpdump | less -Ip examples
 
-            # TCP
-            tcpdump -i br-mgt -s 0 -A 'tcp'
+        # TCP
+        tcpdump -i br-mgt -s 0 -A 'tcp'
 
-            # HTTP GET
-            tcpdump -i br-mgt -s 0 -A 'tcp[((tcp[12:1] & 0xf0) >> 2):4] = 0x47455420'
+        # HTTP GET
+        tcpdump -i br-mgt -s 0 -A 'tcp[((tcp[12:1] & 0xf0) >> 2):4] = 0x47455420'
 
-            # HTTP POST
-            tcpdump -i br-mgt -s 0 -A 'tcp[((tcp[12:1] & 0xf0) >> 2):4] = 0x504f5354'
+        # HTTP POST
+        tcpdump -i br-mgt -s 0 -A 'tcp[((tcp[12:1] & 0xf0) >> 2):4] = 0x504f5354'
 
-            # HTTP Response Head & Data
-            tcpdump -i br-mgt -s 0 -A '(((ip[2:2] - ((ip[0]&0xf)<<2)) - ((tcp[12]&0xf0)>>2)) != 0)'
-            tcpdump -i br-mgt -s 0 -X '(((ip[2:2] - ((ip[0]&0xf)<<2)) - ((tcp[12]&0xf0)>>2)) != 0)'
+        # HTTP Response Head & Data
+        tcpdump -i br-mgt -s 0 -A '(((ip[2:2] - ((ip[0]&0xf)<<2)) - ((tcp[12]&0xf0)>>2)) != 0)'
+        tcpdump -i br-mgt -s 0 -X '(((ip[2:2] - ((ip[0]&0xf)<<2)) - ((tcp[12]&0xf0)>>2)) != 0)'
+        ```
 
 ### API Design ( [Catalog](#catalog) )
 
 1. [Authentication](https://docs.openstack.org/api-ref/identity/v3/), [stein version](https://docs.openstack.org/keystone/stein/api_curl_examples.html)
     - [Demo]: Get unscope token
 
-            curl -i \
-              -H "Content-Type: application/json" \
-              -d '
-            { "auth": {
-                "identity": {
-                  "methods": ["password"],
-                  "password": {
-                    "user": {
-                      "name": "admin",
-                      "domain": { "id": "default" },
-                      "password": "UJCcUExoRddRtPC9LIyzzceDM2nHdjMIfwICZRsY"
-                    }
-                  }
+        ```bash
+        curl -i \
+          -H "Content-Type: application/json" \
+          -d '
+        { "auth": {
+            "identity": {
+              "methods": ["password"],
+              "password": {
+                "user": {
+                  "name": "admin",
+                  "domain": { "id": "default" },
+                  "password": "UJCcUExoRddRtPC9LIyzzceDM2nHdjMIfwICZRsY"
                 }
               }
-            }' \
-              "http://172.25.0.100:35357/v3/auth/tokens"
+            }
+          }
+        }' \
+          "http://172.25.0.100:35357/v3/auth/tokens"
+        ```
 
     - [Demo]: Get endpoint list with scope token
 
-            TOKEN=$(openstack token issue | grep -E '^\|\s*id\s+' | awk '{print $4}')
-            curl -s -H "X-Auth-Token: ${TOKEN}" http://172.25.0.100:5000/v3/endpoints | python -m json.tool
+        ```bash
+        TOKEN=$(openstack token issue | grep -E '^\|\s*id\s+' | awk '{print $4}')
+        curl -s -H "X-Auth-Token: ${TOKEN}" http://172.25.0.100:5000/v3/endpoints | python -m json.tool
+        ```
+
     - Questions
         - Issue a project scope token by CURL tool
         - Use this token to list endpoints
@@ -183,33 +210,37 @@
 1. [Compute](https://docs.openstack.org/api-ref/compute/)
     - [Demo]: List servers
 
-            [root@openstack ~]# curl -s -H "X-Auth-Token: ${TOKEN}" http://172.25.0.100:8774/v2.1/ed009b94405443b393a132bb75ae1de8/servers | python -m json.tool
-            #http://172.25.0.100:8774/v2.1/ is your nova endponit
-            #ed009b94405443b393a132bb75ae1de8 is your project id
+        ```console
+        [root@openstack ~]# curl -s -H "X-Auth-Token: ${TOKEN}" http://172.25.0.100:8774/v2.1/ed009b94405443b393a132bb75ae1de8/servers | python -m json.tool
+        #http://172.25.0.100:8774/v2.1/ is your nova endponit
+        #ed009b94405443b393a132bb75ae1de8 is your project id
+        ```
 
     - [Demo]: Launch a new server
 
-            curl -X POST \
-              http://172.25.0.100:8774/v2.1/f3816430aded4dbd92b3faeda1a87e0b/servers \
-              -H 'Content-Type: application/json' \
-              -H "X-Auth-Token: ${TOKEN}" \
-              -d '{
-                "server" : {
-                    "accessIPv4": "1.2.3.4",
-                    "accessIPv6": "80fe::",
-                    "name" : "new-server-test",
-                    "imageRef" : "eb901df6-801f-466f-8983-b55454b17cf5",
-                    "flavorRef" : "8ffeec2e-fc2d-496a-af53-5020849d630a",
-                    "networks" : [{
-                        "uuid" : "0f2d90bc-da6d-4a0d-867e-e1a204e11f9f"
-                    }],
-                    "security_groups": [
-                        {
-                            "name": "default"
-                        }
-                    ]
-                }
-            }'
+        ```bash
+        curl -X POST \
+          http://172.25.0.100:8774/v2.1/f3816430aded4dbd92b3faeda1a87e0b/servers \
+          -H 'Content-Type: application/json' \
+          -H "X-Auth-Token: ${TOKEN}" \
+          -d '{
+            "server" : {
+                "accessIPv4": "1.2.3.4",
+                "accessIPv6": "80fe::",
+                "name" : "new-server-test",
+                "imageRef" : "eb901df6-801f-466f-8983-b55454b17cf5",
+                "flavorRef" : "8ffeec2e-fc2d-496a-af53-5020849d630a",
+                "networks" : [{
+                    "uuid" : "0f2d90bc-da6d-4a0d-867e-e1a204e11f9f"
+                }],
+                "security_groups": [
+                    {
+                        "name": "default"
+                    }
+                ]
+            }
+        }'
+        ```
 
 1. [Block Storage](https://docs.openstack.org/api-ref/block-storage/v3/index.html)
     - [Demo]: Create a block storage
