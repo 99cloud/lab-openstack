@@ -33,9 +33,9 @@
 
 1. Target Machine
 
-    ```shell
+    ```bash
     ssh root@training-01.demotheworld.com
-    ...
+    # ...
     ssh root@training-15.demotheworld.com
     ```
 
@@ -153,7 +153,7 @@
 
     - [Demo]: TcpDump examples
 
-        ```
+        ```bash
         yum install tcpdump -y
         man tcpdump | less -Ip examples
 
@@ -245,68 +245,76 @@
 1. [Block Storage](https://docs.openstack.org/api-ref/block-storage/v3/index.html)
     - [Demo]: Create a block storage
 
-            curl -X POST \
-              http://172.25.0.100:8776/v3/f3816430aded4dbd92b3faeda1a87e0b/volumes \
-              -H 'Content-Type: application/json' \
-              -H "X-Auth-Token: ${TOKEN}" \
-              -d '{
-                "volume": {
-                    "size": 10,
-                    "availability_zone": null,
-                    "source_volid": null,
-                    "description": "test volume",
-                    "multiattach": false,
-                    "snapshot_id": null,
-                    "backup_id": null,
-                    "name": null,
-                    "imageRef": null,
-                    "volume_type": null,
-                    "metadata": {},
-                    "consistencygroup_id": null
-                }
-            }'
+        ```bash
+        curl -X POST \
+          http://172.25.0.100:8776/v3/f3816430aded4dbd92b3faeda1a87e0b/volumes \
+          -H 'Content-Type: application/json' \
+          -H "X-Auth-Token: ${TOKEN}" \
+          -d '{
+            "volume": {
+                "size": 10,
+                "availability_zone": null,
+                "source_volid": null,
+                "description": "test volume",
+                "multiattach": false,
+                "snapshot_id": null,
+                "backup_id": null,
+                "name": null,
+                "imageRef": null,
+                "volume_type": null,
+                "metadata": {},
+                "consistencygroup_id": null
+            }
+        }'
+        ```
 
     - [Demo]: Attach to a specific server instance
 
-            curl -X POST \
-              http://172.25.0.100:8776/v3/f3816430aded4dbd92b3faeda1a87e0b/volumes/07178089-7017-4d53-bb02-65b0a1b02bb5/action \
-              -H 'Content-Type: application/json' \
-              -H "X-Auth-Token: ${TOKEN}" \
-              -d '{
-                "os-attach": {
-                    "instance_uuid": "173d8d22-ce8e-4414-b286-008e33471d74",
-                    "mountpoint": "/dev/vdb"
-                }
-            }'
+        ```bash
+        curl -X POST \
+          http://172.25.0.100:8776/v3/f3816430aded4dbd92b3faeda1a87e0b/volumes/07178089-7017-4d53-bb02-65b0a1b02bb5/action \
+          -H 'Content-Type: application/json' \
+          -H "X-Auth-Token: ${TOKEN}" \
+          -d '{
+            "os-attach": {
+                "instance_uuid": "173d8d22-ce8e-4414-b286-008e33471d74",
+                "mountpoint": "/dev/vdb"
+            }
+        }'
+        ```
 
 1. [Network](https://docs.openstack.org/api-ref/network/v2/index.html)
     - [Demo]: Create a network
 
-            curl -X POST \
-              http://172.25.0.100:9696/v2.0/networks \
-              -H 'Content-Type: application/json' \
-              -H "X-Auth-Token: ${TOKEN}" \
-              -d '{
-                "network": {
-                    "name": "sample_network",
-                    "admin_state_up": true,
-                    "mtu": 1400
-                }
-            }'
+        ```bash
+        curl -X POST \
+          http://172.25.0.100:9696/v2.0/networks \
+          -H 'Content-Type: application/json' \
+          -H "X-Auth-Token: ${TOKEN}" \
+          -d '{
+            "network": {
+                "name": "sample_network",
+                "admin_state_up": true,
+                "mtu": 1400
+            }
+        }'
+        ```
 
     - [Demo]: Create a subnet
 
-            curl -X POST \
-              http://172.25.0.100:9696/v2.0/subnets \
-              -H 'Content-Type: application/json' \
-              -H "X-Auth-Token: ${TOKEN}" \
-              -d '{
-                "subnet": {
-                    "network_id": "6f0b2c56-48ae-4981-89b2-bb5d1decb7ed",
-                    "ip_version": 4,
-                    "cidr": "192.168.199.0/24"
-                }
-            }'
+        ```bash
+        curl -X POST \
+          http://172.25.0.100:9696/v2.0/subnets \
+          -H 'Content-Type: application/json' \
+          -H "X-Auth-Token: ${TOKEN}" \
+          -d '{
+            "subnet": {
+                "network_id": "6f0b2c56-48ae-4981-89b2-bb5d1decb7ed",
+                "ip_version": 4,
+                "cidr": "192.168.199.0/24"
+            }
+        }'
+        ```
 
     - Questions
         - Create a router
@@ -334,64 +342,68 @@
 
         ![postman](img/postman5.png)
 
-            #head内容如下
-            X-Auth-Toke: gAAAAABdQqoqaMFBasJV1p-mv9B0o3xQVCTdhGQDp3cBTuD2Wz0OJIA_xjmZG9XzTw7H7Za1dv-PAyacGe6StIkdrE1sj8P9C4fS0wTp9gDExt1m1QZ2RSj0im5OLwF0fX14VH7fiQvytS3D3aaMkQ
+        ```
+        #head内容如下
+        X-Auth-Toke: gAAAAABdQqoqaMFBasJV1p-mv9B0o3xQVCTdhGQDp3cBTuD2Wz0OJIA_xjmZG9XzTw7H7Za1dv-PAyacGe6StIkdrE1sj8P9C4fS0wTp9gDExt1m1QZ2RSj0im5OLwF0fX14VH7fiQvytS3D3aaMkQ
 
-            # token 可以通过openstack token issue 获取
-            # Content-Type是postman自动添加的
-            # 请求地址如下
-            POST http://10.211.55.100:9696/v2.0/routers
+        # token 可以通过openstack token issue 获取
+        # Content-Type是postman自动添加的
+        # 请求地址如下
+        POST http://10.211.55.100:9696/v2.0/routers
 
-            # http://10.211.55.100:9696 为neutron的endpoint，可以通以openstack endpoint list获取
-            # /v2.0/routers 是api接口 可以通过openstack网站上获取
-            # 请求的body如下
-            {
-                "router": {
-                    "name": "router1",
-                    "external_gateway_info": {
-                        "network_id"7c431bd4-985b-4a1a-ab21-166fa8",
-                        "enable_snat": true
-                    },
-                    "admin_state_up": true
-                }
+        # http://10.211.55.100:9696 为neutron的endpoint，可以通以openstack endpoint list获取
+        # /v2.0/routers 是api接口 可以通过openstack网站上获取
+        # 请求的body如下
+        {
+            "router": {
+                "name": "router1",
+                "external_gateway_info": {
+                    "network_id"7c431bd4-985b-4a1a-ab21-166fa8",
+                    "enable_snat": true
+                },
+                "admin_state_up": true
             }
+        }
 
-            # network_id 为provider网络的id，可以通过openstack network list 获取到
-            # 其他的属性可以参考openstack的neutron api获取
+        # network_id 为provider网络的id，可以通过openstack network list 获取到
+        # 其他的属性可以参考openstack的neutron api获取
+        ```
 
 1. [Fiddler](https://www.telerik.com/fiddler)
     - [Demo]: Collect trace
     - [Demo]: Play back
 1. Windows 下的 OSI 七层模型的实现结构
 
-		          +-------------------------------+
-		          |           Ws2_32.dll          |
-		          +-------------------------------+
-		 User               |           |
-		          +-------------------------------+
-		          |           msafd.dll           |
-		          +-------------------------------+
-		                  |   System Call  |
-		                  | File Operation |
-		----------------------------------------------------------------------
-		                  |                |
-		          +-------------------------------+
-		          |           afd.sys             |
-		          |         \Device\Afd           |
-		          +-------------------------------+
-		 Kernel           | File Operation |
-		                  |      IRP       |
-		       +----------------------------------------+
-		       |                tcpip.sys               | ( Tdi layer )     --- 传输层
-		       | \Device\Tcp \Device\Udp \Device\RawIp  | ( Ndis Protocol ) --- 网络层
-		       +----------------------------------------+
-		                  |   Ndis lib     |
-		                  |                |
-		           +-------------------------------+
-		           |           k57xp32.sys         |      ( Miniport )      --- 链路层
-		           +-------------------------------+
-		           |       Net Interface Card      |                        --- 物理层
-		           +-------------------------------+
+    ```
+              +-------------------------------+
+              |           Ws2_32.dll          |
+              +-------------------------------+
+     User               |           |
+              +-------------------------------+
+              |           msafd.dll           |
+              +-------------------------------+
+                      |   System Call  |
+                      | File Operation |
+    ----------------------------------------------------------------------
+                      |                |
+              +-------------------------------+
+              |           afd.sys             |
+              |         \Device\Afd           |
+              +-------------------------------+
+     Kernel           | File Operation |
+                      |      IRP       |
+           +----------------------------------------+
+           |                tcpip.sys               | ( Tdi layer )     --- 传输层
+           | \Device\Tcp \Device\Udp \Device\RawIp  | ( Ndis Protocol ) --- 网络层
+           +----------------------------------------+
+                      |   Ndis lib     |
+                      |                |
+               +-------------------------------+
+               |           k57xp32.sys         |      ( Miniport )      --- 链路层
+               +-------------------------------+
+               |       Net Interface Card      |                        --- 物理层
+               +-------------------------------+
+    ```
 
 - 参考：[描述](http://blog.csdn.net/Henzox/article/details/38846117#)
 	- 简单来讲，Windows 对网络部分的实现分为两部分，用户态部分和内核态部分。
@@ -438,41 +450,47 @@
         ![](img/auto-maintenance-difference.png)
 1. SSH client configuration
 
-        Host training-01
-            HostName        training-01.maodouzi.net
-            User            root
-            IdentityFile    ~/.ssh/id_rsa_openstack
+    ```
+    Host training-01
+        HostName        training-01.maodouzi.net
+        User            root
+        IdentityFile    ~/.ssh/id_rsa_openstack
 
-        Host training-01_aio
-            HostName        training-01.maodouzi.net
-            Port            8600
-            User            root
-            IdentityFile    ~/.ssh/id_rsa_openstack
+    Host training-01_aio
+        HostName        training-01.maodouzi.net
+        Port            8600
+        User            root
+        IdentityFile    ~/.ssh/id_rsa_openstack
+    ```
 
 1. SSH Proxy
 
-        ProxyCommand    ssh fq -W %h:%p
-        ProxyCommand    bash -c 'h=%h;ssh bastion -W ${h##prefix-}:%p'
+    ```
+    ProxyCommand    ssh fq -W %h:%p
+    ProxyCommand    bash -c 'h=%h;ssh bastion -W ${h##prefix-}:%p'
+    ```
 
 1. Fabric Hello World
 
-        pip3 install fabric3
-	
-        $ cat fabricrc
-        hosts = 172.25.0.200
-        user = root
-        password = 123456
-	
-        $ cat fabfile.py
-        from fabric.api import run
-        def hello():
-            run("hostname")
+    ```console
+    pip3 install fabric3
 
-        $ fab -c fabricrc hello
-        [testhost] Executing task 'hello'
-        [testhost] run: hostname
-        [testhost] out: example.hostname.com
-        Done.
+    $ cat fabricrc
+    hosts = 172.25.0.200
+    user = root
+    password = 123456
+
+    $ cat fabfile.py
+    from fabric.api import run
+    def hello():
+        run("hostname")
+
+    $ fab -c fabricrc hello
+    [testhost] Executing task 'hello'
+    [testhost] run: hostname
+    [testhost] out: example.hostname.com
+    Done.
+    ```
 
 ### Fabric in Details ( [Catalog](#catalog) )
 
@@ -493,17 +511,20 @@
     ![](img/ansible-architecture.png)
 1. Ansible Hello World
 
-        pip3 install ansible==2.7.11
+    ```console
+    pip3 install ansible==2.7.11
 
-        $ cat /etc/ansible/hosts
-        [testservers]
-        test1
-        test2
+    $ cat /etc/ansible/hosts
+    [testservers]
+    test1
+    test2
 
-        ansible localhost -m ping
-        ansible testservers -m ping
+    ansible localhost -m ping
+    ansible testservers -m ping
 
-        ansible testservers -m shell -a "echo hello world"
+    ansible testservers -m shell -a "echo hello world"
+    ```
+
 1. Idempotency
 
 ### Ansible Common Concepts ( [Catalog](#catalog) )
@@ -534,22 +555,24 @@
 
 1. [Demo]: Template, copy files to target host with template
 
-        # cat config.ini.j2 
-        hosts = 172.25.0.200
-        user = root
-        password = {{ password }}
+    ```console
+    # cat config.ini.j2
+    hosts = 172.25.0.200
+    user = root
+    password = {{ password }}
 
-        # cat playbook.yml 
-        - hosts: testservers
-          vars:
-            password: "hello"
-          tasks:
-          - name: Create a DOS-style text file from a template
-            template:
-              src: /root/config.ini.j2
-              dest: /root/config.ini
+    # cat playbook.yml
+    - hosts: testservers
+      vars:
+        password: "hello"
+      tasks:
+      - name: Create a DOS-style text file from a template
+        template:
+          src: /root/config.ini.j2
+          dest: /root/config.ini
 
-        # ansible-playbook -i /etc/ansible/hosts playbook.yml
+    # ansible-playbook -i /etc/ansible/hosts playbook.yml
+    ```
 
 1. [Demo]: [Deploy a website with Ansible](https://github.com/wu-wenxiang/Project-Python-Webdev/tree/master/u1604-ansible)
 1. [Demo]: Deploy OpenShift
@@ -573,63 +596,65 @@
 1. Azure
     - [Demo]: Register DNS in Azure
 
-            $ cat dns-sp.yml
-            tenantId: "e967c2f0-fd97-47ce-89be-26cd63a261AA"
-            subscriptionId: "d909fe64-bc51-4377-9907-29a63692cfAA"
-            aadClientId: "97d30cbe-f7e3-4785-bdc2-dc6c4753a5AA"
-            aadClientSecret: "27f60511-4680-4ff0-aadb-5202d6402aAA"
-            resourceGroup: "openshift-dns"
-            cloud: "AzureCloud"
+        ```console
+        $ cat dns-sp.yml
+        tenantId: "e967c2f0-fd97-47ce-89be-26cd63a261AA"
+        subscriptionId: "d909fe64-bc51-4377-9907-29a63692cfAA"
+        aadClientId: "97d30cbe-f7e3-4785-bdc2-dc6c4753a5AA"
+        aadClientSecret: "27f60511-4680-4ff0-aadb-5202d6402aAA"
+        resourceGroup: "openshift-dns"
+        cloud: "AzureCloud"
 
-            $ cat set-dns.yml
-            - hosts: localhost
-              tasks:
-                - name: Get dns_yml
-                  include_vars:
-                    file: "dns-sp.yml"
-                    name: dns_sp
-                - name: Dump dns_sp
-                  debug:
-                    msg: "{{ dns_sp }}"
-                - name: Dump hosts
-                  debug:
-                    msg: "{{ item }}"
-                  loop: "{{ vultr_hosts }}"
-                - name: Add Records to Azure Zone
-                  azure_rm_dnsrecordset:
-                    resource_group: "openshift-dns"
-                    relative_name: "{{ item.hostname }}"
-                    zone_name: "maodouzi.net"
-                    record_type: A
-                    state: present
-                    records:
-                      - entry: "{{ item.ipaddr }}"
-                    cloud_environment: "{{ dns_sp.cloud }}"
-                    subscription_id: "{{ dns_sp.subscriptionId }}"
-                    client_id: "{{ dns_sp.aadClientId }}"
-                    secret: "{{ dns_sp.aadClientSecret }}"
-                    tenant: "{{ dns_sp.tenantId }}"
-                  loop: "{{ vultr_hosts }}"
-              vars:
-                - vultr_hosts:
-                  - {'hostname': 'training-01', 'ipaddr': '149.248.18.239'}
-                  - {'hostname': 'training-02', 'ipaddr': '8.6.8.15'}
-                  - {'hostname': 'training-03', 'ipaddr': '104.207.152.126'}
-                  - {'hostname': 'training-04', 'ipaddr': '144.202.127.252'}
-                  - {'hostname': 'training-05', 'ipaddr': '149.28.74.219'}
-                  - {'hostname': 'training-06', 'ipaddr': '45.77.120.38'}
-                  - {'hostname': 'training-07', 'ipaddr': '45.32.85.81'}
-                  - {'hostname': 'training-08', 'ipaddr': '207.246.99.128'}
-                  - {'hostname': 'training-09', 'ipaddr': '66.42.109.203'}
-                  - {'hostname': 'training-10', 'ipaddr': '149.28.78.167'}
-                  - {'hostname': 'training-11', 'ipaddr': '140.82.18.5'}
-                  - {'hostname': 'training-12', 'ipaddr': '66.42.105.38'}
-                  - {'hostname': 'training-13', 'ipaddr': '149.248.5.42'}
-                  - {'hostname': 'training-14', 'ipaddr': '45.63.60.228'}
-                  - {'hostname': 'training-15', 'ipaddr': '45.76.75.76'}
-                  - {'hostname': 'training-16', 'ipaddr': '45.32.64.92'}
+        $ cat set-dns.yml
+        - hosts: localhost
+          tasks:
+            - name: Get dns_yml
+              include_vars:
+                file: "dns-sp.yml"
+                name: dns_sp
+            - name: Dump dns_sp
+              debug:
+                msg: "{{ dns_sp }}"
+            - name: Dump hosts
+              debug:
+                msg: "{{ item }}"
+              loop: "{{ vultr_hosts }}"
+            - name: Add Records to Azure Zone
+              azure_rm_dnsrecordset:
+                resource_group: "openshift-dns"
+                relative_name: "{{ item.hostname }}"
+                zone_name: "maodouzi.net"
+                record_type: A
+                state: present
+                records:
+                  - entry: "{{ item.ipaddr }}"
+                cloud_environment: "{{ dns_sp.cloud }}"
+                subscription_id: "{{ dns_sp.subscriptionId }}"
+                client_id: "{{ dns_sp.aadClientId }}"
+                secret: "{{ dns_sp.aadClientSecret }}"
+                tenant: "{{ dns_sp.tenantId }}"
+              loop: "{{ vultr_hosts }}"
+          vars:
+            - vultr_hosts:
+              - {'hostname': 'training-01', 'ipaddr': '149.248.18.239'}
+              - {'hostname': 'training-02', 'ipaddr': '8.6.8.15'}
+              - {'hostname': 'training-03', 'ipaddr': '104.207.152.126'}
+              - {'hostname': 'training-04', 'ipaddr': '144.202.127.252'}
+              - {'hostname': 'training-05', 'ipaddr': '149.28.74.219'}
+              - {'hostname': 'training-06', 'ipaddr': '45.77.120.38'}
+              - {'hostname': 'training-07', 'ipaddr': '45.32.85.81'}
+              - {'hostname': 'training-08', 'ipaddr': '207.246.99.128'}
+              - {'hostname': 'training-09', 'ipaddr': '66.42.109.203'}
+              - {'hostname': 'training-10', 'ipaddr': '149.28.78.167'}
+              - {'hostname': 'training-11', 'ipaddr': '140.82.18.5'}
+              - {'hostname': 'training-12', 'ipaddr': '66.42.105.38'}
+              - {'hostname': 'training-13', 'ipaddr': '149.248.5.42'}
+              - {'hostname': 'training-14', 'ipaddr': '45.63.60.228'}
+              - {'hostname': 'training-15', 'ipaddr': '45.76.75.76'}
+              - {'hostname': 'training-16', 'ipaddr': '45.32.64.92'}
 
-            $ ansible-playbook set-dns.yml
+        $ ansible-playbook set-dns.yml
+        ```
 
     - [Demo]: Deploy openshift in Azure
 1. [Optional] Aliyun
@@ -639,75 +664,85 @@
 1. OpenStack Ansible Hello World
     - [Demo]: Get token
 
-            - hosts: localhost
-              tasks:
-                - name: Retrieve an auth token
-                  os_auth:
-                    auth:
-                      auth_url: http://172.25.0.100:5000/v3
-                      username: admin
-                      project_name: admin
-                      password: mo0xgPEqDDdWoYk2oxnlB60STu4MdFDNPXr0sUuh
-                      user_domain_name: Default
-                      project_domain_name: Default
-                - name: Show auth token
-                  debug:
-                    var: auth_token
+        ```yaml
+        - hosts: localhost
+          tasks:
+            - name: Retrieve an auth token
+              os_auth:
+                auth:
+                  auth_url: http://172.25.0.100:5000/v3
+                  username: admin
+                  project_name: admin
+                  password: mo0xgPEqDDdWoYk2oxnlB60STu4MdFDNPXr0sUuh
+                  user_domain_name: Default
+                  project_domain_name: Default
+            - name: Show auth token
+              debug:
+                var: auth_token
+        ```
 
 1. Compute
     - [Demo]: Create a server instance
 
-            - name: Create a server instance
-              hosts: localhost
-              tasks:
-                - name: Launch a instance
-                  os_server:
-                    auth:
-                      auth_url: http://172.25.0.100:5000/v3
-                      username: admin
-                      project_name: admin
-                      password: mo0xgPEqDDdWoYk2oxnlB60STu4MdFDNPXr0sUuh
-                      user_domain_name: Default
-                      project_domain_name: Default
-                    state: present
-                    name: new-server-test
-                    image: 6cc537b7-dba4-4c2a-a25b-af19b6055979
-                    flavor: 1
-                    network: 1a657834-2bdc-4677-b513-aaf88f60a8cd
-                    security_groups: default
+        ```
+        - name: Create a server instance
+          hosts: localhost
+          tasks:
+            - name: Launch a instance
+              os_server:
+                auth:
+                  auth_url: http://172.25.0.100:5000/v3
+                  username: admin
+                  project_name: admin
+                  password: mo0xgPEqDDdWoYk2oxnlB60STu4MdFDNPXr0sUuh
+                  user_domain_name: Default
+                  project_domain_name: Default
+                state: present
+                name: new-server-test
+                image: 6cc537b7-dba4-4c2a-a25b-af19b6055979
+                flavor: 1
+                network: 1a657834-2bdc-4677-b513-aaf88f60a8cd
+                security_groups: default
+        ```
 
     - [Demo]: List server instance
 
+        ```yaml
+        - name: List server instance
+          hosts: localhost
+          tasks:
             - name: List server instance
-              hosts: localhost
-              tasks:
-                - name: List server instance
-                  os_server_facts:
-                - debug:
-                    var: openstack_servers
+              os_server_facts:
+            - debug:
+                var: openstack_servers
+        ```
 
 1. Block Storage
     - [Demo]: Create a block storage
 
-            - name: Create a block storage
-              hosts: localhost
-              tasks:
-                - name: Create a volume
-                  os_volume:
-                    state: present
-                    size: 10
-                    display_name: "test volume"
+        ```yaml
+        - name: Create a block storage
+          hosts: localhost
+          tasks:
+            - name: Create a volume
+              os_volume:
+                state: present
+                size: 10
+                display_name: "test volume"
+        ```
 
 1. Network
     - [Demo]: Create a network
 
+        ```yaml
+        - name: Create a network
+            hosts: localhost
+            tasks:
             - name: Create a network
-                hosts: localhost
-                tasks:
-                - name: Create a network
-                  os_network:
-                    state: present
-                    name: sample_network
+              os_network:
+                state: present
+                name: sample_network
+        ```
 
 ## lab-04 OpenStack kolla-ansible ( [Catalog](#catalog) )
 
