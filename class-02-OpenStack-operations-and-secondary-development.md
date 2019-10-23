@@ -473,7 +473,7 @@
 1. Fabric Hello World
 
     ```console
-    pip3 install fabric3
+    $ pip3 install fabric3
 
     $ cat fabricrc
     hosts = 172.25.0.200
@@ -750,77 +750,91 @@
 
 1. Python Virtual Environment
 
-        # pip3 install virtualenv
+    ```console
+    # pip3 install virtualenv
 
-        # virtualenv -p python3 .env
-        Running virtualenv with interpreter /usr/bin/python3
-        Already using interpreter /usr/bin/python3
-        Using base prefix '/usr'
-          No LICENSE.txt / LICENSE found in source
-        New python executable in /root/.env/bin/python3
-        Also creating executable in /root/.env/bin/python
-        Installing setuptools, pip, wheel...
-        done.
+    # virtualenv -p python3 .env
+    Running virtualenv with interpreter /usr/bin/python3
+    Already using interpreter /usr/bin/python3
+    Using base prefix '/usr'
+      No LICENSE.txt / LICENSE found in source
+    New python executable in /root/.env/bin/python3
+    Also creating executable in /root/.env/bin/python
+    Installing setuptools, pip, wheel...
+    done.
 
-        # . .env/bin/activate
-        (.env) [root@openstack-01 ~]# python
-        Python 3.6.8 (default, Apr 25 2019, 21:02:35)
-        [GCC 4.8.5 20150623 (Red Hat 4.8.5-36)] on linux
-        Type "help", "copyright", "credits" or "license" for more information.
-        >>> exit()
+    # . .env/bin/activate
+    (.env) [root@openstack-01 ~]# python
+    Python 3.6.8 (default, Apr 25 2019, 21:02:35)
+    [GCC 4.8.5 20150623 (Red Hat 4.8.5-36)] on linux
+    Type "help", "copyright", "credits" or "license" for more information.
+    >>> exit()
+    ```
 
 1. Docker Hello World
     - Quick Start
 
-            $ yum install docker -y
-            $ systemctl start docker
-            $ docker run hello-world
+        ```console
+        $ yum install docker -y
+        $ systemctl start docker
+        $ docker run hello-world
 
-            $ docker run ubuntu:18.04 /bin/echo "Hello world"
-            $ docker ps -a
+        $ docker run ubuntu:18.04 /bin/echo "Hello world"
+        $ docker ps -a
+        ```
 
     - Run Process in Docker
 
-            # stdin & terminal
-            $ docker run -it ubuntu:18.04 /bin/bash
-            $ ps -ef | grep bash
+        ```console
+        # stdin & terminal
+        $ docker run -it ubuntu:18.04 /bin/bash
+        $ ps -ef | grep bash
+        ```
 
     - Backend Process in Docker
 
-            $ docker run -d ubuntu:18.04 /bin/sh -c "while true; do echo hello world; sleep 1; done"
-            $ docker logs <container-id> -f
-            $ docker exec -it <container-id> /bin/bash
-            $ docker stop <container-id>
+        ```console
+        $ docker run -d ubuntu:18.04 /bin/sh -c "while true; do echo hello world; sleep 1; done"
+        $ docker logs <container-id> -f
+        $ docker exec -it <container-id> /bin/bash
+        $ docker stop <container-id>
+        ```
 
     - Python docker API
 
-            $ pip3 install docker
+        ```console
+        $ pip3 install docker
 
-            $ python3
-            Python 3.6.8 (default, Apr 25 2019, 21:02:35)
-            [GCC 4.8.5 20150623 (Red Hat 4.8.5-36)] on linux
-            Type "help", "copyright", "credits" or "license" for more information.
-            >>> import docker
-            >>> client = docker.from_env()
-            >>> print(client.containers.run("ubuntu:18.04", ["echo", "hello", "world"]))
-            b'hello world\n'
+        $ python3
+        Python 3.6.8 (default, Apr 25 2019, 21:02:35)
+        [GCC 4.8.5 20150623 (Red Hat 4.8.5-36)] on linux
+        Type "help", "copyright", "credits" or "license" for more information.
+        >>> import docker
+        >>> client = docker.from_env()
+        >>> print(client.containers.run("ubuntu:18.04", ["echo", "hello", "world"]))
+        b'hello world\n'
+        ```
+
     - [Ansible docker module](https://docs.ansible.com/ansible/latest/modules/docker_container_module.html)
 
-            - name: Create a server instance
-              hosts: localhost
-              tasks:
-                - name: Container present
-                  docker_container:
-                    name: mycontainer
-                    state: present
-                    image: ubuntu:18.04
-                    command: sleep infinity
-                - name: Stop a container
-                  docker_container:
-                    name: mycontainer
-                    state: stopped
+        ```console
+        $ cat docker.yml
+        - name: Create a server instance
+          hosts: localhost
+          tasks:
+            - name: Container present
+              docker_container:
+                name: mycontainer
+                state: present
+                image: ubuntu:18.04
+                command: sleep infinity
+            - name: Stop a container
+              docker_container:
+                name: mycontainer
+                state: stopped
 
-            ansible-playbook docker.yml
+        $ ansible-playbook docker.yml
+        ```
 
     - [Docker example](https://docs.docker.com/get-started/part2/)
 1. Docker Concepts
@@ -844,14 +858,16 @@
 
 1. View stdout history with the logs command.
 
-        $ docker run -d --name=logtest alpine /bin/sh -c "while true; do sleep 5; df -h; done"
-        35f6353d2e47ab1f6c34073475014f4ab5e0b131043dca4454f67be9d8ef1253
-        $ docker logs logtest
-        Filesystem Size Used Available Use% Mounted on
-        none 93.7G 2.0G 87.0G 2% /
-        tmpfs 3.8G 0 3.8G 0% /dev
-        tmpfs 3.8G 0 3.8G 0% /sys/fs/cgroup
-        ... etc ...
+    ```console
+    $ docker run -d --name=logtest alpine /bin/sh -c "while true; do sleep 5; df -h; done"
+    35f6353d2e47ab1f6c34073475014f4ab5e0b131043dca4454f67be9d8ef1253
+    $ docker logs logtest
+    Filesystem Size Used Available Use% Mounted on
+    none 93.7G 2.0G 87.0G 2% /
+    tmpfs 3.8G 0 3.8G 0% /dev
+    tmpfs 3.8G 0 3.8G 0% /sys/fs/cgroup
+    # ... etc ...
+    ```
 
     - This history is available even after the container exits
     - as long as its file system is still present on disk (until it is removed with docker rm).
@@ -860,51 +876,60 @@
 1. Stream stdout with the attach command.
 If you want to see what is written to stdout in real time then the attach command is your friend.
 
-        $ docker run -d --name=logtest alpine /bin/sh -c "while true; do sleep 5; df -h; done"
-        26a329f1e7074f0c0f89caf266ad145ab427b1bcb35f82557e78bafe053faf44
-        $ docker attach logtest
-        Filesystem Size Used Available Use% Mounted on
-        none 93.7G 2.0G 87.0G 2% /
-        tmpfs 3.8G 0 3.8G 0% /dev
-        tmpfs 3.8G 0 3.8G 0% /sys/fs/cgroup
-        … etc …
-        Filesystem Size Used Available Use% Mounted on
-        none 93.7G 2.0G 87.0G 2% /
-        tmpfs 3.8G 0 3.8G 0% /dev
-        tmpfs 3.8G 0 3.8G 0% /sys/fs/cgroup
-        … etc …
+    ```console
+    $ docker run -d --name=logtest alpine /bin/sh -c "while true; do sleep 5; df -h; done"
+    26a329f1e7074f0c0f89caf266ad145ab427b1bcb35f82557e78bafe053faf44
+
+    $ docker attach logtest
+    Filesystem Size Used Available Use% Mounted on
+    none 93.7G 2.0G 87.0G 2% /
+    tmpfs 3.8G 0 3.8G 0% /dev
+    tmpfs 3.8G 0 3.8G 0% /sys/fs/cgroup
+    # … etc …
+    Filesystem Size Used Available Use% Mounted on
+    none 93.7G 2.0G 87.0G 2% /
+    tmpfs 3.8G 0 3.8G 0% /dev
+    tmpfs 3.8G 0 3.8G 0% /sys/fs/cgroup
+    # … etc …
+    ```
+
     - By default this command attaches stdin and proxies signals to the remote process. Options are available to control both of these behaviors.
     - To detach from the process use the default `ctrl-p ctrl-q` sequence.
     - If couldn't detach in this way, try kill :-)
 
-            # ps -ef | grep docker.*attach
-            root     12224 10895  0 00:04 pts/2    00:00:00 /usr/bin/docker-current attach logtest3
+        ```console
+        # ps -ef | grep docker.*attach
+        root     12224 10895  0 00:04 pts/2    00:00:00 /usr/bin/docker-current attach logtest3
 
-            # kill -9 12224
+        # kill -9 12224
+        ```
 
 1. Execute arbitrary commands with exec.
 Maybe the most powerful all-around tool in your kit, the exec command allows you to run arbitrary commands inside a running container.
 
-        $ docker run -d --name=exectest alpine watch "echo 'This is a test.' >> /var/log/test.log"
-        70ddfdf5169e755177a812959808973c92974dba2531c42a21ad9e50c8a4804c
-        $ docker exec exectest cat /var/log/test.log
-        This is a test.
-        This is a test.
-        This is a test.
-        This is a test.
+    ```console
+    $ docker run -d --name=exectest alpine watch "echo 'This is a test.' >> /var/log/test.log"
+    70ddfdf5169e755177a812959808973c92974dba2531c42a21ad9e50c8a4804c
+    $ docker exec exectest cat /var/log/test.log
+    This is a test.
+    This is a test.
+    This is a test.
+    This is a test.
 
-        # You can even use exec to get an interactive shell in the container.
+    # You can even use exec to get an interactive shell in the container.
 
-        $ docker run -d --name=exectest alpine watch "echo 'This is a test.' >> /var/log/test.log"
-        91e46bf5d19d4239a2f30af06669d4263580a01187d2290c33d7dee110f76356
-        $ docker exec -it exectest /bin/sh
-        / # ls -al /var/log
-        total 12
-        drwxr-xr-x 2 root root 4096 Mar 23 05:37 .
-        drwxr-xr-x 10 root root 4096 Mar 23 05:37 ..
-        -rw-r — r — 1 root root 192 Mar 23 05:38 test.log
-        / # exit
-        $
+    $ docker run -d --name=exectest alpine watch "echo 'This is a test.' >> /var/log/test.log"
+    91e46bf5d19d4239a2f30af06669d4263580a01187d2290c33d7dee110f76356
+    $ docker exec -it exectest /bin/sh
+    / # ls -al /var/log
+    total 12
+    drwxr-xr-x 2 root root 4096 Mar 23 05:37 .
+    drwxr-xr-x 10 root root 4096 Mar 23 05:37 ..
+    -rw-r — r — 1 root root 192 Mar 23 05:38 test.log
+    / # exit
+    $
+    ```
+
     - Note that exec only works while the container is running. So for a container that is crashing you’ll need to fall back on the logs command.
 1. Override the ENTRYPOINT.
     - Every docker image has an entrypoint and command, whether defined in the dockerfile at build time or as an option to the docker run command at run time. The relationship between entrypoint and command can be a little confusing, and there are different ways to use them, but here is one setup that follows best practices and gives you a lot of customization ability.
@@ -919,59 +944,80 @@ Maybe the most powerful all-around tool in your kit, the exec command allows you
     - `docker run -d -p 80:8000 /myrepo/mydjangoapp 0.0.0.0:8000`
     - Anything that appears after the image name in the docker run command is passed to the container and treated as CMD arguments, basically as if it were specified in the dockerfile like this:
 
-            ENTRYPOINT ["python", "manage.py", "runserver"]
-            CMD ["0.0.0.0:8000"]
+        ```
+        ENTRYPOINT ["python", "manage.py", "runserver"]
+        CMD ["0.0.0.0:8000"]
+        ```
+
     - Additional arguments can be passed as space-delimited parameters to the docker run call. This is a very convenient and flexible way to reconfigure an image for debugging purposes, by passing an option to increase log verbosity, for example.
 1. Pause and unpause a container.
     - I doubt you’ll have use for this one very often, but it’s cool so I’m throwing it in here anyway. Using the docker pause command you can pause all of the processes inside a container.
 
-            $ docker run -d --name=pausetest alpine /bin/sh -c "while true; do sleep 2; date; done"
-            e81e1bc519e4eb2e30a1c1e57198f0060147fa749ff8f93ba4f69bdf8a114311
+        ```console
+        $ docker run -d --name=pausetest alpine /bin/sh -c "while true; do sleep 2; date; done"
+        e81e1bc519e4eb2e30a1c1e57198f0060147fa749ff8f93ba4f69bdf8a114311
+        ```
+
     - The container is just echoing the date to stdout, so we can watch it with the attach command.
 
-            $ docker attach pausetest
-            Wed Mar 23 06:21:40 UTC 2016
-            Wed Mar 23 06:21:42 UTC 2016
+        ```console
+        $ docker attach pausetest
+        Wed Mar 23 06:21:40 UTC 2016
+        Wed Mar 23 06:21:42 UTC 2016
+        ```
+
     - Now pause the container, wait a bit, then unpause it.
 
-            $ docker pause pausetest
-            pausetest
-            $ docker unpause pausetest
-            pausetest
+        ```console
+        $ docker pause pausetest
+        pausetest
+        $ docker unpause pausetest
+        pausetest
+        ```
+
     - And back in our other window where attach is running…
 
-            $ docker attach pausetest
-            Wed Mar 23 06:21:40 UTC 2016
-            Wed Mar 23 06:21:42 UTC 2016
-            Wed Mar 23 06:22:06 UTC 2016
-            Wed Mar 23 06:22:08 UTC 2016
+        ```console
+        $ docker attach pausetest
+        Wed Mar 23 06:21:40 UTC 2016
+        Wed Mar 23 06:21:42 UTC 2016
+        Wed Mar 23 06:22:06 UTC 2016
+        Wed Mar 23 06:22:08 UTC 2016
+        ```
+
     - Actually I don’t have to stretch my imagination too much to come up with scenarios where this would be useful. It might be nice to freeze the current state of a server while I eat lunch or something.
 1. Get process stats with the top command.
     - The docker top command is exactly what it sounds like: top that runs in the container.
 
-            $ docker run -d —-name=toptest alpine:3.1 watch "echo 'Testing top'"
-            fc54369116fe993ae45620415fb5a6376a3069cdab7c206ac5ce3b57006d4241
-            $ docker top toptest
-            UID PID … TIME CMD
-            root 26339 … 00:00:00 watch "echo 'Testing top'"
-            root 26370 … 00:00:00 sleep 2
+        ```console
+        $ docker run -d —-name=toptest alpine:3.1 watch "echo 'Testing top'"
+        fc54369116fe993ae45620415fb5a6376a3069cdab7c206ac5ce3b57006d4241
+        $ docker top toptest
+        UID PID … TIME CMD
+        root 26339 … 00:00:00 watch "echo 'Testing top'"
+        root 26370 … 00:00:00 sleep 2
+        ```
+
     - Some columns removed to make it fit here. There is also a docker stats command that is basically top for all the containers running on a host.
 1. View container details with the inspect command.
     - The **inspect** command returns information about a container or an image. Here’s an example of running it on the toptest container from the last example above.
 
-            $ docker inspect toptest
-            [
-              {
-                "Id": "fdb3008e70892e14d183f8 ... 020cc34fec9703c821",
-                "Created": "2016–03–23T17:45:01.876121835Z",
-                "Path": "/bin/sh",
-                "Args": [
-                  "-c",
-                  "while true; do sleep 2; echo 'Testing top'; done"
-                ],
-                … and lots, lots more.
-              }
-            ]
+        ```console
+        $ docker inspect toptest
+        [
+          {
+            "Id": "fdb3008e70892e14d183f8 ... 020cc34fec9703c821",
+            "Created": "2016–03–23T17:45:01.876121835Z",
+            "Path": "/bin/sh",
+            "Args": [
+              "-c",
+              "while true; do sleep 2; echo 'Testing top'; done"
+            ],
+            … and lots, lots more.
+          }
+        ]
+        ```
+
     - I’ve skipped the bulk of the output because there’s a lot of it. Some of the more valuable bits of intelligence you can get are:
         - Current state of the container. (In the "State" property.)
         - Path to the log history file. (In the "LogPath" field.)
