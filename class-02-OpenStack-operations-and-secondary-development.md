@@ -33,9 +33,11 @@
 
 1. Target Machine
 
-        ssh root@training-01.demotheworld.com
-        ...
-        ssh root@training-15.demotheworld.com
+    ```shell
+    ssh root@training-01.demotheworld.com
+    ...
+    ssh root@training-15.demotheworld.com
+    ```
 
 1. [Putty](https://www.putty.org/) Config
     - Text font
