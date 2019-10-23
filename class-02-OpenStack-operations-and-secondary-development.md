@@ -684,7 +684,7 @@
 1. Compute
     - [Demo]: Create a server instance
 
-        ```
+        ```yaml
         - name: Create a server instance
           hosts: localhost
           tasks:
