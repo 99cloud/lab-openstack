@@ -950,6 +950,27 @@ Maybe the most powerful all-around tool in your kit, the exec command allows you
         ```
 
     - Additional arguments can be passed as space-delimited parameters to the docker run call. This is a very convenient and flexible way to reconfigure an image for debugging purposes, by passing an option to increase log verbosity, for example.
+    - 上述用于 K8S 时，yaml 用的是 command / args，[参考](https://kubernetes.io/docs/tasks/inject-data-application/define-command-argument-container/)
+
+		```yaml
+		apiVersion: v1
+		kind: Pod
+		metadata:
+		  name: example
+		  labels:
+		    app: python
+		  namespace: default
+		spec:
+		  containers:
+		    - name: python
+		      image: python
+		      command: ["/bin/sh"]
+		      args: ["-c", "while true; do echo hello; sleep 10;done"]
+		      env:
+		        - name: TZ
+		          value: Asia/Shanghai
+		```
+
 1. Pause and unpause a container.
     - I doubt you’ll have use for this one very often, but it’s cool so I’m throwing it in here anyway. Using the docker pause command you can pause all of the processes inside a container.
 
