@@ -2,14 +2,14 @@
   filesystem:
     fstype: "{{ vmdisk_fstype }}"
     dev: "{{ vmdisk_device }}"
-  when: use_vmdisk_device
+  when: use_vmdisk_device | bool
 
 - name: "Mkdir {{ vmdisk_path }}"
   file:
     path: "{{ vmdisk_path }}"
     state: "directory" 
     mode: "0755"
-  when: use_vmdisk_device
+  when: use_vmdisk_device | bool
 
 - name: "Mount {{ vmdisk_device }} present"
   mount:
@@ -18,11 +18,11 @@
     state: "present"
     fstype: "{{ vmdisk_fstype }}"
     opts: "gquota"
-  when: use_vmdisk_device
+  when: use_vmdisk_device | bool
 
 - name: restorecon {{ vmdisk_path }}
   shell: "restorecon -R {{ vmdisk_path }}"
-  when: use_vmdisk_device
+  when: use_vmdisk_device | bool
 
 - name: "Mount {{ vmdisk_device }} mounted"
   mount:
@@ -31,4 +31,4 @@
     state: "mounted"
     fstype: "{{ vmdisk_fstype }}"
     opts: "gquota"
-  when: use_vmdisk_device
+  when: use_vmdisk_device | bool
