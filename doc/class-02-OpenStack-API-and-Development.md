@@ -1063,14 +1063,14 @@ Maybe the most powerful all-around tool in your kit, the exec command allows you
     - Topology map
 
         ![](src/ansible-build-openstack-env/img/openstack-env-architecture.png)
-    - [Ansible Scripts: Build OpenStack Environment](https://github.com/99cloud/lab-openstack/tree/master/src/ansible-build-openstack-env)
+    - [Ansible Scripts: Build OpenStack Environment](../src/ansible-build-openstack-env)
 
 ### Kolla-Ansible Installation & Maintenance ( [Catalog](#catalog) )
 
 1. [OpenStack Stein Kolla Reference](https://docs.openstack.org/kolla-ansible/stein/)
-1. [Demo]: [kolla-ansible installation in all-in-one mode](https://github.com/99cloud/lab-openstack/blob/master/doc/installation-kolla-all-in-one.md)
-1. [Demo]: [kolla-ansible installation in multi-node mode](https://github.com/99cloud/lab-openstack/blob/master/doc/installation-kolla-multinode.md)
-1. [Demo]: [kolla-ansible maintenance](https://github.com/99cloud/lab-openstack/blob/master/doc/maintenance-kolla.md)
+1. [Demo]: [kolla-ansible installation in all-in-one mode](installation-kolla-all-in-one.md)
+1. [Demo]: [kolla-ansible installation in multi-node mode](installation-kolla-multinode.md)
+1. [Demo]: [kolla-ansible maintenance](maintenance-kolla.md)
     - OpenStack Upgrade
     - OpenStack Nodes Scaling up
 
@@ -1097,4 +1097,4 @@ Maybe the most powerful all-around tool in your kit, the exec command allows you
 
 ### [Optional] RDO ( [Catalog](#catalog) )
 
-1. [Demo]: [RDO Installation](https://github.com/99cloud/lab-openstack/blob/master/doc/installation-rdo-all-in-one.md)
+1. [Demo]: [RDO Installation](installation-rdo-all-in-one.md)
