@@ -16,10 +16,7 @@
 | Date | Time | Title | Content |
 | ---- | ---- | ----- | ------- |
 | 第 1 天 | 上午 | [1. OpenStack 概述]() | [OpenStack 从何而来？]() |
-| | | | [OpenStack 基金会是怎么运作的？]() |
 | | | | [OpenStack 的组件架构是怎样的？]() |
-| | | | [OpenStack 的项目发展流程是怎样的？]() |
-| | | | [如何与 OpenStack 社区交互？]() |
 | | | | [云计算的技术发展趋势是怎样的？]() |
 | | | [Lesson 02：管理身份认证服务 - Keystone](#) | [管理 OpenStack service catalog 和 endpoint](#) |
 | | | | [创建 / 管理项⽬和租户]() |

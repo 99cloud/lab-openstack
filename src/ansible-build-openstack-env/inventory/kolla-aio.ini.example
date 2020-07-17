@@ -6,10 +6,10 @@ nodes
 [OSEv3:vars]
 bastion_node_interface1_name=enp1s0
 public_ip=1.2.3.4
-resource_group_name=training-01
-public_cluster_hostname=maodouzi.net
-ssh_public_key_path="~/.ssh/id_rsa_openstack.pub"
-ssh_private_key_path="~/.ssh/id_rsa_openstack"
+resource_group_name=coa001
+public_cluster_hostname=demotheworld.com
+ssh_public_key_path="~/.ssh/id_rsa_lab.pub"
+ssh_private_key_path="~/.ssh/id_rsa_lab"
 
 use_vmdisk_device=true
 vmdisk_path="/home/vmdisk"
@@ -23,6 +23,9 @@ cluster_portal_ip=200.0.0.200
 cinder_backend="ceph"
 cinder_device="/dev/sdb"
 openstack_internal_vip_address=172.25.0.100
+
+remote_image_url="http://mirrors.oit.uci.edu/centos/7.7.1908/isos/x86_64/CentOS-7-x86_64-Minimal-1908.iso"
+local_image_path="/var/lib/libvirt/images/CentOS-7-x86_64-Minimal-1908.iso"
 
 [bastion]
 training-01

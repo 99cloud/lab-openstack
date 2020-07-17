@@ -72,7 +72,7 @@
 - name: Mount installation iso read-only
   mount:
     path: "{{ mount_image_target_url }}"
-    src: "{{ local_image_url }}"
+    src: "{{ local_image_path }}"
     fstype: iso9660
     opts: ro
     state: mounted

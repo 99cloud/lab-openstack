@@ -2,14 +2,14 @@
 
 - name: ensure direcroty exists
   file:
-    path: "{{ local_image_url | dirname }}"
+    path: "{{ local_image_path | dirname }}"
     state: "directory"
     mode: "0777"
 
 - name: Download centos iso
   get_url:
     url: "{{ remote_image_url }}"
-    dest: "{{ local_image_url }}"
+    dest: "{{ local_image_path }}"
 
 - name: Stopped and disable firewalld, if firewalld installed
   service:
@@ -168,10 +168,10 @@
     jump: SNAT
     to_source: "{{ network_prefix_ext }}.1"
   loop:
-    - 22
-    - 5901
-    - 5902
-    - 5903
+    - "22"
+    - "5901"
+    - "5902"
+    - "5903"
 
 - name: "Forward web port to openstack-host - DNAT"
   iptables:
@@ -183,18 +183,18 @@
     jump: DNAT
     to_destination: "{{ openstack_internal_vip_address }}:{{ item }}"
   loop:
-    - 80
-    - 443
-    - 5000
-    - 6080
-    - 8000
-    - 8004
-    - 8774
-    - 8776
-    - 8780
-    - 9292
-    - 9696
-    - 35357
+    - "80"
+    - "443"
+    - "5000"
+    - "6080"
+    - "8000"
+    - "8004"
+    - "8774"
+    - "8776"
+    - "8780"
+    - "9292"
+    - "9696"
+    - "35357"
 
 - name: "Forward web port to openstack-host - SNAT"
   iptables:
@@ -206,18 +206,18 @@
     jump: SNAT
     to_source: "{{ network_prefix_mgt }}.1"
   loop:
-    - 80
-    - 443
-    - 5000
-    - 6080
-    - 8000
-    - 8004
-    - 8774
-    - 8776
-    - 8780
-    - 9292
-    - 9696
-    - 35357
+    - "80"
+    - "443"
+    - "5000"
+    - "6080"
+    - "8000"
+    - "8004"
+    - "8774"
+    - "8776"
+    - "8780"
+    - "9292"
+    - "9696"
+    - "35357"
 
 - name: Save iptables
   shell: service iptables save
