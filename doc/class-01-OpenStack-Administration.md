@@ -18,13 +18,16 @@
 | 第 1 天 | 上午 | [1. OpenStack 概述]() | [OpenStack 从何而来？]() |
 | | | | [OpenStack 的组件架构是怎样的？]() |
 | | | | [云计算的技术发展趋势是怎样的？]() |
-| | | [Lesson 02：管理身份认证服务 - Keystone](#) | [管理 OpenStack service catalog 和 endpoint](#) |
-| | | | [创建 / 管理项⽬和租户]() |
-| | | | [为 OpenStack 环境创建]()  |
-| | | | [管理身份服务]() |
-| | | | [管理配额]() |
-| | 下午 | [Lesson 03：管理看板服务 - Horizon]() | [检验 Dashboard 的运⾏](#) |
-| | | | [配置 Horizon 来⽀持多 Domain 登录](#) |
+| | | | [OpenStack 的参考资料有哪些？]() |
+| | | [Lesson 02：管理身份认证服务 - Keystone](#) | [Keystone 的概念空间中有哪些对象？](#) |
+| | | | [Keystone 能提供哪些服务？]() |
+| | | | [Keystone 如何管理 Service Catalog？]() |
+| | | | [Keystone 如何管理管理项目（ 租户 ）和配额？]() |
+| | | | [Keystone 如何管理用户和组？]() |
+| | | | [Keystone 如何处理身份认证？]() |
+| | | | [Keystone 如何管理角色和权限？]() |
+| | 下午 | [Lesson 03：管理看板服务 - Horizon]() | [如何通过 Dashboard 来管理 OpenStack 平台？](#) |
+| | | | [如何配置 Horizon 来⽀持多 Domain 登录？](#) |
 | | | [Lesson 04：管理计算服务 - Nova](#) | [理解虚拟化](#) |
 | | | | [学习规划硬件计算资源（ 算你需要买多少服务器 ）](#) |
 | | | | [管理 flavor](#) |
@@ -74,9 +77,9 @@
 | | 下午 | [Lesson 10：模拟管理员练习题]() | [模拟题讲解](#) |
 | | | | [模拟题练习]() |
 
-## Lesson 01：OpenStack Introduction - 介绍
+## Lesson 01：OpenStack Introduction ( [Catalog](#catalog) )
 
-### Virtualization & OpenStack
+### Virtualization & OpenStack ( [Catalog](#catalog) )
 
 虚拟化和基于虚拟化技术的基础设施云计算技术
 
@@ -97,9 +100,11 @@
 - 桉树
 - OpenNebula
 
-### 了解 OpenStack 的⽬前的市场背景
+### OpenStack Infrastructure ( [Catalog](#catalog) )
 
-### 理解构建云的组件
+### The Trend of Cloud Computing ( [Catalog](#catalog) )
+
+### OpenStack Reference ( [Catalog](#catalog) )
 
 ## Lesson 02：Keystone
 
