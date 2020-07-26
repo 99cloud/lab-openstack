@@ -108,7 +108,17 @@
 
 ### OpenStack Reference ( [Catalog](#catalog) )
 
+1. 官方文档在哪里？
+1. 有哪些推荐的入门书？《每天五分钟玩转 OpenStack》，《OpenStack 设计与实现》
+
 ## Lesson 02：Keystone
+
+### Keystone Concepts
+
+1. 什么是 User / Group？有几种 Credentials / Authentication？用户名密码 / Token / API Key
+1. 什么是 Project / Tenant / Account？
+1. 什么是 Service / Endpoint？
+1. 什么是 Role / Policy？
 
 ### 管理 OpenStack service catalog 和 endpoint
 
