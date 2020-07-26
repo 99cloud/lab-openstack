@@ -81,28 +81,30 @@
 
 ### Virtualization & OpenStack ( [Catalog](#catalog) )
 
-虚拟化和基于虚拟化技术的基础设施云计算技术
-
-- 60 - 70 年代：IBM，虚拟化技术的开创者
-- 80 - 90 年代：VMWare，X86 平台虚拟机技术的革命者
-- 2005 年：Amazon，SOA（ Service-Oriented Architecture ），服务第一，EC2（ Elastic Compute Cloud ）
-- 2010 年：OpenStack：NASA Nebula & RackSpace Cloud Storage
-
-云计算的分类
-
-- IaaS
-- PaaS / FaaS
-- SaaS
-
-同行的产品
-
-- CloudStack
-- 桉树
-- OpenNebula
+1. 什么是虚拟化？虚拟化的发展历程如何？60-70 IBM / 80-90 VMWare / 2005-2010 Amazon / 2010 NASA Nebula & RackSpace Cloud Storage
+1. 云计算的类型有几种类型？IaaS / PaaS / SaaS，只有 IaaS 是必须基于虚拟化的
+1. OpenStack 的发展过程？模块化 & 服务化，核心项目 & 集成项目 => Big Tent
 
 ### OpenStack Infrastructure ( [Catalog](#catalog) )
 
+1. OpenStack 哪些是核心项目？Keystone / Nova / Cinder / Neutron / Glance
+1. [Design](https://docs.openstack.org/arch-design/design.html)
+
+    ![](https://docs.openstack.org/arch-design/_images/osog_0001.png)
+
+1. [Logical architecture](https://docs.openstack.org/install-guide/get-started-logical-architecture.html)
+
+    ![](https://docs.openstack.org/install-guide/_images/openstack-arch-kilo-logical-v1.png)
+
+1. [Conceptual architecture](https://docs.openstack.org/ocata/admin-guide/common/get-started-conceptual-architecture.html)
+
+    ![](https://docs.openstack.org/ocata/admin-guide/_images/openstack_kilo_conceptual_arch.png)
+
 ### The Trend of Cloud Computing ( [Catalog](#catalog) )
+
+1. 私有云、公有云、混合云的发展趋势如何？Azure / Aliyun / HW
+1. IaaS & CaaS 谁会是未来的主流？
+1. OpenStack 的发展趋势？
 
 ### OpenStack Reference ( [Catalog](#catalog) )
 
