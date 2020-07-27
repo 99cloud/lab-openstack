@@ -21,11 +21,6 @@
 | | | | [OpenStack 的参考资料有哪些？]() |
 | | | [Lesson 02：管理身份认证服务 - Keystone](#) | [Keystone 的概念空间中有哪些对象？](#) |
 | | | | [Keystone 能提供哪些服务？]() |
-| | | | [Keystone 如何管理 Service Catalog？]() |
-| | | | [Keystone 如何管理管理项目（ 租户 ）和配额？]() |
-| | | | [Keystone 如何管理用户和组？]() |
-| | | | [Keystone 如何处理身份认证？]() |
-| | | | [Keystone 如何管理角色和权限？]() |
 | | 下午 | [Lesson 03：管理看板服务 - Horizon]() | [如何通过 Dashboard 来管理 OpenStack 平台？](#) |
 | | | | [如何配置 Horizon 来⽀持多 Domain 登录？](#) |
 | | | [Lesson 04：管理计算服务 - Nova](#) | [理解虚拟化](#) |
@@ -120,15 +115,11 @@
 1. 什么是 Service / Endpoint？
 1. 什么是 Role / Policy？
 
-### 管理 OpenStack service catalog 和 endpoint
+### Keystone Capablities
 
-### 创建 / 管理项⽬和租户
-
-### 为 OpenStack 环境创建
-
-### 管理身份服务
-
-### 管理配额
+1. Keystone 怎么处理服务注册和服务发现？
+1. Keystone 怎么处理组织和用户管理？用户、用户组、项目、配额
+1. Keystone 怎么处理认证、鉴权和授权？角色、RBAC、Cloud Admin / Domain Admin
 
 ## Lesson 03：Horizon
 
