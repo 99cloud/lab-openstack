@@ -179,6 +179,15 @@
 
 ### 管理卷
 
+1. cinder-volume 可以类比 nova-compute，运行在存储节点（ 定期主动上报容量 ）。cinder-api 运行在控制节点。cinder-schedule（ 默认用空闲容量计算权重 ）类比 nova-schedule（ 默认用空闲内存计算权重 ）。
+1. cinder-provider（ 类比 hypervisor ）是独立的，cinder-volume 通过 driver（ 使用哪个 provider 通过 cinder.conf 确定 ） 和 provider 通信。如果有两个 provider，就需要两个不同的 cinder-volume。
+1. Create Volume from Source：image / backup / snapshot ？ 增量还是全量？
+1. Attach 方案就是 iSCSI，cinder-volume 初始化，nova-compute 来连接。
+1. volume -> Image，可以
+1. backup：容灾（ restore 是创建空白 volume & copy 数据过去 ），snapshot：便捷回溯
+1. nova 的 snapshot 是对系统盘全量备份，生成 image 保存到 glance。Cinder 的 snapshot 依赖与 volume，有 snapshot 的 volume 不可以删除。通常 snapshot 和 volume 放在一起（ volume provider ）
+1. NFS provider 里，volume 就是文件
+
 ### 创建块存储的卷组
 
 ### 创建⼀个新的卷并将其安装到 Nova 实例上
@@ -206,6 +215,8 @@
 ### 理解 Neutron 的作⽤
 
 ### ⽣产环境中的实施⽅案
+
+1. Linux Bridge 支持 vlan & vxlan
 
 ### ⽹络加速的技术 dpdk、sr-iov 的介绍
 
