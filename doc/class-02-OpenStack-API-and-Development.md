@@ -324,23 +324,23 @@
 1. Chrome Developer tools
     - [Demo]: Capture & Parse the HTTP requests
 
-        ![chrome](img/chrome1.png)
+        ![chrome](../img/chrome1.png)
 
-        ![chrome](img/chrome2.png)
+        ![chrome](../img/chrome2.png)
 
-        ![chrome](img/chrome3.png)
+        ![chrome](../img/chrome3.png)
 1. [Postman](https://www.getpostman.com/downloads/)
     - [Demo]: Send HTTP requests
 
-        ![postman](img/postman1.png)
+        ![postman](../img/postman1.png)
 
-        ![postman](img/postman2.png)
+        ![postman](../img/postman2.png)
 
-        ![postman](img/postman3.png)
+        ![postman](../img/postman3.png)
 
-        ![postman](img/postman4.png)
+        ![postman](../img/postman4.png)
 
-        ![postman](img/postman5.png)
+        ![postman](../img/postman5.png)
 
         ```
         #head内容如下
@@ -443,11 +443,11 @@
 1. Auto-Maintenance Frameworks
     - Ansible vs Others
 
-        ![](img/puppet-chef-ansible-saltstack.png)
+        ![](../img/puppet-chef-ansible-saltstack.png)
 
     - Framework Differences
 
-        ![](img/auto-maintenance-difference.png)
+        ![](../img/auto-maintenance-difference.png)
 1. SSH client configuration
 
     ```
@@ -496,19 +496,19 @@
 
 1. Fabric Concepts
 
-    ![](img/fabric-concepts.png)
+    ![](../img/fabric-concepts.png)
 1. Fabric Common Steps
 
-    ![](img/fabric-methods.png)
+    ![](../img/fabric-methods.png)
 
-    ![](img/fabric-steps.png)
+    ![](../img/fabric-steps.png)
 1. [Demo]: [Deploy a website with Fabric](https://github.com/wu-wenxiang/Project-Python-Webdev/tree/master/u1604-fabric)
 
 ### Ansible as a Plus ( [Catalog](#catalog) )
 
 1. Ansible Architecture
 
-    ![](img/ansible-architecture.png)
+    ![](../img/ansible-architecture.png)
 1. Ansible Hello World
 
     ```console
@@ -581,7 +581,7 @@
 
 1. AWX & Tower
 
-    ![](img/ansible-awx.png)
+    ![](../img/ansible-awx.png)
 1. AWX Hello World
 
 ### [Optional] Terraform ( [Catalog](#catalog) )
@@ -840,19 +840,19 @@
 1. Docker Concepts
     - Virtualization Evolution
 
-        ![](img/virtualization-evolution.svg)
+        ![](../img/virtualization-evolution.svg)
 
     - Docker Underlying Tech
 
-        ![](img/docker-underlying-tech.png)
+        ![](../img/docker-underlying-tech.png)
 
     - Linux Container Namespaces
 
-        ![](img/linux-container-namespaces.png)
+        ![](../img/linux-container-namespaces.png)
 
     - Docker Architecture
 
-        ![](img/docker-architecture.png)
+        ![](../img/docker-architecture.png)
 
 ### Debug in Docker Container ( [Catalog](#catalog) )
 
@@ -1058,11 +1058,11 @@ Maybe the most powerful all-around tool in your kit, the exec command allows you
 
 1. Kolla-Achitecture, reference: [Building a Containerized OpenStack Lab](https://networkop.co.uk/blog/2017/09/08/os-lab-docker/)
 
-    ![](img/kolla-lab.png)
+    ![](../img/kolla-lab.png)
 1. Build an environment with Ansible
     - Topology map
 
-        ![](src/ansible-build-openstack-env/img/openstack-env-architecture.png)
+        ![](../src/ansible-build-openstack-env/img/openstack-env-architecture.png)
     - [Ansible Scripts: Build OpenStack Environment](../src/ansible-build-openstack-env)
 
 ### Kolla-Ansible Installation & Maintenance ( [Catalog](#catalog) )
