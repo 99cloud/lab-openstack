@@ -1073,6 +1073,9 @@ Maybe the most powerful all-around tool in your kit, the exec command allows you
 1. [Demo]: [kolla-ansible maintenance](maintenance-kolla.md)
     - OpenStack Upgrade
     - OpenStack Nodes Scaling up
+1. Kolla 代码阅读
+    - `git clone http://git.trystack.cn/openstack/kolla.git`
+    - `git clone http://git.trystack.cn/openstack/kolla-ansible.git`
 
 ## lab-05 OpenStack Debug ( [Catalog](#catalog) )
 
@@ -1082,6 +1085,20 @@ Maybe the most powerful all-around tool in your kit, the exec command allows you
     - [Demo]: Devstack Installation
 1. DevStack Debugging
     - [Demo]: Debug with DevStack
+1. Nova 代码阅读
+    - `git clone http://git.trystack.cn/openstack/nova.git`
+    - Nova 专注于提供统一的计算资源抽象，包括裸机、虚拟机、容器
+    - 创建虚拟机：API -> Conductor（ 准备工作，通知 Schedule，获取节点信息 ） -> Compute
+    - 删除虚拟机：API -> Compute
+    - nova/nova/api（ API 服务 ）：Metadata API / OpenStack API
+    - nova/nova/cmd（ 各服务入口 ）
+    - nova/nova/pci（ PCI / SRIOV 支持 ）
+    - nova/setup.cfg 代码地图，入口点：entry_points，其中 console_scripts 每一个都代表一个可执行脚本，在部署时安装，是各个组件的入口
+    - nova-compute / nova-conductor / nova-scheduler 在启动时都会注册 RPC Server，因为通信是基于 AMQP 的 RPC 机制。比如：nova/compute/rpcapi.py::ComputeAPI，RPC call 是同步，RPC cast 是异步。比如 start_instance。ComputeAPI 是提供 RPC 调用的接口，需要被其它模块 import，比如 nova/compute/api.py::start。PRC Server 接收到请求后，真正完成任务的是 nova.compute.manager 模块，nova/compute/manager.py::ComputeManager。
+    - Nova API 的路由请求，nova 使用 Paste 来加载 WSGI stack，通过 etc/nova/api-paste.ini 来配置。nova.api.auth::pipeline_factory_v21 是这个 API stack 的一个工厂函数，负责加载 middleware，根据配置可以选择 noauth2 或者 keystone 作为验证，前者是 FT 用的。最后一个 compute_app_v21 是 v2.1 本尊。`nova/api/openstack/__init__.py`::APIRouterV21 是 WSGI Routes。通过 stevedore（ setuptools 中模块注册的进一步封装 ） 加载各个 API 模块实现。然后是 nova/wsgi.py::Router。Nova API 的具体实现在 nova.api.openstack.compute，比如 keypairs::Keypairs
+1. Neutron 代码阅读
+    - `git clone http://git.trystack.cn/openstack/neutron.git`
+    - setup.cfg 中 console_scripts 写明了服务入口，CorePlugin 只留下 ML2 Plugin，其它厂商的已经移除。Service Plugin 包括比如 QoS，vlan-aware-vms。ml2.type_drivers 和 mechanism_drivers 分别指明了 ML2 type & mechanism driver 的入口函数。
 
 ### Debug with Kolla-Ansible ( [Catalog](#catalog) )
 
