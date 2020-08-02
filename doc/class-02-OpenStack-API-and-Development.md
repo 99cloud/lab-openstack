@@ -1082,7 +1082,7 @@ Maybe the most powerful all-around tool in your kit, the exec command allows you
 ### Debug with DevStack ( [Catalog](#catalog) )
 
 1. DevStack Installation
-    - [Demo]: Devstack Installation
+    - [Demo]: [Devstack Installation](devstack-aio.md)
 1. DevStack Debugging
     - [Demo]: Debug with DevStack
 1. Nova 代码阅读
