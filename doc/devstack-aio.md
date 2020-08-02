@@ -53,7 +53,8 @@
         wget https://mirrors.huaweicloud.com/etcd/v3.3.12/etcd-v3.3.12-linux-amd64.tar.gz
         ```
 
-    - 从 [github](https://github.com/cirros-dev/cirros/releases/download/0.5.1/cirros-0.5.1-x86_64-disk.img) 或者其它镜像下载 `cirros-0.5.1-x86_64-disk.img` 放到 `/opt/stack/devstack/files/` 下面
+    - 从 [github](https://github.com/cirros-dev/cirros/releases/download/0.5.1/cirros-0.5.1-x86_64-disk.img) 或者其它镜像网站下载 `cirros-0.5.1-x86_64-disk.img` 放到 `/opt/stack/devstack/files/` 下面，Victoria 版本默认用这个
+    - 从 [github](https://github.com/cirros-dev/cirros/releases/download/0.4.0/cirros-0.4.0-x86_64-disk.img) 或者其它镜像网站下载 `cirros-0.4.0-x86_64-disk.img` 放到 `/opt/stack/devstack/files/` 下面，Ussuri 版本默认用这个
     - 从 [bootstrap.pypa.io](https://bootstrap.pypa.io/get-pip.py) 下载 `get-pip.py` 放到：`/opt/stack/devstack/files/`
 1. 复制和修改 samples/local.conf 文件，如下配置是使用最新版本，使用默认配置，不安装 heat
   
@@ -95,7 +96,7 @@
 
 1. 如果需要用 stable/ussuri 版本，启用 swift & heat，操作和配置如下
 
-    ```
+    ```console
     stack@u1804:~/devstack$ git checkout stable/ussuri
     Branch 'stable/ussuri' set up to track remote branch 'stable/ussuri' from 'origin'.
     Switched to a new branch 'stable/ussuri'
