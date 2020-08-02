@@ -118,6 +118,7 @@
     < 
     < enable_service s-proxy s-object s-container s-account h-eng h-api h-api-cfn h- api-cw q-svc q-dhcp q-meta q-agt q-l3 c-bak n-spice
     < enable_plugin heat http://git.trystack.cn/openstack/heat stable/ussuri
+    < enable_plugin heat-dashboard http://git.trystack.cn/openstack/heat-dashboard stable/ussuri
 
     stack@u1804:~/devstack$ cat local.conf | grep -v ^# | grep -v ^$
     [[local|localrc]]
@@ -130,6 +131,7 @@
     SPICE_REPO=http://git.trystack.cn/git/spice/spice-html5.git
     enable_service s-proxy s-object s-container s-account h-eng h-api h-api-cfn h- api-cw q-svc q-dhcp q-meta q-agt q-l3 c-bak n-spice
     enable_plugin heat http://git.trystack.cn/openstack/heat stable/ussuri
+    enable_plugin heat-dashboard http://git.trystack.cn/openstack/heat-dashboard stable/ussuri
     LOGFILE=$DEST/logs/stack.sh.log
     LOGDAYS=2
     SWIFT_HASH=66a3d6b56c1f479c8b4e70ab5c2000f5
