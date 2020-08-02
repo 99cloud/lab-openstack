@@ -148,6 +148,10 @@
 1. 如何判断当前 devstack 安装出来的 openstack 的版本和对应的 python 解释器的版本？可以 ps -ef | grep python 找到各个服务的进程，然后看对应的 python 解释器的版本 python --version，以及看服务源码的版本：git status
 
     ```console
+    $ ps -ef | grep swift
+    stack    111224      1  2 00:53 ?        00:00:21 /usr/bin/python3.6 /usr/local/bin/swift-object-server /etc/swift/object-server/1.conf -v
+    stack    112380 111853  0 00:53 ?        00:00:00 /usr/bin/python3.6 /usr/local/bin/swift-container-server /etc/swift/container-server/1.conf -v
+
     stack@u1804:~/glance$ git status
     On branch stable/ussuri
     Your branch is up to date with 'origin/stable/ussuri'.
