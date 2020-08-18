@@ -2,10 +2,33 @@
 
 ## Neturon 与 SDN
 
-- Neutron 的概念空间中有哪些对象？
-- Neutron 由模块组成？
-- Neutron 由几种网络模型？
-- VLAN & 物理 L3 的网络模型是怎样的？
+- [Neutron 的概念空间中有哪些对象？](https://docs.openstack.org/mitaka/install-guide-ubuntu/neutron-concepts.html)
+    - network：local / flat / vlan / vxlan / gre
+    - subnet
+    - router
+    - port / VIF / tap
+- Neutron 解决什么问题？
+    - 二层交换
+    - 三层路由
+    - 负载均衡 / 防火墙 / VPN 等增值服务
+- Neutron 由哪些模块组成？
+
+    ![](../img/openstack-arch-kilo-logical-v1.png)
+
+- 怎么理解 Plugin 和 Agent 的关系？plugin 定义了网络对象的特征，agent 负责具体实现。
+- 有哪些 Agent？L2 / DHCP / L3（ routing / FW / SG ） / LB
+- 有几种类型的 Plugin？Core Plugin / Service Plugin
+- Core Plugin 具体解决什么问题？二层交换问题，network / subnet / port
+- 为什么要提出 ML2 Core Plugin？传统 Core Plugin 无法同时使用多种 network provider & 各类 core plugin 的数据库访问代码雷同
+- 怎么理解 ML2 中的 type driver 和 mechanism driver？
+    - type driver：local / flat / vlan / vxlan / gre
+    - mechanism driver
+        - Agent based：Linux Bridge / OpenVswitch
+        - Controller based：OpenDaylight / VMWare NSX
+        - 物理交换机：Cisco Nexus / Arista / Mellanox
+    - Linux Bridge 支持 local / flat / vlan / vxlan
+    - OpenVswitch 多支持一种 gre
+- 怎么理解 Service Plugin？router / LB / SG
 - 基于 Linux Bridge 的网络模型是怎样的？
 - 基于 OVS 的网络模型是怎样的？
 - 如何查看流表？流表的基本操作（ 增删查改 ）？

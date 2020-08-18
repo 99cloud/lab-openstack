@@ -89,7 +89,7 @@
 
 1. [Logical architecture](https://docs.openstack.org/install-guide/get-started-logical-architecture.html)
 
-    ![](https://docs.openstack.org/install-guide/_images/openstack-arch-kilo-logical-v1.png)
+    ![](../img/openstack-arch-kilo-logical-v1.png)
 
 1. [Conceptual architecture](https://docs.openstack.org/ocata/admin-guide/common/get-started-conceptual-architecture.html)
 
