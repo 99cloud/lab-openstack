@@ -88,10 +88,90 @@
 
 ## OpenStack 高可用部署
 
-- 商用中较为流行的 OpenStack HA 方案有哪些？
+- [商用中较为流行的 OpenStack HA 方案有哪些？](https://www.cnblogs.com/sammyliu/p/4741967.html)
+    - 红帽：RDO 方案，分散式控制节点，硬件成本大，性能好
+
+        ![](../img/openstack-ha-rdo.jpg)
+
+        该配置最少需要五台机器：
+
+        - 一台（物理或者虚拟）服务器部署 nfs server，dhcp，dns
+        - 一台物理服务器来作为计算节点
+        - 三台物理服务器组成 pacemaker 集群，创建多个虚机，安装各种应用
+
+        特征：
+
+        - 每个集群使用三个节点，全部采用 A/A 模式，除了 cinder-volume 和 LBaas。RedHat 不认为 A/P 模式是真正的 HA。
+        - 提供使用 Pacemaker 或者 Keepalived 两套方案。
+        - 将 API 和内部无状态组件按功能组分布到各个专有集群，而不是放在一个集群上。
+        - Cinder 这里标识为 A/A HA，但是不包括 cinder-volume
+    - Marantis：集中式控制节点，控制节点上运行服务多，可能会影响其性能，但是在小规模云环境中节省了硬件成本。
+
+        ![](../img/openstack-ha-marantis-1.jpg)
+
+        ![](../img/openstack-ha-marantis-2.jpg)
+
 - 基础设施的 HA 方案推荐怎么做？
+    - [MariaDB: Galera + Haproxy](https://computingforgeeks.com/how-to-setup-mariadb-galera-cluster-on-ubuntu-with-haproxy/)
+    - [Rabbitmq Cluster HA](https://www.rabbitmq.com/ha.html)
+    - [Ceph HA](https://www.jamescoyle.net/how-to/1244-create-a-3-node-ceph-storage-cluster)
+    - [Elasticsearch 也是自身的 HA](https://blog.ruanbekker.com/blog/2019/04/02/setup-a-5-node-highly-available-elasticsearch-cluster/)
 - 控制节点的 HA 方案推荐怎么做？
+    - [社区的方案](https://docs.openstack.org/ha-guide/control-plane-stateless.html#api-services)：Keepalive + HAProxy
+
+        ![](../img/openstack-ha-proxy.png)
+
+- 计算节点的 HA 方案推荐怎么做？
+
+    ![](../img/openstack-ha-rdo-compute-1.jpg)
+
+    ![](../img/openstack-ha-rdo-compute-2.jpg)
+
+    部署方式如下：
+
+    - 使用 Pacemaker 集群作为控制平面
+    - 将计算节点做为 Partial members 加入到 Pacemaker 集群中，受其管理和监控。这时候，其数目不受 Corosync 集群内节点总数的限制。
+
+    HA 实现细节：
+
+    - Pacemaker 通过 pacemaker_remote 按照顺序（neutron-ovs-agent -> ceilometer-compute -> nova-compute) 来启动计算节点上的各种服务。前面的服务启动失败，后面的服务不会被启动。
+    - Pacemaker 监控和每个计算节点上的 pacemaker_remote 的连接，来检查该节点是否处于活动状态。发现它不可以连接的话，启动恢复（recovery）过程。
+    - Pacemaker 监控每个服务的状态，如果状态失效，该服务会被重启。重启失败则触发防护行为（fencing action）；当所有服务都被启动后，虚机的网络会被恢复，因此，网络只会短时间受影响。
+
+    当一个节点失效时，恢复（recovery）过程会被触发，Pacemaker 会依次：
+
+    1. 运行 'nova service-disable'
+    1. 将该节点关机
+    1. 等待 nova 发现该节点失效了
+    1. 将该节点开机
+    1. 如果节点启动成功，执行 'nova service-enable'
+    1. 如果节点启动失败，则执行 ‘nova evacuate’ 把该节点上的虚机移到别的可用计算节点上。
+
+    其中：
+
+    - 步骤（1）和 （5）是可选的，其主要目的是防止 nova-scheduler 将新的虚机分配到该节点。
+    - 步骤（2）保证机器肯定会关机。
+    - 步骤（3）中目前 nova 需要等待一段较长的超时时间才能判断节点 down 了。可以通过 [Nova API 将节点状态直接设置为 down](https://docs.openstack.org/api-ref/compute/?expanded=update-forced-down-detail#compute-services-os-services)。
+
+    其余一些前提条件：
+
+    - 虚机必须部署在 cinder-volume 或者共享的临时存储比如 RBD 或者 NFS 上，这样虚机 evaculation 将不会造成数据丢失。
+    - 计算节点需要有防护机制，比如 IPMI，硬件狗 等
 - 网络节点的 HA 方案推荐怎么做？
+    - [L3 HA](https://wiki.openstack.org/wiki/Neutron/L3_High_Availability_VRRP)
+
+        ![](../img/openstack-ha-l3.png)
+
+        - keepalive 跑在 vrouter 的 namespace 里面
+        - 一主一备两个 vrouter 的 namespace，备 vrouter 里面的qr 口，qg 口在备的状态都没配 IP，主备切换就把 IP 配上，然后发个免费 ARP 出来
+
+    - [DVR](https://docs.openstack.org/neutron/latest/admin/deploy-ovs-ha-dvr.html)，[wiki](https://wiki.openstack.org/wiki/Neutron/DVR)：DVR 的设计思想是在计算节点上起 L3 服务，缓解网络节点压力
+
+        ![](../img/deploy-ovs-ha-dvr-overview.png)
+
+        ![](../img/deploy-ovs-ha-dvr-compconn1.png)
+
+    - vlan 网络 & L3 在物理交换机
 
 ## 虚机注入的方式
 
