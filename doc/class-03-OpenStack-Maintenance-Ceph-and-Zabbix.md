@@ -198,8 +198,33 @@
 
 ## 虚机注入的方式
 
+- Cloudinit 解决什么问题？cloud-init 是一款 linux 工具，当VM 系统启动时，cloud-init 从 nova metadata 服务或者 config drive 中获取 metadata，完成包括但不限于下面的定制化工作：
+    1. 设置 default locale
+    1. 设置 hostname
+    1. 添加 ssh keys 到 .ssh/authorized_keys
+    1. 设置用户密码
+    1. 配置网络
+- Cloudinit 的 workflow 是怎样的？
+
+    ![](../img/cloudinit-workflow.png)
+
+    1. Generator (cloud-config.target)：读取配置文件cloud.cfg
+    1. Local (cloud-init-local.service)：定位“本地”数据源和配置网络
+    1. Network (cloud-init.service)：读取cloud_init_modules 模块的指定配置
+    1. Config (cloud-config.service)：读取cloud_config_modules 模块的指定配置
+    1. Final (cloud-final.service)：分别读取cloud_final_modules模块的指定配置
+- [怎么写 user data script？](https://cloudinit.readthedocs.io/en/latest/topics/format.html#user-data-script)
+- [怎么 trouble shooting？](https://cloud.tencent.com/developer/article/1501295)
+
 ## 虚机镜像存储方式，需要解决分布式读写延迟对业务的影响
+
+- Ceph RBD
 
 ## 客户的最佳实践和遇到的问题
 
-
+- 监控方案
+- 计费方案
+- 定时任务
+- workflow
+- 消息中心
+- 审计日志
