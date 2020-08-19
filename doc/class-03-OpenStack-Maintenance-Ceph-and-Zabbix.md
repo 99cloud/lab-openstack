@@ -213,7 +213,7 @@
     1. Network (`cloud-init.service`)：读取cloud_init_modules 模块的指定配置
     1. Config (`cloud-config.service`)：读取cloud_config_modules 模块的指定配置
     1. Final (`cloud-final.service`)：分别读取cloud_final_modules模块的指定配置
-- [怎么写 user data script？](https://cloudinit.readthedocs.io/en/latest/topics/format.html#user-data-script)
+- [怎么写 user data script？](https://cloudinit.readthedocs.io/en/latest/topics/format.html)
 - [怎么 trouble shooting？](https://cloud.tencent.com/developer/article/1501295)
 - Windows 上使用[cloudbase-init](https://cloudbase.it/cloudbase-init/)
 
