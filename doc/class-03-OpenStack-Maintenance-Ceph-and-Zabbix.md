@@ -209,11 +209,11 @@
 
     ![](../img/cloudinit-workflow.png)
 
-    1. Generator (`cloud-config.target`)：读取配置文件cloud.cfg
+    1. Generator (`cloud-config.target`)：读取配置文件 `cloud.cfg`
     1. Local (`cloud-init-local.service`)：定位“本地”数据源和配置网络
-    1. Network (`cloud-init.service`)：读取cloud_init_modules 模块的指定配置
-    1. Config (`cloud-config.service`)：读取cloud_config_modules 模块的指定配置
-    1. Final (`cloud-final.service`)：分别读取cloud_final_modules模块的指定配置
+    1. Network (`cloud-init.service`)：读取`cloud_init_modules` 模块的指定配置
+    1. Config (`cloud-config.service`)：读取`cloud_config_modules` 模块的指定配置
+    1. Final (`cloud-final.service`)：分别读取`cloud_final_modules` 模块的指定配置
 - [怎么写 user data script？](https://cloudinit.readthedocs.io/en/latest/topics/format.html)
 - [怎么 trouble shooting？](https://cloud.tencent.com/developer/article/1501295)
 - Windows 上使用[cloudbase-init](https://cloudbase.it/cloudbase-init/)
