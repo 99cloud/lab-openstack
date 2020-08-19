@@ -204,6 +204,7 @@
     1. 添加 ssh keys 到 .ssh/authorized_keys
     1. 设置用户密码
     1. 配置网络
+- 在 DHCP 启动的情况下，如何强制走 config drive 读取 metadata？[config_drive 参数](https://docs.openstack.org/api-ref/compute/?expanded=create-server-detail#create-server)
 - Cloudinit 的 workflow 是怎样的？
 
     ![](../img/cloudinit-workflow.png)
