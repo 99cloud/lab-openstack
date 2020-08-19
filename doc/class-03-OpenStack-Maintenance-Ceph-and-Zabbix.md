@@ -208,23 +208,26 @@
 
     ![](../img/cloudinit-workflow.png)
 
-    1. Generator (cloud-config.target)：读取配置文件cloud.cfg
-    1. Local (cloud-init-local.service)：定位“本地”数据源和配置网络
-    1. Network (cloud-init.service)：读取cloud_init_modules 模块的指定配置
-    1. Config (cloud-config.service)：读取cloud_config_modules 模块的指定配置
-    1. Final (cloud-final.service)：分别读取cloud_final_modules模块的指定配置
+    1. Generator (`cloud-config.target`)：读取配置文件cloud.cfg
+    1. Local (`cloud-init-local.service`)：定位“本地”数据源和配置网络
+    1. Network (`cloud-init.service`)：读取cloud_init_modules 模块的指定配置
+    1. Config (`cloud-config.service`)：读取cloud_config_modules 模块的指定配置
+    1. Final (`cloud-final.service`)：分别读取cloud_final_modules模块的指定配置
 - [怎么写 user data script？](https://cloudinit.readthedocs.io/en/latest/topics/format.html#user-data-script)
 - [怎么 trouble shooting？](https://cloud.tencent.com/developer/article/1501295)
+- Windows 上使用[cloudbase-init](https://cloudbase.it/cloudbase-init/)
 
 ## 虚机镜像存储方式，需要解决分布式读写延迟对业务的影响
 
-- Ceph RBD
+- Glance 上传 / 下载 速度慢：看是不是管理网带宽小影响
+- Glance 上传下载时，虚拟机 IO 时候被影响：查看 ceph 的 performance，ceph tuning
 
 ## 客户的最佳实践和遇到的问题
 
-- 监控方案
-- 计费方案
+- 安全问题，[Keystone 密码问题](https://docs.openstack.org/keystone/latest/admin/configuration.html#security-compliance-and-pci-dss)
+- 监控方案：[Zabbix vs Prometheus](https://www.metricfire.com/blog/prometheus-vs-zabbix/)
+- 计费方案：[CloudKitty](https://docs.openstack.org/cloudkitty/latest/)
 - 定时任务
 - workflow
 - 消息中心
-- 审计日志
+- 审计日志：[MiddleWare](https://docs.openstack.org/keystonemiddleware/latest/audit.html)
