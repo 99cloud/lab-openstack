@@ -463,6 +463,44 @@
         IdentityFile    ~/.ssh/id_rsa_openstack
     ```
 
+1. SSH key generation
+
+    ```console
+    root@devopslab020:~/.ssh# ls
+    authorized_keys  known_hosts
+
+    root@devopslab020:~/.ssh# ssh-keygen 
+    Generating public/private rsa key pair.
+    Enter file in which to save the key (/root/.ssh/id_rsa): 
+    Enter passphrase (empty for no passphrase): 
+    Enter same passphrase again: 
+    Your identification has been saved in /root/.ssh/id_rsa.
+    Your public key has been saved in /root/.ssh/id_rsa.pub.
+    The key fingerprint is:
+    SHA256:41njTMl+VNsh/gjSojuolLSGiKXA2lQPU/Ds6co3YFg root@devopslab020
+    The key's randomart image is:
+    +---[RSA 2048]----+
+    |    ...          |
+    |     +           |
+    |    + o      ... |
+    |.  .E= . ......o.|
+    |..o+  + So*o... .|
+    |==+ =. ..Ooo. o  |
+    |=..* .o.o + .. . |
+    |  o. oo..  .     |
+    |   .+. o.        |
+    +----[SHA256]-----+
+    
+    root@devopslab020:~/.ssh# ls
+    authorized_keys  id_rsa  id_rsa.pub  known_hosts
+    ```
+
+    public key -> server side authorized_keys
+
+    private key -> client side
+
+    [Generator for PuTTY on Windows](https://www.ssh.com/ssh/putty/windows/puttygen)
+
 1. SSH Proxy
 
     ```
@@ -470,7 +508,7 @@
     ProxyCommand    bash -c 'h=%h;ssh bastion -W ${h##prefix-}:%p'
     ```
 
-1. Fabric Hello World
+1. [Fabric](https://docs.fabfile.org/en/2.5/getting-started.html) Hello World
 
     ```console
     $ pip3 install fabric3

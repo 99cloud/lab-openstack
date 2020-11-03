@@ -15,7 +15,7 @@
     ```
 
 1. 如果每次执行 sudo 都很慢的话，需要把你的主机名加到 `/etc/hosts`，类似：`127.0.0.1 yourhostname`，参考：[Terminal command with sudo takes a long time](https://askubuntu.com/questions/322514/terminal-command-with-sudo-takes-a-long-time)
-1. [DevStack 单机版本官方文档](https://docs.openstack.org/devstack/latest/guides/single-machine.html)，当前开发中的版本是 Victoria，最新的稳定版本是 Ussuri。注意各版本的 devstack 都只保证兼容其发布时间节点上的最近两个的 Linux 主流 LTS 发行版本
+1. [DevStack 单机版本官方文档](https://docs.openstack.org/devstack/latest/guides/single-machine.html)，当前开发中的版本是 Victoria，最新的稳定版本是 Ussuri。注意各版本的 devstack 都只保证兼容其发布时间节点上的最近两个的 Linux 主流 LTS 发行版本。或者参考这个[官方文档](https://docs.openstack.org/devstack/latest/)，类似的。
 
     ```bash
     sudo useradd -s /bin/bash -d /opt/stack -m stack
@@ -33,7 +33,7 @@
     cd devstack
     ```
 
-1.  我用的是 master 分支（ Victoria 版本 ），当前最新的提交 ID 是 647fef0b405deea635a710c124d508a59e6d1119，你也可以用 stable/ussuri 等 stable 分支
+1.  此处以 master 分支为例（ 本文写作时是 Victoria 版本 ），当前最新的提交 ID 是 647fef0b405deea635a710c124d508a59e6d1119，你也可以用 stable/ussuri 等 stable 分支，Ubuntu 18.04 用 U 分支验证也没问题，安装时可以使用 screen。
 
     ```console
     $ git log -1
