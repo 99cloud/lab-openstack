@@ -511,23 +511,18 @@
 1. [Fabric](https://docs.fabfile.org/en/2.5/getting-started.html) Hello World
 
     ```console
-    $ pip3 install fabric3
-
-    $ cat fabricrc
-    hosts = 172.25.0.200
-    user = root
-    password = 123456
+    $ pip3 install fabric
 
     $ cat fabfile.py
-    from fabric.api import run
-    def hello():
-        run("hostname")
+    from fabric import task
 
-    $ fab -c fabricrc hello
-    [testhost] Executing task 'hello'
-    [testhost] run: hostname
-    [testhost] out: example.hostname.com
-    Done.
+    @task
+    def hello(c):
+        c.run('hostname')
+
+    $ fab -H localhost,localhost hello
+    devopslab020
+    devopslab020
     ```
 
 ### Fabric in Details ( [Catalog](#catalog) )
@@ -540,6 +535,184 @@
     ![](../img/fabric-methods.png)
 
     ![](../img/fabric-steps.png)
+
+1. Run commands via Connections and run
+
+    ```python
+    from fabric import Connection
+    c = Connection('web1')
+    # Connection(host='web1', user='deploy', port=2202)
+    # Connection('deploy@web1:2202')
+    result = c.run('uname -s')
+    # Linux
+    result.stdout.strip() == 'Linux'
+    # True
+    result.exited
+    # 0
+    result.ok
+    # True
+    result.command
+    # 'uname -s'
+    result.connection
+    # <Connection host=web1>
+    result.connection.host
+    #'web1'
+    ```
+
+1. Superuser privileges via auto-response
+
+    ```python
+    from fabric import Connection
+    c = Connection('db1')
+    c.run('sudo useradd mydbuser', pty=True)
+    # [sudo] password:
+    # <Result cmd='sudo useradd mydbuser' exited=0>
+    c.run('id -u mydbuser')
+    # 1001
+    <Result cmd='id -u mydbuser' exited=0>
+    ```
+
+    ```python
+    from invoke import Responder
+    from fabric import Connection
+    c = Connection('host')
+    sudopass = Responder(
+        pattern=r'\[sudo\] password:',
+        response='mypassword\n',
+    )
+    c.run('sudo whoami', pty=True, watchers=[sudopass])
+    # [sudo] password:
+    # root
+    # <Result cmd='sudo whoami' exited=0>
+    ```
+
+1. The sudo helper
+
+    ```python
+    import getpass
+    from fabric import Connection, Config
+    sudo_pass = getpass.getpass("What's your sudo password?")
+    # What's your sudo password?
+    config = Config(overrides={'sudo': {'password': sudo_pass}})
+    c = Connection('db1', config=config)
+    c.sudo('whoami', hide='stderr')
+    # root
+    # <Result cmd="...whoami" exited=0>
+    c.sudo('useradd mydbuser')
+    # <Result cmd="...useradd mydbuser" exited=0>
+    c.run('id -u mydbuser')
+    # 1001
+    # <Result cmd='id -u mydbuser' exited=0>
+    ```
+
+1. Transfer files
+
+    ```python
+    from fabric import Connection
+    result = Connection('web1').put('myfiles.tgz', remote='/opt/mydata/')
+    print("Uploaded {0.local} to {0.remote}".format(result))
+    # Uploaded /local/myfiles.tgz to /opt/mydata/
+    ```
+
+1. Multiple actions
+
+    ```python
+    from fabric import Connection
+    c = Connection('web1')
+    c.put('myfiles.tgz', '/opt/mydata')
+    c.run('tar -C /opt/mydata -xzvf /opt/mydata/myfiles.tgz')
+    ```
+
+    ```python
+    def upload_and_unpack(c):
+    c.put('myfiles.tgz', '/opt/mydata')
+    c.run('tar -C /opt/mydata -xzvf /opt/mydata/myfiles.tgz')
+    ```
+
+1. Multiple servers
+
+    ```python
+    >>> from fabric import Connection
+    >>> for host in ('web1', 'web2', 'mac1'):
+    >>>     result = Connection(host).run('uname -s')
+    ...     print("{}: {}".format(host, result.stdout.strip()))
+    ...
+    ...
+    web1: Linux
+    web2: Linux
+    mac1: Darwin
+    ```
+
+    ```python
+    >>> from fabric import SerialGroup as Group
+    >>> results = Group('web1', 'web2', 'mac1').run('uname -s')
+    >>> print(results)
+    <GroupResult: {
+        <Connection 'web1'>: <CommandResult 'uname -s'>,
+        <Connection 'web2'>: <CommandResult 'uname -s'>,
+        <Connection 'mac1'>: <CommandResult 'uname -s'>,
+    }>
+    >>> for connection, result in results.items():
+    ...     print("{0.host}: {1.stdout}".format(connection, result))
+    ...
+    ...
+    web1: Linux
+    web2: Linux
+    mac1: Darwin
+    ```
+
+1. Bringing it all together
+
+    ```python
+    from fabric import SerialGroup as Group
+    pool = Group('web1', 'web2', 'web3')
+    pool.put('myfiles.tgz', '/opt/mydata')
+    pool.run('tar -C /opt/mydata -xzvf /opt/mydata/myfiles.tgz')
+
+    # You could fill that need by using iterables of Connection objects (though this foregoes some benefits of using Groups):
+    from fabric import Connection
+    for host in ('web1', 'web2', 'web3'):
+        c = Connection(host)
+        if c.run('test -f /opt/mydata/myfile', warn=True).failed:
+            c.put('myfiles.tgz', '/opt/mydata')
+            c.run('tar -C /opt/mydata -xzvf /opt/mydata/myfiles.tgz')
+
+    from fabric import SerialGroup as Group
+
+    # Alternatively, remember how we used a function in that earlier example? You can go that route instead:
+    def upload_and_unpack(c):
+        if c.run('test -f /opt/mydata/myfile', warn=True).failed:
+            c.put('myfiles.tgz', '/opt/mydata')
+            c.run('tar -C /opt/mydata -xzvf /opt/mydata/myfiles.tgz')
+
+    for connection in Group('web1', 'web2', 'web3'):
+        upload_and_unpack(connection)
+    ```
+
+1. Addendum: the fab command-line tool
+
+    ```python
+    # For a final code example, let’s adapt the previous example into a fab task module called fabfile.py:
+    from fabric import task
+
+    @task
+    def upload_and_unpack(c):
+        if c.run('test -f /opt/mydata/myfile', warn=True).failed:
+            c.put('myfiles.tgz', '/opt/mydata')
+            c.run('tar -C /opt/mydata -xzvf /opt/mydata/myfiles.tgz')
+    ```
+
+    ```console
+    $ fab --list
+    Available tasks:
+
+    upload_and_unpack
+
+    $ fab -H web1 upload_and_unpack
+
+    $ fab -H web1,web2,web3 upload_and_unpack
+    ```
+
 1. [Demo]: [Deploy a website with Fabric](https://github.com/wu-wenxiang/Project-Python-Webdev/tree/master/u1604-fabric)
 
 ### Ansible as a Plus ( [Catalog](#catalog) )
