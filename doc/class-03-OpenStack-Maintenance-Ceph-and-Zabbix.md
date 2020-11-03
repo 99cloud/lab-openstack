@@ -1,6 +1,6 @@
 # 部署和运维
 
-## Neturon 与 SDN
+## 1. Neturon 与 SDN
 
 - [Neutron 的概念空间中有哪些对象？](https://docs.openstack.org/mitaka/install-guide-ubuntu/neutron-concepts.html)
     - network：local / flat / vlan / vxlan / gre
@@ -40,7 +40,7 @@
 - SRIOV 怎么支持？
 - IPv6 的支持情况如何？后端怎么启用 IPv6 支持？前端用户怎么使用（ API & 命令行 ）？
 
-## Manila
+## 2. Manila
 
 - [Manila 提供什么服务？](https://docs.openstack.org/manila/latest/#what-is-manila) Providing Shared Filesystems as a service，[NAS 存储](https://baike.baidu.com/item/NAS/3465615)。对照的 AWS 服务是什么？[Amazon Elastic File System (EFS)](https://aws.amazon.com/cn/efs/)
 - Manila 支持哪些文件共享协议？主要是 [NFS，CIFS](https://www.dell.com/community/%E5%85%A5%E9%97%A8%E7%BA%A7%E5%92%8C%E4%B8%AD%E7%AB%AF/%E5%88%86%E4%BA%AB-CIFS%E5%92%8CNFS%E7%9A%84%E5%8C%BA%E5%88%AB/td-p/6934849)，通过不同的[后端驱动](https://docs.openstack.org/manila/latest/admin/index.html#supported-share-back-ends)实现。还有[其它协议](https://docs.openstack.org/manila/latest/admin/shared-file-systems-share-management.html)。
@@ -109,7 +109,7 @@
     - [API](https://docs.openstack.org/api-ref/shared-file-system/)
     - [命令行](https://docs.openstack.org/manila/latest/cli/index.html)
 
-## OpenStack 高可用部署
+## 3. OpenStack 高可用部署
 
 - [商用中较为流行的 OpenStack HA 方案有哪些？](https://www.cnblogs.com/sammyliu/p/4741967.html)
     - 红帽：RDO 方案，分散式控制节点，硬件成本大，性能好
@@ -196,7 +196,7 @@
 
     - vlan 网络 & L3 在物理交换机
 
-## 虚机注入的方式
+## 4. 虚机注入的方式
 
 - Cloudinit 解决什么问题？cloud-init 是一款 linux 工具，当VM 系统启动时，cloud-init 从 nova metadata 服务或者 config drive 中获取 metadata，完成包括但不限于下面的定制化工作：
     1. 设置 default locale
@@ -218,12 +218,12 @@
 - [怎么 trouble shooting？](https://cloud.tencent.com/developer/article/1501295)
 - Windows 上使用[cloudbase-init](https://cloudbase.it/cloudbase-init/)
 
-## 虚机镜像存储方式，需要解决分布式读写延迟对业务的影响
+## 5. 虚机镜像存储方式，需要解决分布式读写延迟对业务的影响
 
 - Glance 上传 / 下载 速度慢：看是不是管理网带宽小影响
 - Glance 上传下载时，虚拟机 IO 时候被影响：查看 ceph 的 performance，ceph tuning
 
-## 客户的最佳实践和遇到的问题
+## 6. 客户的最佳实践和遇到的问题
 
 - 安全问题，[Keystone 密码问题](https://docs.openstack.org/keystone/latest/admin/configuration.html#security-compliance-and-pci-dss)
 - 监控方案：[Zabbix vs Prometheus](https://www.metricfire.com/blog/prometheus-vs-zabbix/)
@@ -232,3 +232,100 @@
 - workflow
 - 消息中心
 - 审计日志：[MiddleWare](https://docs.openstack.org/keystonemiddleware/latest/audit.html)
+
+## 7. Prometheus
+
+### 7.1 Qick Start
+
+- [参考官方安装文档](https://prometheus.io/docs/prometheus/latest/installation/)，[github](https://github.com/prometheus/prometheus/)
+    - [基于 Docker](https://prometheus.io/docs/prometheus/latest/installation/#using-docker)
+
+        ```bash
+        docker run -p 9090:9090 prom/prometheus
+
+        docker run -p 9090:9090 -v ~/prometheus.yml:/etc/prometheus/prometheus.yml prom/prometheus
+        ```
+
+        思考，用容器启动怎么启动在后台？
+
+    - 获取默认配置文件
+
+        ```bash
+        curl -LO https://github.com/prometheus/prometheus/releases/download/v2.22.0/prometheus-2.22.0.linux-amd64.tar.gz
+
+        tar zxvf prometheus-2.22.0.linux-amd64.tar.gz
+        ```
+
+        ```console
+        $ cat prometheus-2.22.0.linux-amd64/prometheus.yml 
+        
+        # my global config
+		global:
+		  scrape_interval:     15s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
+		  evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
+		  # scrape_timeout is set to the global default (10s).
+
+		# Alertmanager configuration
+		alerting:
+		  alertmanagers:
+		  - static_configs:
+		    - targets:
+		      # - alertmanager:9093
+
+		# Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+		rule_files:
+		  # - "first_rules.yml"
+		  # - "second_rules.yml"
+
+		# A scrape configuration containing exactly one endpoint to scrape:
+		# Here it's Prometheus itself.
+		scrape_configs:
+		  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+		  - job_name: 'prometheus'
+
+		    # metrics_path defaults to '/metrics'
+		    # scheme defaults to 'http'.
+
+		    static_configs:
+		    - targets: ['localhost:9090']
+        ```
+
+    - Download node_exporter
+
+        ```bash
+        wget https://github.com/prometheus/node_exporter/releases/download/v1.0.1/node_exporter-1.0.1.linux-amd64.tar.gz
+        screen -t node_exporter
+        ./node_exporter
+
+        docker run -d -p 9100:9100 prom/node-exporter
+        ```
+
+    - 访问http://localhost:9100/metrics，可以看到当前 node exporter 获取到的当前主机的所有监控数据
+
+        ![](https://gblobscdn.gitbook.com/assets%2F-LBdoxo9EmQ0bJP2BuUi%2F-LPMFlGDFIX7wuLhSHx9%2F-LPMFp6q8o3vUrTJOaFo%2Fnode_exporter_metrics_page.png?alt=media)
+
+    - 为了能够让 Prometheus Server 能够从当前 node exporter 获取到监控数据，这里需要修改 Prometheus 配置文件。编辑 prometheus.yml 并在 scrape_configs 节点下添加以下内容，然后重新启动 Prometheus Server
+
+        ```yaml
+        scrape_configs:
+		  - job_name: 'prometheus'
+		    static_configs:
+		      - targets: ['localhost:9090']
+		  # 采集node exporter监控数据
+		  - job_name: 'node'
+		    static_configs:
+		      - targets: ['localhost:9100']
+        ```
+
+        思考，如果 prometheus 用容器运行，在对接时 node exporter 时会出现什么问题？Targets 能看到什么错？localhost 应该改成什么？
+
+    - [基于 Ansible](https://github.com/cloudalchemy/ansible-prometheus)，[demo](https://github.com/cloudalchemy/demo-site/#applications)
+
+### 7.2 使用PromQL查询监控数据
+
+- PromQL 是 Prometheus 自定义的一套强大的数据查询语言，除了使用监控指标作为查询关键字以为，还内置了大量的函数，帮助用户进一步对时序数据进行处理。
+- 例如使用 rate() 函数，可以计算在单位时间内样本数据的变化情况即增长率，因此通过该函数我们可以近似的通过 CPU 使用时间计算 CPU 的利用率：`rate(node_cpu[2m])`
+- 如果要忽略是哪一个 CPU 的，只需要使用 without 表达式，将标签CPU 去除后聚合数据即可：`avg without(cpu) (rate(node_cpu[2m]))`
+- 那如果需要计算系统 CPU 的总体使用率，通过排除系统闲置的 CPU 使用率即可获得：`1 - avg without(cpu) (rate(node_cpu{mode="idle"}[2m]))`
+
+### 7.3 [对接 Grafana](https://yunlzheng.gitbook.io/prometheus-book/parti-prometheus-ji-chu/quickstart/prometheus-quick-start/use-grafana-create-dashboard)
