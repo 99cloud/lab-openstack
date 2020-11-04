@@ -549,7 +549,94 @@ quantile 用于计算当前样本数据值的分布情况 `quantile(φ, express)
 
 #### 7.3.3 PromQL 内置函数
 
+- 计算 Counter 指标增长率
+    - `increase(node_cpu[2m]) / 120`，这里通过`node_cpu[2m]`获取时间序列最近两分钟的所有样本，increase 计算出最近两分钟的增长量，最后除以时间 120 秒得到node_cpu样本在最近两分钟的平均增长率。并且这个值也近似于主机节点最近两分钟内的平均 CPU 使用率。 
+    - `rate(node_cpu[2m])`，rate 或者 increase 函数去计算样本的平均增长速率，容易陷入“长尾问题”当中，其无法反应在时间窗口内样本数据的突发变化
+    - `irate(node_cpu[2m])`，irate 函数是通过区间向量中最后两个样本数据来计算区间向量的增长速率。这种方式可以避免在时间窗口范围内的“长尾问题”，并且体现出更好的灵敏度。irate 函数相比于 rate 函数提供了更高的灵敏度，不过当需要分析长期趋势或者在告警规则中，irate 的这种灵敏度反而容易造成干扰。因此在长期趋势分析或者告警中更推荐使用 rate 函数。
+- 预测 Gauge 指标变化趋势
+    - `predict_linear(node_filesystem_free{job="node"}[2h], 4 * 3600) < 0`
+- 统计 Histogram 指标的分位数
+    - `histogram_quantile(0.5, http_request_duration_seconds_bucket)`。其中 φ（0<φ<1）表示需要计算的分位数，如果需要计算中位数 φ 取值为 0.5。
+
 #### 7.3.4 在 HTTP API 中使用 PromQL
+
+##### 7.3.4.1 瞬时数据查询
+
+使用以下表达式查询表达式 up 在时间点 2015-07-01T20:10:51.781Z 的计算结果。
+
+```bash
+$ curl 'http://localhost:9090/api/v1/query?query=up&time=2015-07-01T20:10:51.781Z'
+{
+   "status" : "success",
+   "data" : {
+      "resultType" : "vector",
+      "result" : [
+         {
+            "metric" : {
+               "__name__" : "up",
+               "job" : "prometheus",
+               "instance" : "localhost:9090"
+            },
+            "value": [ 1435781451.781, "1" ]
+         },
+         {
+            "metric" : {
+               "__name__" : "up",
+               "job" : "node",
+               "instance" : "localhost:9100"
+            },
+            "value" : [ 1435781451.781, "0" ]
+         }
+      ]
+   }
+}
+
+# Response
+{
+  "resultType": "matrix" | "vector" | "scalar" | "string",
+  "result": <value>
+}
+```
+
+##### 7.3.4.2 区间数据查询
+
+使用以下表达式查询表达式 up 在 30 秒范围内以 15 秒为间隔计算 PromQL 表达式的结果。
+
+```bash
+$ curl 'http://localhost:9090/api/v1/query_range?query=up&start=2015-07-01T20:10:30.781Z&end=2015-07-01T20:11:00.781Z&step=15s'
+{
+   "status" : "success",
+   "data" : {
+      "resultType" : "matrix",
+      "result" : [
+         {
+            "metric" : {
+               "__name__" : "up",
+               "job" : "prometheus",
+               "instance" : "localhost:9090"
+            },
+            "values" : [
+               [ 1435781430.781, "1" ],
+               [ 1435781445.781, "1" ],
+               [ 1435781460.781, "1" ]
+            ]
+         },
+         {
+            "metric" : {
+               "__name__" : "up",
+               "job" : "node",
+               "instance" : "localhost:9091"
+            },
+            "values" : [
+               [ 1435781430.781, "0" ],
+               [ 1435781445.781, "0" ],
+               [ 1435781460.781, "1" ]
+            ]
+         }
+      ]
+   }
+}
+```
 
 #### 7.3.5 最佳实践：4 个黄金指标和 USE 方法
 
