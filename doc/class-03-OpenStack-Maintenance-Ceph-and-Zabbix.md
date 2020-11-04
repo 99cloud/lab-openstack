@@ -642,7 +642,7 @@ $ curl 'http://localhost:9090/api/v1/query_range?query=up&start=2015-07-01T20:10
 
 监控纬度
 
-| 级别 | 监控什么 | Exporter | 
+| 级别 | 监控什么 | Exporter |
 | - | - | - | - |
 | 网络 | 网络协议：http、dns、tcp、icmp；网络硬件：路由器，交换机等 | BlackBox Exporter;SNMP Exporter |
 | 主机 | 资源用量 | node exporter |
