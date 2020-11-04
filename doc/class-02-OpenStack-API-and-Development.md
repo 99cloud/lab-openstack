@@ -787,7 +787,7 @@
 
 1. [Demo-2]: [Deploy a website with Ansible](https://github.com/wu-wenxiang/Project-Python-Webdev/tree/master/u1604-ansible)
 1. [Demo-3]: [Deploy OpenShift 3.11](https://github.com/openshift/openshift-ansible/tree/release-3.11)
-1. [Demo-4]: [ZZLARGE-Project-DjangoTest](https://github.com/wu-wenxiang/ZZLARGE-Project-DjangoTest)
+1. https://github.com/wu-wenxiang/ZZLARGE-Project-DjangoTest
 
 ### [Optional] AWX ( [Catalog](#catalog) )
 
