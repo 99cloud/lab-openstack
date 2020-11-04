@@ -321,11 +321,274 @@
 
     - [基于 Ansible](https://github.com/cloudalchemy/ansible-prometheus)，[demo](https://github.com/cloudalchemy/demo-site/#applications)
 
-### 7.2 使用PromQL查询监控数据
+### 7.2 数据类型
 
-- PromQL 是 Prometheus 自定义的一套强大的数据查询语言，除了使用监控指标作为查询关键字以为，还内置了大量的函数，帮助用户进一步对时序数据进行处理。
-- 例如使用 rate() 函数，可以计算在单位时间内样本数据的变化情况即增长率，因此通过该函数我们可以近似的通过 CPU 使用时间计算 CPU 的利用率：`rate(node_cpu[2m])`
-- 如果要忽略是哪一个 CPU 的，只需要使用 without 表达式，将标签CPU 去除后聚合数据即可：`avg without(cpu) (rate(node_cpu[2m]))`
-- 那如果需要计算系统 CPU 的总体使用率，通过排除系统闲置的 CPU 使用率即可获得：`1 - avg without(cpu) (rate(node_cpu{mode="idle"}[2m]))`
+#### 7.2.1 Counter：只增不减的计数器
 
-### 7.3 [对接 Grafana](https://yunlzheng.gitbook.io/prometheus-book/parti-prometheus-ji-chu/quickstart/prometheus-quick-start/use-grafana-create-dashboard)
+Counter 类型的指标其工作方式和计数器一样，只增不减（除非系统发生重置）。常见的监控指标，如 http_requests_total，node_cpu 都是 Counter 类型的监控指标。一般在定义 Counter 类型指标的名称时推荐使用 _total 作为后缀。
+
+Counter是一个简单但有强大的工具，例如我们可以在应用程序中记录某些事件发生的次数，通过以时序的形式存储这些数据，我们可以轻松的了解该事件产生速率的变化。 PromQL 内置的聚合操作和函数可以让用户对这些数据进行进一步的分析：
+
+例如，通过 rate() 函数获取HTTP请求量的增长率：`rate(http_requests_total[5m])`
+
+查询当前系统中，访问量前10的HTTP地址：`topk(10, http_requests_total)`
+
+#### 7.2.2 Gauge：可增可减的仪表盘
+
+与 Counter 不同，Gauge 类型的指标侧重于反应系统的当前状态。因此这类指标的样本数据可增可减。常见指标如：node_memory_MemFree（主机当前空闲的内容大小）、node_memory_MemAvailable（可用内存大小）都是 Gauge 类型的监控指标。
+
+通过 Gauge 指标，用户可以直接查看系统的当前状态：`node_memory_MemFree`
+
+对于 Gauge 类型的监控指标，通过 PromQL 内置函数 delta() 可以获取样本在一段时间返回内的变化情况。例如，计算 CPU 温度在两个小时内的差异：`delta(cpu_temp_celsius{host="zeus"}[2h])`
+
+还可以使用 deriv() 计算样本的线性回归模型，甚至是直接使用 predict_linear() 对数据的变化趋势进行预测。例如，预测系统磁盘空间在 4 个小时之后的剩余情况：`predict_linear(node_filesystem_free{job="node"}[1h], 4 * 3600)`
+
+#### 7.2.3 使用 Histogram 和 Summary 分析数据分布情况
+
+除了 Counter 和 Gauge 类型的监控指标以外，Prometheus 还定义了 Histogram 和 Summary 的指标类型。Histogram 和 Summary 主用用于统计和分析样本的分布情况。
+
+在大多数情况下人们都倾向于使用某些量化指标的平均值，例如 CPU 的平均使用率、页面的平均响应时间。这种方式的问题很明显，以系统 API 调用的平均响应时间为例：如果大多数 API 请求都维持在 100ms 的响应时间范围内，而个别请求的响应时间需要 5s，那么就会导致某些 WEB 页面的响应时间落到中位数的情况，而这种现象被称为长尾问题。
+
+为了区分是平均的慢还是长尾的慢，最简单的方式就是按照请求延迟的范围进行分组。例如，统计延迟在0~10ms之间的请求数有多少而10~20ms之间的请求数又有多少。通过这种方式可以快速分析系统慢的原因。
+
+Histogram 和 Summary 都是为了能够解决这样问题的存在，通过Histogram 和 Summary 类型的监控指标，我们可以快速了解监控样本的分布情况。
+
+例如，指标 prometheus_tsdb_wal_fsync_duration_seconds 的指标类型为 Summary。 它记录了 Prometheus Server 中 wal_fsync 处理的处理时间，通过访问 Prometheus Server 的 /metrics地址，可以获取到以下监控样本数据：
+
+```
+# HELP prometheus_tsdb_wal_fsync_duration_seconds Duration of WAL fsync.
+# TYPE prometheus_tsdb_wal_fsync_duration_seconds summary
+prometheus_tsdb_wal_fsync_duration_seconds{quantile="0.5"} 0.012352463
+prometheus_tsdb_wal_fsync_duration_seconds{quantile="0.9"} 0.014458005
+prometheus_tsdb_wal_fsync_duration_seconds{quantile="0.99"} 0.017316173
+prometheus_tsdb_wal_fsync_duration_seconds_sum 2.888716127000002
+prometheus_tsdb_wal_fsync_duration_seconds_count 216
+```
+
+从上面的样本中可以得知当前 Prometheus Server 进行 wal_fsync 操作的总次数为 216 次，耗时 2.888716127000002s。其中中位数（quantile=0.5）的耗时为 0.012352463，9分位数（quantile=0.9）的耗时为 0.014458005s。
+
+在 Prometheus Server 自身返回的样本数据中，我们还能找到类型为 Histogram 的监控指标 prometheus_tsdb_compaction_chunk_range_bucket。
+
+```
+# HELP prometheus_tsdb_compaction_chunk_range Final time range of chunks on their first compaction
+# TYPE prometheus_tsdb_compaction_chunk_range histogram
+prometheus_tsdb_compaction_chunk_range_bucket{le="100"} 0
+prometheus_tsdb_compaction_chunk_range_bucket{le="400"} 0
+prometheus_tsdb_compaction_chunk_range_bucket{le="1600"} 0
+prometheus_tsdb_compaction_chunk_range_bucket{le="6400"} 0
+prometheus_tsdb_compaction_chunk_range_bucket{le="25600"} 0
+prometheus_tsdb_compaction_chunk_range_bucket{le="102400"} 0
+prometheus_tsdb_compaction_chunk_range_bucket{le="409600"} 0
+prometheus_tsdb_compaction_chunk_range_bucket{le="1.6384e+06"} 260
+prometheus_tsdb_compaction_chunk_range_bucket{le="6.5536e+06"} 780
+prometheus_tsdb_compaction_chunk_range_bucket{le="2.62144e+07"} 780
+prometheus_tsdb_compaction_chunk_range_bucket{le="+Inf"} 780
+prometheus_tsdb_compaction_chunk_range_sum 1.1540798e+09
+prometheus_tsdb_compaction_chunk_range_count 780
+```
+
+与 Summary 类型的指标相似之处在于 Histogram 类型的样本同样会反应当前指标的记录的总数(以 _count 作为后缀)以及其值的总量（以_sum 作为后缀）。不同在于 Histogram 指标直接反应了在不同区间内样本的个数，区间通过标签 len 进行定义。
+同时对于 Histogram 的指标，我们还可以通过 histogram_quantile()函数计算出其值的分位数。不同在于 Histogram 通过 histogram_quantile 函数是在服务器端计算的分位数。 而 Sumamry 的分位数则是直接在客户端计算完成。因此对于分位数的计算而言，Summary 在通过 PromQL 进行查询时有更好的性能表现，而 Histogram 则会消耗更多的资源。反之对于客户端而言 Histogram 消耗的资源更少。在选择这两种方式时用户应该按照自己的实际场景进行选择。
+
+### 7.3 使用 PromQL 查询监控数据
+
+#### 7.3.1 PromQL Quick Start
+
+PromQL 是 Prometheus 自定义的一套强大的数据查询语言，除了使用监控指标作为查询关键字以为，还内置了大量的函数，帮助用户进一步对时序数据进行处理。
+
+例如使用 rate() 函数，可以计算在单位时间内样本数据的变化情况即增长率，因此通过该函数我们可以近似的通过 CPU 使用时间计算 CPU 的利用率：`rate(node_cpu[2m])`
+
+如果要忽略是哪一个 CPU 的，只需要使用 without 表达式，将标签CPU 去除后聚合数据即可：`avg without(cpu) (rate(node_cpu[2m]))`
+
+那如果需要计算系统 CPU 的总体使用率，通过排除系统闲置的 CPU 使用率即可获得：`1 - avg without(cpu) (rate(node_cpu{mode="idle"}[2m]))`
+
+##### 7.3.1.1 查询时间序列
+
+直接使用监控指标名称查询时，可以查询该指标下的所有时间序列。如：`http_requests_total`，等同于：`http_requests_total{}`。该表达式会返回指标名称为 `http_requests_total` 的所有时间序列：
+
+```
+http_requests_total{code="200",handler="alerts",instance="localhost:9090",job="prometheus",method="get"}=(20889@1518096812.326)
+http_requests_total{code="200",handler="graph",instance="localhost:9090",job="prometheus",method="get"}=(21287@1518096812.326)
+```
+
+PromQL 还支持用户根据时间序列的标签匹配模式来对时间序列进行过滤，目前主要支持两种匹配模式：完全匹配和正则匹配。
+PromQL 支持使用 = 和 != 两种完全匹配模式：
+
+- 通过使用 label=value 可以选择那些标签满足表达式定义的时间序列；
+- 反之使用 label!=value 则可以根据标签匹配排除时间序列；
+
+例如，如果我们只需要查询所有 http_requests_total 时间序列中满足标签 instance 为 localhost:9090 的时间序列，则可以使用如下表达式：`http_requests_total{instance="localhost:9090"}`。
+
+反之使用 `instance!="localhost:9090"` 则可以排除这些时间序列 `http_requests_total{instance!="localhost:9090"}`
+
+除了使用完全匹配的方式对时间序列进行过滤以外，PromQL 还可以支持使用正则表达式作为匹配条件，多个表达式之间使用 | 进行分离：
+
+- 使用 label=~regx 表示选择那些标签符合正则表达式定义的时间序列；
+- 反之使用label!~regx进行排除；
+
+例如，如果想查询多个环节下的时间序列序列可以使用如下表达式：`http_requests_total{environment=~"staging|testing|development",method!="GET"}`
+
+##### 7.3.1.2 范围查询
+
+通过表达式 `http_requests_total` 查询时间序列时，返回值中只会包含该时间序列中的最新的一个样本值，这样的返回结果我们称之为瞬时向量。而相应的这样的表达式称之为**瞬时向量表达式**。
+
+而如果我们想过去一段时间范围内的样本数据时，我们则需要使用**区间向量表达式**。区间向量表达式和瞬时向量表达式之间的差异在于在区间向量表达式中我们需要定义时间选择的范围，时间范围通过时间范围选择器`[]`进行定义。例如，通过以下表达式可以选择最近5分钟内的所有样本数据：`http_requests_total{}[5m]`
+
+该表达式将会返回查询到的时间序列中最近5分钟的所有样本数据：
+
+```
+http_requests_total{code="200",handler="alerts",instance="localhost:9090",job="prometheus",method="get"}=[
+    1@1518096812.326
+    1@1518096817.326
+    1@1518096822.326
+    1@1518096827.326
+    1@1518096832.326
+    1@1518096837.325
+]
+http_requests_total{code="200",handler="graph",instance="localhost:9090",job="prometheus",method="get"}=[
+    4 @1518096812.326
+    4@1518096817.326
+    4@1518096822.326
+    4@1518096827.326
+    4@1518096832.326
+    4@1518096837.325
+]
+```
+
+范围支持：
+
+- s - 秒
+- m - 分钟
+- h - 小时
+- d - 天
+- w - 周
+- y - 年
+
+##### 7.3.1.3 时间位移操作
+
+如果想查询，5分钟前的瞬时样本数据，或昨天一天的区间内的样本数据，可以使用位移操作，位移操作的关键字为offset。
+
+```
+http_request_total{} offset 5m
+http_request_total{}[1d] offset 1d
+```
+
+##### 7.3.1.4 使用聚合操作
+
+一般来说，如果描述样本特征的标签(label)在并非唯一的情况下，通过 PromQL 查询数据，会返回多条满足这些特征维度的时间序列。而 PromQL 提供的聚合操作可以用来对这些时间序列进行处理，形成一条新的时间序列：
+
+```
+# 查询系统所有http请求的总量
+sum(http_request_total)
+
+# 按照mode计算主机CPU的平均使用时间
+avg(node_cpu) by (mode)
+
+# 按照主机查询各个主机的CPU使用率
+sum(sum(irate(node_cpu{mode!='idle'}[5m]))  / sum(irate(node_cpu[5m]))) by (instance)
+```
+
+##### 7.3.1.5 标量和字符串
+
+除了使用瞬时向量表达式和区间向量表达式以外，PromQL 还直接支持用户使用标量(Scalar)和字符串(String)
+
+- 标量（Scalar）：一个浮点型的数字值.标量只有一个数字，没有时序。例如：`10`。需要注意的是，当使用表达式 `count(http_requests_total)`，返回的数据类型，依然是瞬时向量。用户可以通过内置函数`scalar()`将单个瞬时向量转换为标量。
+- 字符串（String）：一个简单的字符串值。直接使用字符串，作为PromQL表达式，则会直接返回字符串。
+
+    ```
+    "this is a string"
+    'these are unescaped: \n \\ \t'
+    `these are not unescaped: \n ' " \t`
+    ```
+
+##### 7.3.1.6 合法的 PromQL 表达式
+
+所有的 PromQL 表达式都必须至少包含一个指标名称(例如`http_request_total`)，或者一个不会匹配到空字符串的标签过滤器(例如`{code="200"}`)。因此以下两种方式，均为合法的表达式：
+
+```
+http_request_total # 合法
+http_request_total{} # 合法
+{method="get"} # 合法
+```
+
+而如下表达式，则不合法：`{job=~".*"} # 不合法`
+
+同时，除了使用`<metric name>{label=value}`的形式以外，我们还可以使用内置的`__name__`标签来指定监控指标名称：
+
+```
+{__name__=~"http_request_total"} # 合法
+{__name__=~"node_disk_bytes_read|node_disk_bytes_written"} # 合法
+```
+
+#### 7.3.2 PromQL 聚合操作
+
+Prometheus 还提供了下列内置的聚合操作符，这些操作符作用域瞬时向量。可以将瞬时表达式返回的样本数据进行聚合，形成一个新的时间序列。
+
+- sum (求和)
+- min (最小值)
+- max (最大值)
+- avg (平均值)
+- stddev (标准差)
+- stdvar (标准方差)
+- count (计数)
+- count_values (对value进行计数)
+- bottomk (后n条时序)
+- topk (前n条时序)
+- quantile (分位数)
+
+使用聚合操作的语法如下：`<aggr-op>([parameter,] <vector expression>) [without|by (<label list>)]`。其中只有`count_values`, `quantile`, `topk`, `bottomk`支持参数(parameter)。
+
+without 用于从计算结果中移除列举的标签，而保留其它标签。by 则正好相反，结果向量中只保留列出的标签，其余标签则移除。通过 without 和 by 可以按照样本的问题对数据进行聚合。例如：`sum(http_requests_total) without (instance)`
+等价于`sum(http_requests_total) by (code,handler,job,method)`
+
+如果只需要计算整个应用的HTTP请求总量，可以直接使用表达式：`sum(http_requests_total)`。`count_values`用于时间序列中每一个样本值出现的次数。`count_values`会为每一个唯一的样本值输出一个时间序列，并且每一个时间序列包含一个额外的标签。例如：`count_values("count", http_requests_total)`
+
+topk 和 bottomk 则用于对样本值进行排序，返回当前样本值前 n 位，或者后 n 位的时间序列。获取HTTP请求数前5位的时序样本数据，可以使用表达式：`topk(5, http_requests_total)`
+
+quantile 用于计算当前样本数据值的分布情况 `quantile(φ, express)` 其中`0 ≤ φ ≤ 1`。例如，当 φ 为 0.5 时，即表示找到当前样本数据中的中位数：`quantile(0.5, http_requests_total)`
+
+#### 7.3.3 PromQL 内置函数
+
+#### 7.3.4 在 HTTP API 中使用 PromQL
+
+#### 7.3.5 最佳实践：4 个黄金指标和 USE 方法
+
+监控纬度
+
+| 级别 | 监控什么 | Exporter | 
+| - | - | - | - |
+| 网络 | 网络协议：http、dns、tcp、icmp；网络硬件：路由器，交换机等 | BlackBox Exporter;SNMP Exporter |
+| 主机 | 资源用量 | node exporter |
+| 容器 | 资源用量 | cAdvisor |
+| 应用(包括 Library) | 延迟，错误，QPS，内部状态等 | 代码中集成Prmometheus Client |
+| 中间件状态 | 资源用量，以及服务状态 | 代码中集成Prmometheus Client |
+| 编排工具 | 集群资源用量，调度等 | Kubernetes Components |
+
+4个黄金指标
+
+- 延迟：服务请求所需时间。
+- 通讯量：监控当前系统的流量，用于衡量服务的容量需求。
+- 错误：监控当前系统所有发生的错误请求，衡量当前系统错误发生的速率。
+- 饱和度：衡量当前服务的饱和度。
+
+饱和度主要强调最能影响服务状态的受限制的资源。 例如，如果系统主要受内存影响，那就主要关注系统的内存状态，如果系统主要受限与磁盘I/O，那就主要观测磁盘I/O的状态。因为通常情况下，当这些资源达到饱和后，服务的性能会明显下降。同时还可以利用饱和度对系统做出预测，比如，“磁盘是否可能在4个小时候就满了”。
+
+RED方法
+
+- (请求)速率：服务每秒接收的请求数。
+- (请求)错误：每秒失败的请求数。
+- (请求)耗时：每个请求的耗时。
+
+USE 方法主要关注与资源的：使用率(Utilization)、饱和度(Saturation)以及错误(Errors)。
+
+- 使用率：关注系统资源的使用情况。 这里的资源主要包括但不限于：CPU，内存，网络，磁盘等等。100%的使用率通常是系统性能瓶颈的标志。
+- 饱和度：例如CPU的平均运行排队长度，这里主要是针对资源的饱和度(注意，不同于4大黄金信号)。任何资源在某种程度上的饱和都可能导致系统性能的下降。
+- 错误：错误计数。例如：“网卡在数据包传输过程中检测到的以太网网络冲突了14次”。
+
+### 7.4 对接 Grafana
+
+- 参考：[use-grafana-create-dashboard](https://yunlzheng.gitbook.io/prometheus-book/parti-prometheus-ji-chu/quickstart/prometheus-quick-start/use-grafana-create-dashboard)
+
+### 7.5 写一个 Python exporter
+
+- 参考：[client_python](https://github.com/prometheus/client_python)
