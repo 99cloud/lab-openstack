@@ -854,3 +854,409 @@ USE 方法主要关注与资源的：使用率(Utilization)、饱和度(Saturati
     if __name__ == '__main__':
         app.run(host='0.0.0.0', port=5000)
     ```
+
+## 8. Elastic Search
+
+Elasticsearch 可以快速地储存、搜索和分析海量数据。维基百科、Stack Overflow、Github 都采用它。
+
+Elastic 的底层是开源库 Lucene。但是，你没法直接用 Lucene，必须自己写代码去调用它的接口。Elastic 是 Lucene 的封装，提供了 REST API 的操作接口，开箱即用。
+
+### 8.1 安装部署
+
+参考：[Install Elasticsearch with Docker](https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html)，通过 docker 启动一个 AIO 的 ES（注意：Elasticsearch 占用资源较多，如果是实验环境，建议先清理无用的服务。K8S 群集可以通过 [`kubeadmin reset -f`](https://kubernetes.io/zh/docs/reference/setup-tools/kubeadm/kubeadm-reset/) 清理）。命令如下：
+
+`docker run -d -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.9.3`
+
+然后可以测试下 ES 服务是否就绪：
+
+```bash
+curl http://localhost:9200
+```
+
+```json
+{
+  "name" : "b4bb0ad2c659",
+  "cluster_name" : "docker-cluster",
+  "cluster_uuid" : "lYLCXqqsTbyS2nJM2MpQcw",
+  "version" : {
+    "number" : "7.9.3",
+    "build_flavor" : "default",
+    "build_type" : "docker",
+    "build_hash" : "c4138e51121ef06a6404866cddc601906fe5c868",
+    "build_date" : "2020-10-16T10:36:16.141335Z",
+    "build_snapshot" : false,
+    "lucene_version" : "8.6.2",
+    "minimum_wire_compatibility_version" : "6.8.0",
+    "minimum_index_compatibility_version" : "6.0.0-beta1"
+  },
+  "tagline" : "You Know, for Search"
+}
+```
+
+### 8.2 基本概念
+
+- Node 与 Cluster
+    - Elastic 本质上是一个分布式数据库，允许多台服务器协同工作，每台服务器可以运行多个 Elastic 实例。
+    - 单个 Elastic 实例称为一个节点（node）。一组节点构成一个集群（cluster）。参考官网安装文档的 [docker-compose 多节点实验环境部署](https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html#docker-compose-file)。
+- Index
+    - Elastic 会索引所有字段，经过处理后写入一个反向索引（Inverted Index）。查找数据的时候，直接查找该索引。
+    - Elastic 数据管理的顶层单位就叫做 Index（索引）。它是单个数据库的同义词。每个 Index （即数据库）的名字必须是小写。
+    - 查看当前节点的所有 Index
+    
+        ```conosle
+        $ curl -X GET 'http://localhost:9200/_cat/indices?v'
+        health status index uuid pri rep docs.count docs.deleted store.size pri.store.size
+        ```
+
+- Document
+    - Index 里面单条的记录称为 Document（文档）。许多条 Document 构成了一个 Index。
+    - Document 使用 JSON 格式表示，下面是一个例子。
+
+        ```json
+        {
+        "user": "张三",
+        "title": "工程师",
+        "desc": "数据库管理"
+        }
+        ```
+
+    - 同一个 Index 里面的 Document，不要求有相同的结构（scheme），但是最好保持相同，这样有利于提高搜索效率。
+
+- Type
+    - Document 可以分组，比如 weather 这个 Index 里面，可以按城市分组（北京和上海），也可以按气候分组（晴天和雨天）。这种分组就叫做 Type，它是虚拟的逻辑分组，用来过滤 Document。
+    - 不同的 Type 应该有相似的结构（schema），举例来说，id字段不能在这个组是字符串，在另一个组是数值。这是与关系型数据库的表的一个区别。性质完全不同的数据（比如products和logs）应该存成两个 Index，而不是一个 Index 里面的两个 Type（虽然可以做到）。
+    - 下面的命令可以列出每个 Index 所包含的 Type。`curl 'localhost:9200/_mapping?pretty=true'`。根据规划，Elastic 6.x 版只允许每个 Index 包含一个 Type，7.x 版以后将考虑移除 Type。
+
+### 8.3 新建和删除 Index
+
+新建 Index，可以直接向 Elastic 服务器发出 PUT 请求。下面的例子是新建一个名叫weather的 Index。
+
+```console
+$ curl -X PUT 'localhost:9200/weather'
+{
+  "acknowledged": true,
+  "shards_acknowledged": true,
+  "index": "weather"
+}
+
+$ curl -X GET 'http://localhost:9200/_cat/indices?v'
+health status index   uuid                   pri rep docs.count docs.deleted store.size pri.store.size
+yellow open   weather dpIqtnP6TdyzMoYqpmZ5yA   1   1          0            0       208b           208b
+
+$ curl -X DELETE 'localhost:9200/weather'
+{
+  "acknowledged": true
+}
+```
+
+### 8.4 数据操作
+
+#### 8.4.1 新增记录
+
+向指定的 /Index/Type 发送 PUT 请求，就可以在 Index 里面新增一条记录。比如，向/accounts/person发送请求，就可以新增一条人员记录。
+
+```console
+$ curl -H "Content-Type: application/json" -X PUT 'localhost:9200/accounts/person/1' -d '
+{
+  "user": "张三",
+  "title": "工程师",
+  "desc": "数据库管理"
+}' 
+```
+
+服务器返回的 JSON 对象，会给出 Index、Type、Id、Version 等信息。
+
+```json
+{
+  "_index": "accounts",
+  "_type": "person",
+  "_id": "1",
+  "_version": 2,
+  "result": "updated",
+  "_shards": {
+    "total": 2,
+    "successful": 1,
+    "failed": 0
+  },
+  "_seq_no": 1,
+  "_primary_term": 1
+}
+```
+
+请求路径是/accounts/person/1，最后的 1 是该条记录的 ID。它不一定是数字，任意字符串（比如abc）都可以。新增记录的时候，也可以不指定 Id，这时要改成 POST 请求。
+
+```console
+$ curl -H "Content-Type: application/json" -X POST 'localhost:9200/accounts/person' -d '
+{
+  "user": "张三",
+  "title": "工程师",
+  "desc": "数据库管理"
+}' 
+```
+
+上面代码中，向/accounts/person发出一个 POST 请求，添加一个记录。这时，服务器返回的 JSON 对象里面，_id字段就是一个随机字符串。
+
+```json
+{
+  "_index": "accounts",
+  "_type": "person",
+  "_id": "fdBHlHUBiFudkY3qOzr3",
+  "_version": 1,
+  "result": "created",
+  "_shards": {
+    "total": 2,
+    "successful": 1,
+    "failed": 0
+  },
+  "_seq_no": 2,
+  "_primary_term": 1
+}
+
+```
+
+注意，如果没有先创建 Index（这个例子是accounts），直接执行上面的命令，Elastic 也不会报错，而是直接生成指定的 Index。所以，打字的时候要小心，不要写错 Index 的名称。
+
+#### 8.4.2 查看记录
+
+向 /Index/Type/ID 发出 GET 请求，就可以查看这条记录。
+
+```bash
+curl 'localhost:9200/accounts/person/1?pretty=true'
+```
+
+返回的数据中，found 字段表示查询成功，_source 字段返回原始记录。
+
+```json
+{
+  "_index" : "accounts",
+  "_type" : "person",
+  "_id" : "1",
+  "_version" : 2,
+  "_seq_no" : 1,
+  "_primary_term" : 1,
+  "found" : true,
+  "_source" : {
+    "user" : "张三",
+    "title" : "工程师",
+    "desc" : "数据库管理"
+  }
+}
+```
+
+如果 ID 不正确，就查不到数据，found 字段就是 false。
+
+```console
+$ curl 'localhost:9200/weather/beijing/abc?pretty=true'
+
+{
+  "_index" : "accounts",
+  "_type" : "person",
+  "_id" : "abc",
+  "found" : false
+}
+```
+
+#### 8.4.3 删除记录
+
+删除记录就是发出 DELETE 请求。
+
+```bash
+curl -X DELETE 'localhost:9200/accounts/person/fdBHlHUBiFudkY3qOzr3'
+```
+
+```json
+{
+  "_index": "accounts",
+  "_type": "person",
+  "_id": "fdBHlHUBiFudkY3qOzr3",
+  "_version": 2,
+  "result": "deleted",
+  "_shards": {
+    "total": 2,
+    "successful": 1,
+    "failed": 0
+  },
+  "_seq_no": 5,
+  "_primary_term": 1
+}
+```
+
+#### 8.4.4 更新记录
+
+更新记录就是使用 PUT 请求，重新发送一次数据。
+
+```bash
+curl -H "Content-Type: application/json" -X PUT 'localhost:9200/accounts/person/1' -d '
+{
+    "user" : "张三",
+    "title" : "工程师",
+    "desc" : "数据库管理，软件开发"
+}' 
+```
+
+```json
+{
+  "_index":"accounts",
+  "_type":"person",
+  "_id":"1",
+  "_version":2,
+  "result":"updated",
+  "_shards":{"total":2,"successful":1,"failed":0},
+  "created":false
+}
+```
+
+上面代码中，我们将原始数据从"数据库管理"改成"数据库管理，软件开发"。 返回结果里面，有几个字段发生了变化。
+
+```
+"_version" : 2,
+"result" : "updated",
+"created" : false
+```
+
+可以看到，记录的 Id 没变，但是版本（version）从 1 变成 2，操作类型（result）从 created 变成 updated，created 字段变成false，因为这次不是新建记录。
+
+### 8.5 数据查询
+
+#### 8.5.1 返回所有记录
+
+使用 GET 方法，直接请求/Index/Type/_search，就会返回所有记录。
+
+```bash
+curl 'localhost:9200/accounts/person/_search'
+```
+
+```json
+{
+  "took":2,
+  "timed_out":false,
+  "_shards":{"total":5,"successful":5,"failed":0},
+  "hits":{
+    "total":2,
+    "max_score":1.0,
+    "hits":[
+      {
+        "_index":"accounts",
+        "_type":"person",
+        "_id":"AV3qGfrC6jMbsbXb6k1p",
+        "_score":1.0,
+        "_source": {
+          "user": "李四",
+          "title": "工程师",
+          "desc": "系统管理"
+        }
+      },
+      {
+        "_index":"accounts",
+        "_type":"person",
+        "_id":"1",
+        "_score":1.0,
+        "_source": {
+          "user" : "张三",
+          "title" : "工程师",
+          "desc" : "数据库管理，软件开发"
+        }
+      }
+    ]
+  }
+}
+```
+
+上面代码中，返回结果的 took字段表示该操作的耗时（单位为毫秒），timed_out字段表示是否超时，hits字段表示命中的记录，里面子字段的含义如下。
+
+- total：返回记录数，本例是2条。
+- max_score：最高的匹配程度，本例是1.0。
+- hits：返回的记录组成的数组。
+
+返回的记录中，每条记录都有一个 _score 字段，表示匹配的程序，默认是按照这个字段降序排列。
+
+### 8.5.2 全文搜索
+
+Elastic 的查询非常特别，使用自己的查询语法，要求 GET 请求带有数据体。
+
+```console
+$ curl -H "Content-Type: application/json"  'localhost:9200/accounts/person/_search'  -d '
+{
+  "query" : { "match" : { "desc" : "软件" }}
+}'
+```
+
+上面代码使用 Match 查询，指定的匹配条件是 desc 字段里面包含"软件"这个词。返回结果如下。
+
+```json
+{
+  "took":3,
+  "timed_out":false,
+  "_shards":{"total":5,"successful":5,"failed":0},
+  "hits":{
+    "total":1,
+    "max_score":0.28582606,
+    "hits":[
+      {
+        "_index":"accounts",
+        "_type":"person",
+        "_id":"1",
+        "_score":0.28582606,
+        "_source": {
+          "user" : "张三",
+          "title" : "工程师",
+          "desc" : "数据库管理，软件开发"
+        }
+      }
+    ]
+  }
+}
+```
+
+Elastic 默认一次返回 10 条结果，可以通过 size 字段改变这个设置。
+
+```conosle
+$ curl -H "Content-Type: application/json"  'localhost:9200/accounts/person/_search'  -d '
+{
+  "query" : { "match" : { "desc" : "管理" }},
+  "size": 1
+}'
+```
+上面代码指定，每次只返回一条结果。
+
+还可以通过 from 字段，指定位移。
+
+```console
+$ curl -H "Content-Type: application/json" 'localhost:9200/accounts/person/_search'  -d '
+{
+  "query" : { "match" : { "desc" : "管理" }},
+  "from": 1,
+  "size": 1
+}'
+```
+
+上面代码指定，从位置 1 开始（默认是从位置 0 开始），只返回一条结果。
+
+### 8.5.3 逻辑运算
+
+如果有多个搜索关键字， Elastic 认为它们是or关系。
+
+```console
+$ curl -H "Content-Type: application/json" 'localhost:9200/accounts/person/_search'  -d '
+{
+  "query" : { "match" : { "desc" : "软件 系统" }}
+}'
+```
+
+上面代码搜索的是软件 or 系统。
+
+如果要执行多个关键词的 and 搜索，必须使用布尔查询。
+
+```console
+$ curl -H "Content-Type: application/json" 'localhost:9200/accounts/person/_search'  -d '
+{
+  "query": {
+    "bool": {
+      "must": [
+        { "match": { "desc": "软件" } },
+        { "match": { "desc": "系统" } }
+      ]
+    }
+  }
+}'
+```
