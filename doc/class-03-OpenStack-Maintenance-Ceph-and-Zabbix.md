@@ -642,14 +642,24 @@ $ curl 'http://localhost:9090/api/v1/query_range?query=up&start=2015-07-01T20:10
 
 监控纬度
 
-| 级别 | 监控什么 | Exporter | 
-| - | - | - | - |
-| 网络 | 网络协议：http、dns、tcp、icmp；网络硬件：路由器，交换机等 | BlackBox Exporter;SNMP Exporter |
-| 主机 | 资源用量 | node exporter |
-| 容器 | 资源用量 | cAdvisor |
-| 应用(包括 Library) | 延迟，错误，QPS，内部状态等 | 代码中集成Prmometheus Client |
-| 中间件状态 | 资源用量，以及服务状态 | 代码中集成Prmometheus Client |
-| 编排工具 | 集群资源用量，调度等 | Kubernetes Components |
+- 网络
+    - 监控：网络协议：http、dns、tcp、icmp；网络硬件：路由器，交换机等
+    - exporter：BlackBox Exporter;SNMP Exporter
+- 主机
+    - 监控：资源用量
+    - exporter：node exporter
+- 容器
+    - 监控：资源用量
+    - exporter：cAdvisor
+- 应用(包括 Library)
+    - 监控：延迟，错误，QPS，内部状态等
+    - exporter：代码中集成Prmometheus Client
+- 中间件状态
+    - 监控：资源用量，以及服务状态
+    - exporter：代码中集成Prmometheus Client
+- 编排工具
+    - 监控：集群资源用量，调度等
+    - exporter：Kubernetes Components
 
 4个黄金指标
 
