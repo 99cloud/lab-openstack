@@ -764,7 +764,7 @@
 
 ### Ansible Demo ( [Catalog](#catalog) )
 
-1. [Demo]: Template, copy files to target host with template
+1. [Demo-1]: Template, copy files to target host with template
 
     ```console
     # cat config.ini.j2
@@ -785,8 +785,9 @@
     # ansible-playbook -i /etc/ansible/hosts playbook.yml
     ```
 
-1. [Demo]: [Deploy a website with Ansible](https://github.com/wu-wenxiang/Project-Python-Webdev/tree/master/u1604-ansible)
-1. [Demo]: Deploy OpenShift
+1. [Demo-2]: [Deploy a website with Ansible](https://github.com/wu-wenxiang/Project-Python-Webdev/tree/master/u1604-ansible)
+1. [Demo-3]: [Deploy OpenShift 3.11](https://github.com/openshift/openshift-ansible/tree/release-3.11)
+1. https://github.com/wu-wenxiang/ZZLARGE-Project-DjangoTest
 
 ### [Optional] AWX ( [Catalog](#catalog) )
 
