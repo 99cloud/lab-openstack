@@ -1389,3 +1389,27 @@ Fluent Bit v1.5.7
 [2020/11/05 00:49:23] [debug] [router] match rule forward.0:es.0
 [2020/11/05 00:49:23] [ info] [sp] stream processor started
 ```
+
+如果要监控日志文件的增长，可以修改配置文件：
+
+```ini
+[SERVICE]
+    Flush        1
+    Daemon       OFF
+    Log_Level    debug
+
+[INPUT]
+    Name        tail
+    Path        /home/logs/ng.log
+    Db          /tmp/ng.db
+    Db.sync     Full
+    Tag         nginxlog8
+
+[OUTPUT]
+    Name        forward
+    Match       *
+    Host        12.18.7.41
+    Port        24222
+```
+
+此时，`echo qquuuuuu>ng.log` 就可以看到 fluent-bit 的输出了。
