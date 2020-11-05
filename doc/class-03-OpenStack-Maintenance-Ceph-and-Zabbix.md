@@ -859,7 +859,7 @@ USE 方法主要关注与资源的：使用率(Utilization)、饱和度(Saturati
 
 Elasticsearch 可以快速地储存、搜索和分析海量数据。维基百科、Stack Overflow、Github 都采用它。
 
-Elastic 的底层是开源库 Lucene。但是，你没法直接用 Lucene，必须自己写代码去调用它的接口。Elastic 是 Lucene 的封装，提供了 REST API 的操作接口，开箱即用。
+Elastic 的底层是开源库 Lucene。但是，你没法直接用 Lucene，必须自己写代码去调用它的接口。Elastic 是 Lucene 的封装，提供了 REST API 的操作接口，开箱即用。参考：[全文搜索引擎 Elasticsearch 入门教程](https://www.ruanyifeng.com/blog/2017/08/elasticsearch.html)
 
 ### 8.1 安装部署
 
@@ -1259,4 +1259,133 @@ $ curl -H "Content-Type: application/json" 'localhost:9200/accounts/person/_sear
     }
   }
 }'
+```
+
+## 8.6 收集日志
+
+| | fluentd | fluent-bit |
+| --- | ---- | --- |
+| 语言 | Ruby / C | C |
+| Size | 40M | 450k |
+| 插件支持 | 650+ | 35+ |
+| 作用 | 日志收集器，处理器和聚合器 | 日志收集器和处理器 |
+
+可以考虑将 Fluentd 主要用作聚合器，将 fluent-bit 作为日志转发器，两个项目相互补充，从而提供了完整的可靠轻量级日志解决方案，当然 fluent-bit 也可以独立完成日志收集。
+
+### 8.6.1 Fluent Bit 收集日志
+
+参考：[Fluent Bit Getting Started](https://hub.docker.com/r/fluent/fluent-bit/)，启动一个 Fluent-bit 容器作为日志收集方，然后把容器的日志发送过去。
+
+Run a Fluent Bit instance that will receive messages over TCP port 24224 through the [Forward](https://docs.fluentbit.io/manual/pipeline/outputs/forward) protocol, and send the messages to the [STDOUT](https://docs.fluentbit.io/manual/pipeline/outputs/standard-output) interface in JSON format every one second:
+
+```console
+$ docker run -p 127.0.0.1:24224:24224 fluent/fluent-bit:1.5 /fluent-bit/bin/fluent-bit -i forward -o stdout -p format=json_lines -f 1
+
+Fluent Bit v1.5.7
+* Copyright (C) 2019-2020 The Fluent Bit Authors
+* Copyright (C) 2015-2018 Treasure Data
+* Fluent Bit is a CNCF sub-project under the umbrella of Fluentd
+* https://fluentbit.io
+
+[2020/11/04 23:51:11] [ info] [engine] started (pid=1)
+[2020/11/04 23:51:11] [ info] [storage] version=1.0.5, initializing...
+[2020/11/04 23:51:11] [ info] [storage] in-memory
+[2020/11/04 23:51:11] [ info] [storage] normal synchronization mode, checksum disabled, max_chunks_up=128
+[2020/11/04 23:51:11] [ info] [input:forward:forward.0] listening on 0.0.0.0:24224
+[2020/11/04 23:51:11] [ info] [sp] stream processor started
+```
+
+Now run a separate container that will send a test message. This time the Docker container will use the Fluentd Forward Protocol as the logging driver:
+
+```bash
+docker run --log-driver=fluentd -t ubuntu echo "Testing a log message"
+```
+
+Fluent-Bit 的输出：
+
+```json
+{"date":1604533893,"log":"Testing a log message\r","container_id":"63d226fec361b66fec06bc4c2c7b091fcb55f047d8b74c61bf2d3f38dc583a72","container_name":"/competent_ritchie","source":"stdout"}
+{"date":1604533896,"container_id":"402de26a84988ae12c82da1e54563ee51ca54360f8dc5b04a2a6e52df1ddac01","container_name":"/xenodochial_goodall","source":"stdout","log":"Testing a log message\r"}
+```
+
+现在用 Python 把日志发到 Fluent-Bit，参考：[FluentSender Interface](https://github.com/fluent/fluent-logger-python)
+
+```bash
+pip install fluent-logger
+```
+
+```python
+>>> from fluent import sender
+>>> logger = sender.FluentSender('app')
+>>> logger.emit('follow', {'from': 'userA', 'to': 'userB'})
+True
+```
+
+Fluent-Bit 的输出：
+
+```json
+{"date":1604534479,"from":"userA","to":"userB"}
+```
+
+#### 8.6.2 将 Fluent Bit 收集到日志重定向到 ES
+
+很多应用都提供直接对接 ES 的能力，我们为什么还需要日志摄取器？应用不应该关注日志的路由和存储(Elasticsearch / Graylog / ...)，**日志应该只输出到 stdout，整个系统所有应用保持统一输出，由日志摄取器无侵入式收集**。
+
+参考官方文档：
+
+- [Running a Logging Pipeline Locally](https://docs.fluentbit.io/manual/v/master/local-testing/logging-pipeline)
+- [Docker Logging with Fluent Bit and Elasticsearch](https://fluentbit.io/articles/docker-logging-elasticsearch/)
+
+```console
+root@devopslab020:~# cat fluent-bit.config 
+[SERVICE]
+    Flush        5
+    Daemon       Off
+    Log_Level    debug
+
+[INPUT]
+    Name   forward
+    Listen 0.0.0.0
+    Port   24224
+
+[OUTPUT]
+    Name  es
+    Match *
+    Host  172.31.43.160
+    Port  9200
+    Index fluentbit
+    Type  docker
+
+root@devopslab020:~# docker run -p 127.0.0.1:24224:24224 -v ~/fluent-bit.config:/tmp/fluent-bit.config fluent/fluent-bit:1.5 /fluent-bit/bin/fluent-bit -c /tmp/fluent-bit.config
+Fluent Bit v1.5.7
+* Copyright (C) 2019-2020 The Fluent Bit Authors
+* Copyright (C) 2015-2018 Treasure Data
+* Fluent Bit is a CNCF sub-project under the umbrella of Fluentd
+* https://fluentbit.io
+
+[2020/11/05 00:49:23] [ info] Configuration:
+[2020/11/05 00:49:23] [ info]  flush time     | 5.000000 seconds
+[2020/11/05 00:49:23] [ info]  grace          | 5 seconds
+[2020/11/05 00:49:23] [ info]  daemon         | 0
+[2020/11/05 00:49:23] [ info] ___________
+[2020/11/05 00:49:23] [ info]  inputs:
+[2020/11/05 00:49:23] [ info]      forward
+[2020/11/05 00:49:23] [ info] ___________
+[2020/11/05 00:49:23] [ info]  filters:
+[2020/11/05 00:49:23] [ info] ___________
+[2020/11/05 00:49:23] [ info]  outputs:
+[2020/11/05 00:49:23] [ info]      es.0
+[2020/11/05 00:49:23] [ info] ___________
+[2020/11/05 00:49:23] [ info]  collectors:
+[2020/11/05 00:49:23] [ info] [engine] started (pid=1)
+[2020/11/05 00:49:23] [debug] [engine] coroutine stack size: 24576 bytes (24.0K)
+[2020/11/05 00:49:23] [debug] [storage] [cio stream] new stream registered: forward.0
+[2020/11/05 00:49:23] [ info] [storage] version=1.0.5, initializing...
+[2020/11/05 00:49:23] [ info] [storage] in-memory
+[2020/11/05 00:49:23] [ info] [storage] normal synchronization mode, checksum disabled, max_chunks_up=128
+[2020/11/05 00:49:23] [debug] [in_fw] Listen='0.0.0.0' TCP_Port=24224
+[2020/11/05 00:49:23] [ info] [input:forward:forward.0] listening on 0.0.0.0:24224
+[2020/11/05 00:49:23] [debug] [output:es:es.0] host=172.31.43.160 port=9200 uri=/_bulk index=fluentbit type=docker
+[2020/11/05 00:49:23] [debug] [router] match rule forward.0:es.0
+[2020/11/05 00:49:23] [ info] [sp] stream processor started
 ```
