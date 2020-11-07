@@ -1,8 +1,8 @@
 # DevStack AIO 环境搭建步骤
 
 1. MacOS / VMWare Fusion 15
-1. 6Core / 16G 内存 / 40G 硬盘 / NAT 网络单张网卡 / 对虚拟机打开 VT 允许嵌套虚拟化
-1. Ubuntu 18.04 Server ISO，安装系统，关机，打快照
+1. 6Core / 16G 内存 / 40G 硬盘（足够的化给 60G） / NAT 网络单张网卡 / 对虚拟机打开 VT 允许嵌套虚拟化
+1. Ubuntu 20.04 Server ISO，安装系统，配置 SSH 密钥登陆，关机，打快照
 1. 配置 Ubuntu [apt 清华源](https://mirrors.tuna.tsinghua.edu.cn/help/ubuntu/)，apt-get update && apt-get upgrade
 1. 配置 pip 豆瓣源，其它源（ 比如阿里、清华、中科大 ）更新速度稍慢，比如 os-brick===3.2.0 会找不到，最多 3.1.0
 
@@ -14,8 +14,10 @@
     index-url = https://pypi.douban.com/simple/
     ```
 
+    **注意：20.04 在 /etc/pip.conf 配置不生效，可能是因为 20.04 上没有 pip 命令，必须 python -m pip，未深究。可以在 stack / root 的 home 目录下创建 ~/.pip/pip.conf，可以生效。**
+
 1. 如果每次执行 sudo 都很慢的话，需要把你的主机名加到 `/etc/hosts`，类似：`127.0.0.1 yourhostname`，参考：[Terminal command with sudo takes a long time](https://askubuntu.com/questions/322514/terminal-command-with-sudo-takes-a-long-time)
-1. [DevStack 单机版本官方文档](https://docs.openstack.org/devstack/latest/guides/single-machine.html)，当前开发中的版本是 Victoria，最新的稳定版本是 Ussuri。注意各版本的 devstack 都只保证兼容其发布时间节点上的最近两个的 Linux 主流 LTS 发行版本。或者参考这个[官方文档](https://docs.openstack.org/devstack/latest/)，类似的。
+1. [DevStack 单机版本官方文档](https://docs.openstack.org/devstack/latest/guides/single-machine.html)，当前最新的稳定版本是 Victoria。注意各版本的 devstack 都只保证兼容其发布时间节点上的最近两个的 Linux 主流 LTS 发行版本。或者参考这个[官方文档](https://docs.openstack.org/devstack/latest/)，类似的。
 
     ```bash
     sudo useradd -s /bin/bash -d /opt/stack -m stack
@@ -25,24 +27,12 @@
     echo "stack ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
     exit
     
-    sudo su stack
-    cd ~
+    sudo su - stack
     
     sudo apt-get install git -y || sudo yum install -y git
     git clone http://git.trystack.cn/openstack/devstack.git
     cd devstack
-    ```
 
-1.  此处以 master 分支为例（ 本文写作时是 Victoria 版本 ），当前最新的提交 ID 是 647fef0b405deea635a710c124d508a59e6d1119，你也可以用 stable/ussuri 等 stable 分支，Ubuntu 18.04 用 U 分支验证也没问题，安装时可以使用 screen。
-
-    ```console
-    $ git log -1
-    commit 647fef0b405deea635a710c124d508a59e6d1119 (HEAD -> master, origin/master, origin/HEAD)
-    Merge: 9208a371 dd3731c8
-    Author: Zuul <zuul@review.opendev.org>
-    Date:   Thu Jul 30 09:27:55 2020 +0000
-    
-        Merge "Install bindep packages when installing lib from src"
     ```
 
 1. 提前下载一些在安装过程中需要用到的大文件
@@ -94,12 +84,12 @@
     SWIFT_DATA_DIR=$DEST/data
     ```
 
-1. 如果需要用 stable/ussuri 版本，启用 swift & heat，操作和配置如下
+1. 如果需要用 stable/victoria 版本，启用 swift & heat，操作和配置如下
 
     ```console
-    stack@u1804:~/devstack$ git checkout stable/ussuri
-    Branch 'stable/ussuri' set up to track remote branch 'stable/ussuri' from 'origin'.
-    Switched to a new branch 'stable/ussuri'
+    stack@u1804:~/devstack$ git checkout stable/victoria
+    Branch 'stable/victoria' set up to track remote branch 'stable/victoria' from 'origin'.
+    Switched to a new branch 'stable/victoria'
 
     stack@u1804:~/devstack$ diff local.conf samples/local.conf 
     28,30c28,30
@@ -117,8 +107,8 @@
     < SPICE_REPO=http://git.trystack.cn/git/spice/spice-html5.git
     < 
     < enable_service s-proxy s-object s-container s-account h-eng h-api h-api-cfn h- api-cw q-svc q-dhcp q-meta q-agt q-l3 c-bak n-spice
-    < enable_plugin heat http://git.trystack.cn/openstack/heat stable/ussuri
-    < enable_plugin heat-dashboard http://git.trystack.cn/openstack/heat-dashboard stable/ussuri
+    < enable_plugin heat http://git.trystack.cn/openstack/heat stable/victoria
+    < enable_plugin heat-dashboard http://git.trystack.cn/openstack/heat-dashboard stable/victoria
 
     stack@u1804:~/devstack$ cat local.conf | grep -v ^# | grep -v ^$
     [[local|localrc]]
@@ -130,8 +120,8 @@
     NOVNC_REPO=http://git.trystack.cn/kanaka/noVNC.git
     SPICE_REPO=http://git.trystack.cn/git/spice/spice-html5.git
     enable_service s-proxy s-object s-container s-account h-eng h-api h-api-cfn h- api-cw q-svc q-dhcp q-meta q-agt q-l3 c-bak n-spice
-    enable_plugin heat http://git.trystack.cn/openstack/heat stable/ussuri
-    enable_plugin heat-dashboard http://git.trystack.cn/openstack/heat-dashboard stable/ussuri
+    enable_plugin heat http://git.trystack.cn/openstack/heat stable/victoria
+    enable_plugin heat-dashboard http://git.trystack.cn/openstack/heat-dashboard stable/victoria
     LOGFILE=$DEST/logs/stack.sh.log
     LOGDAYS=2
     SWIFT_HASH=66a3d6b56c1f479c8b4e70ab5c2000f5
@@ -140,7 +130,7 @@
     ```
 
 1. 关机，打快照，开机
-1. 开始安装 & 等待安装完成，安装完成后（ 正常的网络基本能稳定在 5000 秒以内，大约 1.5 小时左右完成 ）关机，打快照
+1. 开始安装 & 等待安装完成，安装完成后（ 正常的网络基本能稳定在 2500 秒以内，大约 40 分钟左右完成 ）关机，打快照
 
     ```bash
     ./stack.sh
@@ -155,8 +145,8 @@
     stack    112380 111853  0 00:53 ?        00:00:00 /usr/bin/python3.6 /usr/local/bin/swift-container-server /etc/swift/container-server/1.conf -v
 
     stack@u1804:~/glance$ git status
-    On branch stable/ussuri
-    Your branch is up to date with 'origin/stable/ussuri'.
+    On branch stable/victoria
+    Your branch is up to date with 'origin/stable/victoria'.
 
     nothing to commit, working tree clean
     ```
