@@ -129,7 +129,7 @@
     SWIFT_DATA_DIR=$DEST/data
     ```
 
-1. 创建 Volume Group，参考](https://developer.aliyun.com/article/311612)
+1. 创建 Volume Group，[参考](https://developer.aliyun.com/article/311612)
 
     ```bash
     pgcreate /dev/sdb
