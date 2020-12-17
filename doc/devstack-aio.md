@@ -46,6 +46,8 @@
     - 从 [github](https://github.com/cirros-dev/cirros/releases/download/0.5.1/cirros-0.5.1-x86_64-disk.img) 或者其它镜像网站下载 `cirros-0.5.1-x86_64-disk.img` 放到 `/opt/stack/devstack/files/` 下面，Victoria 版本默认用这个
     - 从 [github](https://github.com/cirros-dev/cirros/releases/download/0.4.0/cirros-0.4.0-x86_64-disk.img) 或者其它镜像网站下载 `cirros-0.4.0-x86_64-disk.img` 放到 `/opt/stack/devstack/files/` 下面，Ussuri 版本默认用这个
     - 从 [bootstrap.pypa.io](https://bootstrap.pypa.io/get-pip.py) 下载 `get-pip.py` 放到：`/opt/stack/devstack/files/`
+1. 不随着官方版本变化, 指定安装pip,setuptools,wheels的版本, 稳定稳定稳定提供稳定的部署环境
+    
 1. 复制和修改 samples/local.conf 文件，如下配置是使用最新版本，使用默认配置，不安装 heat
   
     ```console
@@ -136,6 +138,21 @@
     
     # 如果找不到，是Linux 的 lvm 默认配置不允许在 /dev/sdb 上创建 PV，需要将 sdb 添加到 /etc/lvm.conf 的 filter 中
     global_filter = ["a|sdb|", ...]
+    ```
+1. 指定pip，wheels，setuptools的版本，避免部署过程中遇到依赖不匹配的问题
+1. 取消检查setuptools版本是否与requirements.txt的匹配，由于requirements.txt每次都会update到最新的版本，使用旧版本不一定会通过检测
+    ```console
+    stack@u1804:~/devstack$ cp tools/install_pip.sh  tools/install_pip_default.sh
+    stack@u1804:~/devstack$ vi tools/install_pip.sh      	
+    stack@u1804:~/devstack$ diff tools/install_pip.sh  tools/install_pip_default.sh
+    94c94
+    <     sudo -H -E python${PYTHON3_VERSION} $LOCAL_PIP pip==20.2.4 wheel==0.30.0 setuptools==39.0.1
+    ---
+    >     sudo -H -E python${PYTHON3_VERSION} $LOCAL_PIP
+    153c153
+    < #pip_install_gr setuptools
+    ---
+    > pip_install_gr setuptools
     ```
 
 1. 关机，打快照，开机
