@@ -4,7 +4,7 @@
 
 应届生/社招简历请发到：<wu.wenxiang@99cloud.net>
 
-- **K8S 研发工程师（上海/无锡）**：
+- **K8S 研发工程师（上海/无锡/北京）**：
     - 基础项：golang / docker
     - 加分项：kubernetes
 - **OpenStack 研发工程师（上海/无锡）**：
