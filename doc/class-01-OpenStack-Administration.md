@@ -187,6 +187,9 @@ Openstack以Python语法实现IaaS架构,在各组件调度资源的过程,需�
 **为 OpenStack 提供目录服务**
 **规则服务**
 
+参考官方文件
+https://docs.openstack.org/keystone/latest/
+
 ### Keystone Concepts
 
 1. 什么是 User / Group / Project / Tenant / domain？
@@ -204,10 +207,20 @@ domain: 在OpenStack当中域是用来实现真正的多项目/租户模>式的�
 之前提到OpenStack有很多个核心组件组合而成的, 每个组件都有一个或多个管理接口, 每个管理接口提供服务都是以web服务的形式出现的, 那么他们都有一个服务的终点地址比如keystone的(http://ip:5000/v3), 我们怎么才能找到每个组件的终端呢？因为这些服务可以很方便的迁移到任何网络可达的物理服务器上, 所有这里我们要一个机制来集中管理服务的终点, 就像服务终点的路由器一样, 更好理解的是像dns
 
 1. 什么是 tokenid ? 
-是缓存在服务器上的memcache中, 以减少数据库连接查询所带来的磁盘的io, 大大的提高了性能, 我们可以用类似的像postman等工具来查看api的返回结果
+令牌, 由 keystone 认证后发放, 可以透过此令牌在其他 opesntack service 发出请求提供服务
+发放与使用流程
+1. Client obtains token from the Keystone (by user password)
+2. Client sends request to Nova API to launch VM instance
+3. Nova API verifies token in Keystone
+4. Nova requests Keystone to get all available quotas for project/user. Nova calculates amount of used resources and allows or permits operation
+5. Nova API calls nova-compute via RPC to launch VM instance.
+
+![](../img/token.png)
 
 1. 什么是 Role / Policy？
 keystone 遇到不同的使用者做出不同请求的问题 ( 例如: 创建虚拟机 删除云盘 ) 要透过 role 跟 policy 协作来满足需求, 每一个调度请求都会有一个对应的 policy 里面存有多向属性, 其中一个就是 role。 再来, 每个被创建的使用者都会被绑定一个 role (admin / member), 当使用者发出请求调度服务的时后, keystone 收到后会确认这个服务的policy role 是不是这个使用者可以有权利访问的, 如果有才可以继续, 反之拒绝
+
+    ![](../img/api3flow.png)
 
 ### Keystone Capablities
 
