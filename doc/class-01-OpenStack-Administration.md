@@ -74,11 +74,16 @@
 
 ## Lesson 01：OpenStack Introduction ( [Catalog](#catalog) )
 
+云计算最初的概念是”网络即是电脑”, 尔后 Amazon 推出的弹性云计算 (EC2) 提供用户使用资源并且收费, 大致顶定了云计算的商业用途。OpenStack 是一个开源的云平台, 他属于云计算当中我们常说的IAAS(infrastructure as a service),简单的讲他是来管理我们的硬件设施的, 我们在我们的设备上部署Linux与OpenStack, 然后由 OpenStack 来帮助我们决定哪些虚拟机应该启动在哪些物理的计算节点上
+
+    ![](../img/simpleOpenstackArch.png)
+
+    ![](../img/iaas.png)
+
 ### Virtualization & OpenStack ( [Catalog](#catalog) )
 
 1. 什么是虚拟化？虚拟化的发展历程如何？60-70 IBM / 80-90 VMWare / 2005-2010 Amazon / 2010 NASA Nebula & RackSpace Cloud Storage
 1. 云计算的类型有几种类型？IaaS / PaaS / SaaS，只有 IaaS 是必须基于虚拟化的
-1. OpenStack 的发展过程？模块化 & 服务化，核心项目 & 集成项目 => Big Tent
 
 ### OpenStack Infrastructure ( [Catalog](#catalog) )
 
@@ -95,16 +100,85 @@
 
     ![](https://docs.openstack.org/ocata/admin-guide/_images/openstack_kilo_conceptual_arch.png)
 
+1. OpenStack 的发展过程？模块化 & 服务化，核心项目 & 集成项目 => Big Tent
+1. 平均6个月版本更新, 每个版本维护18个月, bugfix
+
+1. [stackalytics](https://www.stackalytics.com/)
+
+1. [Source code](https://opendev.org/openstack)
+
+1. [launchpad](https://bugs.launchpad.net/)
+
+1. [review](https://review.opendev.org/)
+
+    ![](../img/qualityfordevelop.png)
+
 ### The Trend of Cloud Computing ( [Catalog](#catalog) )
 
 1. 私有云、公有云、混合云的发展趋势如何？Azure / Aliyun / HW
 1. IaaS & CaaS 谁会是未来的主流？
 1. OpenStack 的发展趋势？
 
+裸机资源的管理: 
+        Ironic 裸机节点纳管,精准的编排与调度,实现裸机云
+
+容器化:
+        Docker Containerd CRIO,到的Kubernetes容器管理平台,弥补openstack原生云
+        kolla-ansible 布署容器化openstack
+        openstack-helm 基于kubernetes管理平台部署openstack     
+
+相容于主流资源池化:
+        数据池化  SDS -- Ceph and Cinder-volume 
+                高性能 高可用性 高可扩展性 支持三种存储接口(文件, 块, 物件)
+        网络资源池化 SDN -- Neutron Server
+                控制转发分离 集中控制 虚拟化
+
 ### OpenStack Reference ( [Catalog](#catalog) )
 
 1. 官方文档在哪里？
 1. 有哪些推荐的入门书？《每天五分钟玩转 OpenStack》，《OpenStack 设计与实现》
+
+### reference ( [Catalog](#catalog) )
+
+1. How openstack service implements communication?
+   infra: restful api
+   inner: message queue
+
+    ![](../img/communication.png)
+
+1. Restful api
+
+OpenStack是由很多个核心组件组合而成，每个组件都负责他们自己的一小块的功能比如负责提供计算服务的是Nova，提供网络服务的是Neutron,他们各自都有属于自己的管理接口，所谓管理接口就是一个基于http请求的一个Web服务，主要是用于接受命令行工具或者组件的http请求。
+访问管理接口的过程, 使用者发出请求(request)以RESTful的风格,基于http网络协议, 传送送到处理RESTful封包的接口, 又称REST API, 完成对数据库的增删查找.
+
+    ![](../img/restfulapi.png)
+
+1. Message queue
+
+    ![](../img/rabbitmqex.png)
+    ![](../img/rabbitmqex2.png)
+    ![](../img/rabbitmqex3.png)
+
+1. message for openstack oslo.messageing
+Event Notification
+    将讯息发送到总线上面, 对此类讯息感兴趣的服务进程会去获取此讯息, 做进一步的处理
+    举例来说: 计量服务的Ceilometer就是监听总线获取其他服务的事件,进而实现计量与监控
+
+Remote Procedure Call(RPC)
+    Cast: 异步执行远程方法,调用者不会等待结果返回
+    Call: 同步执行远程方法,调用者会等待结果返回
+
+    ![](../img/oslo.png)
+
+1. database and sqlachemy
+
+Openstack以Python语法实现IaaS架构,在各组件调度资源的过程,需要一数据库记录所有平台管理资料
+底层后台数据库琳琅满目 MySQL Mariadb PostgreSQL Sqlite3 等
+上层开发需要使用Python语法实现
+基于这样环境Openstack使用SQLAchemy来管理数据库
+SQLAchemy是一个以Python语法写成向下对数据库键值进行修改的工具 
+
+    ![](../img/sqlachemy.png)
 
 ## Lesson 02：Keystone
 
