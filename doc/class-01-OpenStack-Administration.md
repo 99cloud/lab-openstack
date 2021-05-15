@@ -76,9 +76,9 @@
 
 云计算最初的概念是”网络即是电脑”, 尔后 Amazon 推出的弹性云计算 (EC2) 提供用户使用资源并且收费, 大致顶定了云计算的商业用途。OpenStack 是一个开源的云平台, 他属于云计算当中我们常说的 IAAS(infrastructure as a service), 简单的讲他是来管理我们的硬件设施的, 我们在我们的设备上部署 Linux 与 OpenStack, 然后由 OpenStack 来帮助我们决定哪些虚拟机应该启动在哪些物理的计算节点上
 
-    ![simpleOpenstackArch](../img/simpleOpenstackArch.png)
+![simpleOpenstackArch](../img/simpleOpenstackArch.png)
     
-    ![iaas](../img/iaas.png)
+![iaas](../img/iaas.png)
 
 ### Virtualization & OpenStack ( [Catalog](#catalog) )
 
@@ -102,13 +102,9 @@
 
 1. OpenStack 的发展过程？模块化 & 服务化，核心项目 & 集成项目 => Big Tent
 1. 平均6个月版本更新, 每个版本维护18个月, bugfix
-
 1. [stackalytics](https://www.stackalytics.com/)
-
 1. [Source code](https://opendev.org/openstack)
-
 1. [launchpad](https://bugs.launchpad.net/)
-
 1. [review](https://review.opendev.org/)
 
     ![](../img/qualityfordevelop.png)
@@ -144,24 +140,25 @@
 ### reference ( [Catalog](#catalog) )
 
 #### How openstack service implements communication?
+
 1.   infra: restful api
 1.   inner: message queue
 
-    ![](../img/communication.png)
+![](../img/communication.png)
 
 #### Restful api
 
 OpenStack 是由很多个核心组件组合而成，每个组件都负责他们自己的一小块的功能比如负责提供计算服务的是Nova，提供网络服务的是 Neutron, 他们各自都有属于自己的管理接口，所谓管理接口就是一个基于 http 请求的一个 Web 服务，主要是用于接受命令行工具或者组件的 http 请求。访问管理接口的过程, 使用者发出请求 (request) 以 RESTful 的风格,基于 http 网络协议, 传送送到处理RESTful 封包的接口, 又称 REST API, 完成对数据库的增删查找.
 
-    ![](../img/restfulapi.png)
+![](../img/restfulapi.png)
 
 #### Message queue
 
-    ![](../img/rabbitmqex.png)
+![](../img/rabbitmqex.png)
     
-    ![](../img/rabbitmqex2.png)
+![](../img/rabbitmqex2.png)
     
-    ![](../img/rabbitmqex3.png)
+![](../img/rabbitmqex3.png)
 
 #### message for openstack oslo.messageing
 
@@ -182,7 +179,7 @@ OpenStack 是由很多个核心组件组合而成，每个组件都负责他们�
 
 Openstack 以 Python 语法实现 IaaS 架构, 在各组件调度资源的过程, 需要一数据库记录所有平台管理资料底层后台数据库琳琅满目 MySQL Mariadb PostgreSQL Sqlite3 等上层开发需要使用 Python 语法实现, 基于这样环境 Openstack 使用 SQLAchemy 来管理数据库, SQLAchemy 是一个以 Python 语法写成向下对数据库键值进行修改的工具 
 
-    ![](../img/sqlachemy.png)
+![](../img/sqlachemy.png)
 
 ## Lesson 02：Keystone
 
@@ -198,90 +195,82 @@ https://docs.openstack.org/keystone/latest/
 ### Keystone Concepts
 
 1. 什么是 User / Group / Project / Tenant / domain？
-- User: 最基本的用户, 一个通常意义上的账号有用户名和密码还有一些相关的比如邮件等信息, 在 OpenStack 中只是创建一个用户是不可以使用OpenStack中的资源的
-- group: 组顾名思义就是一个用户的集合, 一般我们会把一个用户关联到一个项目中, 每次关联的时候都要设置一个角色比较麻烦, 有了组以后我们可以把组加到租户当中去并关联一个角色, 以后所以加入到这个组当中的用户就继承了这个组在这个租户当中的角色
-- project/tenant: project 顾名思义是项目的意思或者用我们熟知的话就是租户, 在本书中我们都会称之为项目而不是租户, 租户是 OpenStack 中一个核心的概念, 基本上所有的资源都是按照租户隔离, 比如网络、实例、路由等资源, 所以我们可以想象一个用户必须要先关联到一个项目中去才能正确使用 OpenStack 资源
-- domain: 在 OpenStack 当中域是用来实现真正的多项目/租户模>式的一种方法, 在没有域出现之前 OpenStack 有着一个权限的场景, 当你把一个用户任何一个项目/租户当中去的时候，你如果关联的是  admin 的角色的话, 这个时候这个用户突然就成为了 OpenStack 超级管理员, 这并非我们所希望的场景, 使用了域以后我们就可以实现真正意义上的多项目/租户模式了, 把一个用户加到 default 以外的域中的项目并关联到 admin 的时候, 这个用户就不再是整个 OpenStack 的管理员了, 他只能管理这个域下面的所有的项目/租户, 当然你要开启多项目/租户模式你得替换掉 /etc/keystone/policy.json 文件来开启
-
-    ![](../img/DomainUserProjectRole.png)
-
+    - User: 最基本的用户, 一个通常意义上的账号有用户名和密码还有一些相关的比如邮件等信息, 在 OpenStack 中只是创建一个用户是不可以使用OpenStack中的资源的
+    - group: 组顾名思义就是一个用户的集合, 一般我们会把一个用户关联到一个项目中, 每次关联的时候都要设置一个角色比较麻烦, 有了组以后我们可以把组加到租户当中去并关联一个角色, 以后所以加入到这个组当中的用户就继承了这个组在这个租户当中的角色
+    - project/tenant: project 顾名思义是项目的意思或者用我们熟知的话就是租户, 在本书中我们都会称之为项目而不是租户, 租户是 OpenStack 中一个核心的概念, 基本上所有的资源都是按照租户隔离, 比如网络、实例、路由等资源, 所以我们可以想象一个用户必须要先关联到一个项目中去才能正确使用 OpenStack 资源
+    - domain: 在 OpenStack 当中域是用来实现真正的多项目/租户模>式的一种方法, 在没有域出现之前 OpenStack 有着一个权限的场景, 当你把一个用户任何一个项目/租户当中去的时候，你如果关联的是  admin 的角色的话, 这个时候这个用户突然就成为了 OpenStack 超级管理员, 这并非我们所希望的场景, 使用了域以后我们就可以实现真正意义上的多项目/租户模式了, 把一个用户加到 default 以外的域中的项目并关联到 admin 的时候, 这个用户就不再是整个 OpenStack 的管理员了, 他只能管理这个域下面的所有的项目/租户, 当然你要开启多项目/租户模式你得替换掉 /etc/keystone/policy.json 文件来开启
+    - ![](../img/DomainUserProjectRole.png)
 1. 什么是服务终端 service endpoint？
-服务终点即一个服务提供的地址比如 http://192.168.100.20:5000/v3, 这就是一个服务终点, 服务终点是用来提供基于 http 请求的 API 方法的一个地址
-
+    - 服务终点即一个服务提供的地址比如 http://192.168.100.20:5000/v3, 这就是一个服务终点, 服务终点是用来提供基于 http 请求的 API 方法的一个地址
 1. 什么是目录服务？
-之前提到OpenStack有很多个核心组件组合而成的, 每个组件都有一个或多个管理接口, 每个管理接口提供服务都是以 web 服务的形式出现的, 那么他们都有一个服务的终点地址比如 keystone 的(http://ip:5000/v3), 我们怎么才能找到每个组件的终端呢？因为这些服务可以很方便的迁移到任何网络可达的物理服务器上, 所有这里我们要一个机制来集中管理服务的终点, 就像服务终点的路由器一样, 更好理解的是像 dns
-
+    - 之前提到OpenStack有很多个核心组件组合而成的, 每个组件都有一个或多个管理接口, 每个管理接口提供服务都是以 web 服务的形式出现的, 那么他们都有一个服务的终点地址比如 keystone 的(http://ip:5000/v3), 我们怎么才能找到每个组件的终端呢？因为这些服务可以很方便的迁移到任何网络可达的物理服务器上, 所有这里我们要一个机制来集中管理服务的终点, 就像服务终点的路由器一样, 更好理解的是像 dns
 1. 什么是 tokenid ? 
-
-令牌, 由 keystone 认证后发放, 可以透过此令牌在其他 opesntack service 发出请求提供服务, 发放与使用流程
-
-- Client obtains token from the Keystone (by user password)
-- Client sends request to Nova API to launch VM instance
-- Nova API verifies token in Keystone
-- Nova requests Keystone to get all available quotas for project/user. Nova calculates amount of used resources and allows or permits operation
-- Nova API calls nova-compute via RPC to launch VM instance.
-
-![](../img/token.png)
+    - 令牌, 由 keystone 认证后发放, 可以透过此令牌在其他 opesntack service 发出请求提供服务
+    - 发放与使用流程
+        - Client obtains token from the Keystone (by user password)
+        - Client sends request to Nova API to launch VM instance
+        - Nova API verifies token in Keystone
+        - Nova requests Keystone to get all available quotas for project/user. Nova calculates amount of used resources and allows or permits operation
+        - Nova API calls nova-compute via RPC to launch VM instance.
+    - ![](../img/token.png)
 
 1. 什么是 Role / Policy？
-
-keystone 遇到不同的使用者做出不同请求的问题 ( 例如: 创建虚拟机 删除云盘 ) 要透过 role 跟 policy 协作来满足需求, 每一个调度请求都会有一个对应的 policy 里面存有多向属性, 其中一个就是 role。 再来, 每个被创建的使用者都会被绑定一个 role (admin / member), 当使用者发出请求调度服务的时后, keystone 收到后会确认这个服务的policy role 是不是这个使用者可以有权利访问的, 如果有才可以继续, 反之拒绝
-
-    ![](../img/api3flow.png)
+    - keystone 遇到不同的使用者做出不同请求的问题 ( 例如: 创建虚拟机 删除云盘 ) 要透过 role 跟 policy 协作来满足需求, 每一个调度请求都会有一个对应的 policy 里面存有多向属性, 其中一个就是 role。 再来, 每个被创建的使用者都会被绑定一个 role (admin / member), 当使用者发出请求调度服务的时后, keystone 收到后会确认这个服务的policy role 是不是这个使用者可以有权利访问的, 如果有才可以继续, 反之拒绝
+    - ![](../img/api3flow.png)
 
 ### Keystone Capablities
 
 1. Keystone 怎么处理服务注册和服务发现？
+    - 练习: 如何添加一个新的服务终端?
+    - 我们为 OpenStack 写了一个新的服务, 并且已经和开发团队约定好我们的服务以 Rest API 的方式部署, 我们的服务名称叫 myService, 我们的服务终端的地址为 http://172.25.0.10:3838。
 
-练习: 如何添加一个新的服务终端?
-
-我们为 OpenStack 写了一个新的服务, 并且已经和开发团队约定好我们的服务以 Rest API 的方式部署, 我们的服务名称叫 myService, 我们的服务终端的地址为 http://172.25.0.10:3838。
-
-```console
-$ openstack service create --name myService --description "helloworld" myService
-$ openstack endpoint create --region RegionOne myService public/internal/admin http://172.25.0.10:3838
-```
+    ```console
+    $ openstack service create --name myService --description "helloworld" myService
+    $ openstack endpoint create --region RegionOne myService public/internal/admin http://172.25.0.10:3838
+    ```
 
 1. Keystone 怎么处理组织和用户管理？用户、用户组、项目、配额
-练习: 
-```console
-# 创建一个用户
-$ openstack user create --password johnpassword john
+    - 练习: 
 
-# 更新一个用户
-$ openstack user set --password newpassword john
+    ```console
+    # 创建一个用户
+    $ openstack user create --password johnpassword john
 
-# 删除一个用户
-$ openstack user delete john
+    # 更新一个用户
+    $ openstack user set --password newpassword john
 
-# 用户列表
-$ openstack user list
+    # 删除一个用户
+    $ openstack user delete john
 
-# 查看详细
-$ openstack user show john
+    # 用户列表
+    $ openstack user list
 
-# 将用户关联到项目/租户
-$ openstack role add --user john --project demo admin 
-```
+    # 查看详细
+    $ openstack user show john
+
+    # 将用户关联到项目/租户
+    $ openstack role add --user john --project demo admin 
+    ```
 
 1. Keystone 怎么处理认证、鉴权和授权？角色、RBAC、Cloud Admin / Domain Admin
-练习: 只允许admin创建云盘
-```console
-# 检查/etc/cinder/ 路径下面有无policy,如果没有就新增一个
-$ oslopolicy-sample-generator --namespace cinder --format json --output-file policy.json
-$ sudo cp policy.json /etc/cinder/policy.json
+    - 练习: 只允许admin创建云盘
 
-# 添加或是修改policy路径到cinder.conf
-[oslo_policy]
-policy_file = /etc/cinder/policy.json
+    ```console
+    # 检查/etc/cinder/ 路径下面有无policy,如果没有就新增一个
+    $ oslopolicy-sample-generator --namespace cinder --format json --output-file policy.json
+    $ sudo cp policy.json /etc/cinder/policy.json
 
-# 修改policy rule权限
-"context_is_admin": "role:admin"
-"network:create": "rule:context_is_admin",
+    # 添加或是修改policy路径到cinder.conf
+    [oslo_policy]
+    policy_file = /etc/cinder/policy.json
 
-# 重启服务
-$ systemctl restart devstack@c-api
-```
+    # 修改policy rule权限
+    "context_is_admin": "role:admin"
+    "network:create": "rule:context_is_admin",
+
+    # 重启服务
+    $ systemctl restart devstack@c-api
+    ```
 
 ## Lesson 03：Horizon
 
