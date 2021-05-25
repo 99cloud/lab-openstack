@@ -14,7 +14,8 @@
     - 基础项：javascript
     - 加分项：react
 
-实习生简历请发到：<nie.linjing@99cloud.net>
+[实习生职位](doc/99cloud.pdf) 简历请发到：<nie.linjing@99cloud.net>
+
 
 - **[实习生] OpenStack 运维工程师（上海）**：
     - 基础项：linux
