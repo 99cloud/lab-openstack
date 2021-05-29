@@ -83,11 +83,9 @@
 #### 相容于主流资源池化:
 
 1. 数据池化  SDS -- Ceph and Cinder-volume
-
     - 高性能 高可用性 高可扩展性 支持三种存储接口(文件, 块, 物件)
 
 1. 网络资源池化 SDN -- Neutron Server
-
     - 控制转发分离 集中控制 虚拟化
 
 ### OpenStack Reference
@@ -154,7 +152,6 @@ https://docs.openstack.org/keystone/latest/
 ### Keystone Concepts
 
 1. 什么是 User / Group / Project / Tenant / domain？
-
     - User: 最基本的用户, 一个通常意义上的账号有用户名和密码还有一些相关的比如邮件等信息, 在 OpenStack 中只是创建一个用户是不可以使用OpenStack中的资源的
     - group: 组顾名思义就是一个用户的集合, 一般我们会把一个用户关联到一个项目中, 每次关联的时候都要设置一个角色比较麻烦, 有了组以后我们可以把组加到租户当中去并关联一个角色, 以后所以加入到这个组当中的用户就继承了这个组在这个租户当中的角色
     - project/tenant: project 顾名思义是项目的意思或者用我们熟知的话就是租户, 在本书中我们都会称之为项目而不是租户, 租户是 OpenStack 中一个核心的概念, 基本上所有的资源都是按照租户隔离, 比如网络、实例、路由等资源, 所以我们可以想象一个用户必须要先关联到一个项目中去才能正确使用 OpenStack 资源
@@ -162,15 +159,12 @@ https://docs.openstack.org/keystone/latest/
     - ![](../img/DomainUserProjectRole.png)
 
 1. 什么是服务终端 service endpoint？
-
     - 服务终点即一个服务提供的地址比如 http://192.168.100.20:5000/v3, 这就是一个服务终点, 服务终点是用来提供基于 http 请求的 API 方法的一个地址
 
 1. 什么是目录服务？
-
     - 之前提到OpenStack有很多个核心组件组合而成的, 每个组件都有一个或多个管理接口, 每个管理接口提供服务都是以 web 服务的形式出现的, 那么他们都有一个服务的终点地址比如 keystone 的(http://ip:5000/v3), 我们怎么才能找到每个组件的终端呢？因为这些服务可以很方便的迁移到任何网络可达的物理服务器上, 所有这里我们要一个机制来集中管理服务的终点, 就像服务终点的路由器一样, 更好理解的是像 dns
 
 1. 什么是 tokenid ? 
-
     - 令牌, 由 keystone 认证后发放, 可以透过此令牌在其他 opesntack service 发出请求提供服务
     - 发放与使用流程
         - Client obtains token from the Keystone (by user password)
@@ -181,14 +175,12 @@ https://docs.openstack.org/keystone/latest/
     - ![](../img/token.png)
 
 1. 什么是 Role / Policy？
-
     - keystone 遇到不同的使用者做出不同请求的问题 ( 例如: 创建虚拟机 删除云盘 ) 要透过 role 跟 policy 协作来满足需求, 每一个调度请求都会有一个对应的 policy 里面存有多向属性, 其中一个就是 role。 再来, 每个被创建的使用者都会被绑定一个 role (admin / member), 当使用者发出请求调度服务的时后, keystone 收到后会确认这个服务的policy role 是不是这个使用者可以有权利访问的, 如果有才可以继续, 反之拒绝
     - ![](../img/api3flow.png)
 
 ### Keystone Capablities
 
 1. Keystone 怎么处理服务注册和服务发现？
-
     - 练习: 如何添加一个新的服务终端?
     - 我们为 OpenStack 写了一个新的服务, 并且已经和开发团队约定好我们的服务以 Rest API 的方式部署, 我们的服务名称叫 myService, 我们的服务终端的地址为 http://172.25.0.10:3838。
 
@@ -220,7 +212,6 @@ https://docs.openstack.org/keystone/latest/
     ```
 
 1. Keystone 怎么处理认证、鉴权和授权？角色、RBAC、Cloud Admin / Domain Admin
-
     - 练习: 只允许admin创建云盘
 
     ```console
@@ -300,13 +291,11 @@ $ vi /etc/nova/nova.conf
 1. Hypervisor 是什么? a piece of software or driver which run on the physical device 
 
 1. Hypervisor function
-
     - 将物理资源池化
     - 分配资源给虚拟机
     - 管理虚拟机生命周期
 
 1. 虚拟化的类型
-
     - Type1: installed directly on top of physical, named as bare metal hypervisors (ex: VMware ESXi, Microsoft Hyper-V, KVM)
     - Type2: installed on Host OS which sits between physical serer and hypervisor, named as hosted hypervisors(VMware Workstation, VirtualBox)
 
@@ -326,11 +315,9 @@ $ vi /etc/nova/nova.conf
 ### nova Concepts
 
 1. 我们回到 nova ，之前提到 openstack 使用的 hypervisor 是用 kvm , 除此之外还可以支持其他的 hypervisor 比如 virtual box、vmware、xen、qemu 当我们的计算的节点的 cpu 不支持硬件加速的时候我们可以使用 qemu 来代替
-
     - ![](../img/virtual5.png)
 
 1. 虚拟机属性？
-
     - User:
     - region: 物理地域的区分，比如我们在大连部署了一套 openstack 另外在上海部署了另外一套 openstack，他们的除了管理界面和keystone是共享的其他的资源都是独立
     - available zone: 可用区域是对用户可见，比如我们使用阿里云的时候我们会去选需要哪个机房的服务器, openstack 预设的可用域是 nova
@@ -339,14 +326,12 @@ $ vi /etc/nova/nova.conf
     - Host Group: 集群标签虚拟机, 可选择亲和或是反亲和, 来决定在哪台宿主机孵化
 
 1. host aggregation 示例:
-
     - AggregateCoreFilter: 针对HostAggregate设置一个metadata(Key，Value)，比如设置cpu_allocation_ratio=10, 超过则该宿主机被过滤
     - SameHostFilter: 在指定虚拟机所在主机上分配虚拟机
 
     - ![](../img/virtual6.png)
 
 1. nova 核心组件
-
     - nova-api: 和其他核心项目组件一样都一个管理接口
     - nova-scheduler: 将虚拟机分配到具体的计算节点的服务
 	- nova-conductor: 负责虚拟机的监控与分配整逻辑实现
@@ -386,7 +371,6 @@ $ vi /etc/nova/nova.conf
 	```
 
 1. nova cloud-init 服务
-
     - 当虚拟机在 OpenStack 启动过的时候，一些信息比如 SSH key、语言设置、主机名都是放在 nova 的 metadata 服务中的，这样可以方便虚拟机的迁移
     - linux 安装 cloud-init daemon: 我们使用的镜像中预装的软件，为了执行预启动的脚本
 	
@@ -462,7 +446,6 @@ $ vi /etc/nova/nova.conf
 1. 镜像是一个物件存储
 
 1. 镜像格式
-
     - raw: 无格式的镜像
     - vhd: 常用的格式，经常被 VMWare, Xen, Microsoft, VirtualBox 来使用的格式
     - vmdk: 另一种被很多虚拟机监控器常用到的格式
@@ -474,7 +457,6 @@ $ vi /etc/nova/nova.conf
     - ari: 表示镜像是亚马逊的 Amazon machine image
 
 1. glance 核心组件
-
     - glance-api: 和其他核心项目组件一样都一个管理接口
     - glance-registry: 在 v2 版本, 提供存储镜像 metadata 与查找的服务, 在 v3 版本被 glance-api 取代 
 
@@ -540,7 +522,6 @@ $ vi /etc/nova/nova.conf
 ### 统⼀的存储解决⽅案 Ceph 的简介
 
 1. Ceph 作为 SDS 的解决方案已经是大家公认的做法了，当成本有限的时候 SDS 可以带来很好性能和成本之间的平衡, 一般我们的做法是将 glance、cinder 都集成到 ceph 当中
-
     - ![](../img/ceph1.png)
     - ![](../img/ceph2.png)
 
@@ -601,6 +582,7 @@ $ vi /etc/nova/nova.conf
 	```
 	
 1. 从快照中创建新卷
+
     ```console
 	$ openstack volume create --snapshot [myvol_ss] --size 2 [myvol2]
 	```
@@ -641,7 +623,6 @@ $ vi /etc/nova/nova.conf
 	- 先解包最外层的封包
 
 1. 网络中的术语
-
     - tap: 虚拟的网络设备, 处理二层数据帧
     - tun: 虚拟的网络设备, 处理三层数据包
     - veth: 虚拟的网络线
@@ -753,7 +734,6 @@ $ vi /etc/nova/nova.conf
 	```
 
 1. 透过 neutron 创建两台虚机能互通的网络
-
     - Neutron ML2.OVS_agent, L3_agent, dhcp_agent 疯了...
 
     - ![](../img/neutron5.png)
@@ -761,7 +741,6 @@ $ vi /etc/nova/nova.conf
 ### neutron Concepts
 
 1. neutron 核心组件
-
     - neutron-server: 提供 API 接口，并把对 API 的调用请求传给已经配置好的插件进行后续处理. 插件需要访问数据库来维护各种配置数据和对应关系，例如路由器、网络、子网、端口、floating ip、安全组等等
     - (neutron-)plugin: 维护逻辑网络状态, 调用 agent, 处理 sever 请求
     - neutron-agent: 负责在 network-provider 上实现网络拓璞, 处理 plugin 请求
@@ -772,7 +751,6 @@ $ vi /etc/nova/nova.conf
     - ![](../img/neutron6.png)
 	
 1. Plugin 和 Agents
-
     - Q: plugin 和 agents 是否是一对? 是的
     - A:  plugin 有分core plugin 和 service plugin, service_plugins = router, core_plugin = ml2
 	
@@ -783,7 +761,6 @@ $ vi /etc/nova/nova.conf
     - A: ml2
 	
 1. ml2 plugin 介绍
-
     - ML2 提供 neutron 异构部署的可能性, 可以在不同的节点部署不同的网络架构
 	- Type Driver: 决定逻辑网络类型
     - Techanism Driver: 决定如何在 provider 实现网络类型的办法
@@ -823,7 +800,6 @@ $ vi /etc/nova/nova.conf
 ### 理解节点的内部⽹络的实现
 
 1. neutron 术语
-
     - br-int: 综合网桥当我们使用 ovs 的时候，ovs 会根据配置文件创建一个综合网桥，目的是把虚拟机的流量引向这座综合网桥
     - qbr: 也是网桥, 不过针对 Security group 通常在 linux bridge 上实现 iptables
     - br-tun: ovs 的虚拟网桥, 接收 br-int 透过穿遂技术与对象 br-tun 形成通道, 实现虚拟三层网络
@@ -843,14 +819,12 @@ $ vi /etc/nova/nova.conf
 ### Distributed Virtual Router
 
 1. Before
-
     - Neutron Routing: Neutron Server 透过 Linux IP Stack 和 iptables 執行 L3 轉發和 NAT Neutron Server 与 Network Node交互实现 高可用性
     - 问题: 网路管理的过程当中 某Neutron Node宕机会如何? 会成为NAT的阻塞点!!
 
     - ![](../img/neutron8.png)
 
 1. After
-
     - 把原本 Network node 的工作分散到了 Compute Node 上
     - 南北流量 Floating IP 可选择在计算节点上处理
 	- 东西流量不用可选择不用经过网路节点上
@@ -886,7 +860,6 @@ $ vi /etc/nova/nova.conf
     - ![](../img/neutron13.png)
 	
 1. 实现 DPDK 需满足以下
-
     - 需要特别网卡, 包含的驱动如: e1000, ixgbe i40e
     - 需要特别分配cpu，大页内存(Huge memory)，和 DPDK NIC 给 DPDK 使用
 
@@ -899,7 +872,6 @@ $ vi /etc/nova/nova.conf
     - ![](../img/neutron15.png)
 
 1. 实现 DPDK 需满足以下
-
     - 需要特别网卡, 包含的驱动如: e1000, ixgbe i40e
 	- 底层创建 PF 跟 VF
 
@@ -908,7 +880,6 @@ $ vi /etc/nova/nova.conf
 1. 怎么又来了一个, 他能做什么? Time synchronization
 
 1. TSN标准 (IEEE 802.1 IEEE 1588)
-
     - 提高同步性能
 	- 数据帧抢占优先
 	- 提升规划的通信!!
@@ -916,7 +887,6 @@ $ vi /etc/nova/nova.conf
 	- 高速通道带宽预留
 
 1. 示例
-
     - 边缘云跟边缘传感设备
     - p2p4l, phc2sys: LinuxPTP项目提供的时间同步工具
     - tc(traffic control): IPROUTE2提供，控制数据帧的
@@ -1034,7 +1004,6 @@ $ vi /etc/nova/nova.conf
 ### swift Concepts
 
 1. swift 核心组件
-
     - Proxy service: 一个管理接口, 处理 REST API 请求
     - Accounts service: 一组 account database 管理 container 列表
     - Containers service: 一组 container database 管理 object 列表
