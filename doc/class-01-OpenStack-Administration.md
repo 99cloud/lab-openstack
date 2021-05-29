@@ -15,64 +15,19 @@
 
 | Date | Time | Title | Content |
 | ---- | ---- | ----- | ------- |
-| 第 1 天 | 上午 | [1. OpenStack 概述]() | [OpenStack 从何而来？]() |
-| | | | [OpenStack 的组件架构是怎样的？]() |
-| | | | [云计算的技术发展趋势是怎样的？]() |
-| | | | [OpenStack 的参考资料有哪些？]() |
-| | | [Lesson 02：管理身份认证服务 - Keystone](#) | [Keystone 的概念空间中有哪些对象？](#) |
-| | | | [Keystone 能提供哪些服务？]() |
-| | 下午 | [Lesson 03：管理看板服务 - Horizon]() | [如何通过 Dashboard 来管理 OpenStack 平台？](#) |
-| | | | [如何配置 Horizon 来⽀持多 Domain 登录？](#) |
-| | | [Lesson 04：管理计算服务 - Nova](#) | [理解虚拟化](#) |
-| | | | [学习规划硬件计算资源（ 算你需要买多少服务器 ）](#) |
-| | | | [管理 flavor](#) |
-| | | | [管理 compute instance（ 如启动、关闭、终⽌ ）](#) |
-| | | | [管理Nova⽤户密钥对（ keypair ）](#) |
-| | | | [启动⼀个新实例](#) |
-| | | | [关闭⼀个实例](#) |
-| | | | [终⽌实例](#) |
-| | | | [配置⼀个拥有 floating IP 的实例]() |
-| | | | [管理项⽬的安全组规则]() |
-| | | | [分配安全组给实例]() |
-| | | | [分配 floating IP 给实例]() |
-| | | | [从实例上分离 floating IP]() |
-| 第 2 天 | 上午 | | [理解虚拟机从镜像启动和从云盘启动的区别](#) |
-| | | | [nova 管理虚拟机的静态数据的位置](#) |
-| | | | [devstack 服务的管理](#) |
-| | | [Lesson 05：管理镜像服务 - Glance](#) | [理解 OpenStack 中使⽤的镜像](#) |
-| | | | [上传⼀个镜像](#) |
-| | | | [管理镜像类型和后端](#) |
-| | | | [管理镜像（ 如添加、更新、移除 ）](#) |
-| | 下午 | [Lesson 06：管理块存储 - Cinder]() | [理解 Cinder 的作⽤](#) |
-| | | | [统⼀的存储解决⽅案 Ceph 的简介](#) |
-| | | | [管理卷](#) |
-| | | | [创建块存储的卷组](#) |
-| | | | [创建⼀个新的卷并将其安装到 Nova 实例上](#) |
-| | | | [管理配额](#) |
-| | | | [管理卷的配额](#) |
-| | | | [管理卷的备份](#) |
-| | | | [备份和恢复卷](#) |
-| | | [Lesson 07：管理对象存储 - Swift](#) | [理解 Swift 的使⽤场景](#) |
-| | | | [Ring 的设计简介](#) |
-| | | | [管理对象存储的](#) |
-| | | | [管理到期的对象](#) |
-| | | [Lesson 08：管理⽹络服务 - Neutron](#) | [理解 Neutron 的作⽤](#) |
-| | | | [⽣产环境中的实施⽅案](#) |
-| | | | [⽹络加速的技术 dpdk、sr-iov 的介绍](#) |
-| | | | [理解节点的内部⽹络的实现](#) |
-| | | | [管理⽹络资源（ 如路由、⼦⽹ ）](#) |
-| | | | [创建外部⽹络](#) |
-| | | | [创建路由](#) |
-| | | | [在虚拟环境中管理⽹络服务](#) |
-| | | | [管理安全组规则](#) |
-| 第 3 天 | 上午 | [Lesson 09：编排服务 - Heat](#) | [Heat 的模版中的讲解](#) |
-| | | | [通过⼀个模版创建 OpenStack 的资源](#) |
-| | | | [更新⼀个模版](#) |
-| | | | [创建互相依赖 yaml 模版]() |
-| | 下午 | [Lesson 10：模拟管理员练习题]() | [模拟题讲解](#) |
-| | | | [模拟题练习]() |
+| 第 1 天 | 上午 | [Lesson 01：OpenStack 概述] ( [Catalog](#Lesson-01-OpenStack-Introduction) ) |
+| | 下午 | [Lesson 02：管理身份认证服务 - Keystone] ( [Catalog](#Lesson-02-Keystone) ) |
+| | | [Lesson 03：管理看板服务 - Horizon] ( [Catalog](#Lesson-03-Horizon) ) |
+| 第 2 天 | 上午 | [Lesson 04：管理计算服务 - Nova] ( [Catalog](#Lesson-04-Nova) ) |
+| | 下午 | [Lesson 05：管理镜像服务 - Glance] ( [Catalog](#Lesson-05-Glance) ) |
+| | | [Lesson 06：管理块存储 - Cinder] ( [Catalog](#Lesson-06-Cinder) ) |
+| | | [Lesson 07：管理⽹络服务 - Neutron] ( [Catalog](#Lesson-07-Neutron) ) |
+| 第 3 天 | 上午 | [Lesson 08: devstack 部署与管理] ( [Catalog](#Lesson-08-devstack-服务的管理) ) |
+| | | [Lesson 09：管理对象存储 - Swift] ( [Catalog](#Lesson-09-Swift) ) |
+| | | [Lesson 10：编排服务 - Heat] ( [Catalog](#Lesson-10-Heat) ) |
+| | 下午 | [Lesson 11：Quiz] ( [Catalog](#Lesson-11-Quiz) ) |
 
-## Lesson 01：OpenStack Introduction ( [Catalog](#catalog) )
+## Lesson 01 OpenStack Introduction ( [Catalog](#catalog) )
 
 云计算最初的概念是”网络即是电脑”, 尔后 Amazon 推出的弹性云计算 (EC2) 提供用户使用资源并且收费, 大致顶定了云计算的商业用途。OpenStack 是一个开源的云平台, 他属于云计算当中我们常说的 IAAS(infrastructure as a service), 简单的讲他是来管理我们的硬件设施的, 我们在我们的设备上部署 Linux 与 OpenStack, 然后由 OpenStack 来帮助我们决定哪些虚拟机应该启动在哪些物理的计算节点上
 
@@ -80,12 +35,12 @@
     
 ![iaas](../img/iaas.png)
 
-### Virtualization & OpenStack ( [Catalog](#catalog) )
+### Virtualization & OpenStack
 
 1. 什么是虚拟化？虚拟化的发展历程如何？60-70 IBM / 80-90 VMWare / 2005-2010 Amazon / 2010 NASA Nebula & RackSpace Cloud Storage
 1. 云计算的类型有几种类型？IaaS / PaaS / SaaS，只有 IaaS 是必须基于虚拟化的
 
-### OpenStack Infrastructure ( [Catalog](#catalog) )
+### OpenStack Infrastructure
 
 1. OpenStack 哪些是核心项目？Keystone / Nova / Cinder / Neutron / Glance
 1. [Design](https://docs.openstack.org/arch-design/design.html)
@@ -109,7 +64,7 @@
 
     ![](../img/qualityfordevelop.png)
 
-### The Trend of Cloud Computing ( [Catalog](#catalog) )
+### The Trend of Cloud Computing
 
 1. 私有云、公有云、混合云的发展趋势如何？Azure / Aliyun / HW
 1. IaaS & CaaS 谁会是未来的主流？
@@ -129,15 +84,16 @@
 
 1. 数据池化  SDS -- Ceph and Cinder-volume
     - 高性能 高可用性 高可扩展性 支持三种存储接口(文件, 块, 物件)
+
 1. 网络资源池化 SDN -- Neutron Server
     - 控制转发分离 集中控制 虚拟化
 
-### OpenStack Reference ( [Catalog](#catalog) )
+### OpenStack Reference
 
 1. 官方文档在哪里？
 1. 有哪些推荐的入门书？《每天五分钟玩转 OpenStack》，《OpenStack 设计与实现》
 
-### reference ( [Catalog](#catalog) )
+### reference
 
 #### How openstack service implements communication?
 
@@ -181,9 +137,10 @@ Openstack 以 Python 语法实现 IaaS 架构, 在各组件调度资源的过程
 
 ![](../img/sqlachemy.png)
 
-## Lesson 02：Keystone
+## Lesson 02 Keystone ( [Catalog](#catalog) )
 
 1. keystone 在 openstack 扮演什么角色
+
 **用户的身份认证服务包括组件和组件之间的身份认证**
 **为 OpenStack 提供目录服务**
 **规则服务**
@@ -200,10 +157,13 @@ https://docs.openstack.org/keystone/latest/
     - project/tenant: project 顾名思义是项目的意思或者用我们熟知的话就是租户, 在本书中我们都会称之为项目而不是租户, 租户是 OpenStack 中一个核心的概念, 基本上所有的资源都是按照租户隔离, 比如网络、实例、路由等资源, 所以我们可以想象一个用户必须要先关联到一个项目中去才能正确使用 OpenStack 资源
     - domain: 在 OpenStack 当中域是用来实现真正的多项目/租户模>式的一种方法, 在没有域出现之前 OpenStack 有着一个权限的场景, 当你把一个用户任何一个项目/租户当中去的时候，你如果关联的是  admin 的角色的话, 这个时候这个用户突然就成为了 OpenStack 超级管理员, 这并非我们所希望的场景, 使用了域以后我们就可以实现真正意义上的多项目/租户模式了, 把一个用户加到 default 以外的域中的项目并关联到 admin 的时候, 这个用户就不再是整个 OpenStack 的管理员了, 他只能管理这个域下面的所有的项目/租户, 当然你要开启多项目/租户模式你得替换掉 /etc/keystone/policy.json 文件来开启
     - ![](../img/DomainUserProjectRole.png)
+
 1. 什么是服务终端 service endpoint？
     - 服务终点即一个服务提供的地址比如 http://192.168.100.20:5000/v3, 这就是一个服务终点, 服务终点是用来提供基于 http 请求的 API 方法的一个地址
+
 1. 什么是目录服务？
     - 之前提到OpenStack有很多个核心组件组合而成的, 每个组件都有一个或多个管理接口, 每个管理接口提供服务都是以 web 服务的形式出现的, 那么他们都有一个服务的终点地址比如 keystone 的(http://ip:5000/v3), 我们怎么才能找到每个组件的终端呢？因为这些服务可以很方便的迁移到任何网络可达的物理服务器上, 所有这里我们要一个机制来集中管理服务的终点, 就像服务终点的路由器一样, 更好理解的是像 dns
+
 1. 什么是 tokenid ? 
     - 令牌, 由 keystone 认证后发放, 可以透过此令牌在其他 opesntack service 发出请求提供服务
     - 发放与使用流程
@@ -230,7 +190,6 @@ https://docs.openstack.org/keystone/latest/
     ```
 
 1. Keystone 怎么处理组织和用户管理？用户、用户组、项目、配额
-    - 练习: 
 
     ```console
     # 创建一个用户
@@ -272,7 +231,7 @@ https://docs.openstack.org/keystone/latest/
     $ systemctl restart devstack@c-api
     ```
 
-## Lesson 03：Horizon
+## Lesson 03 Horizon ( [Catalog](#catalog) )
 
 ### Horizon Concepts
 
@@ -293,7 +252,7 @@ Horizon 为 OpenStack 提供了界面管理服务, 让 OpenStack 管理员和用
 
 ### 管理 flavor
 
-### 管理Nova⽤户密钥对（ keypair ）
+### 管理 Nova ⽤户密钥对（ keypair ）
 
 ### 管理网络
 
@@ -315,14 +274,13 @@ Horizon 为 OpenStack 提供了界面管理服务, 让 OpenStack 管理员和用
 
 ```console
 $ vi /etc/nova/nova.conf
-...
-instances_path = /opt/stack/data/nova/instances
-state_path = /opt/stack/data/nova
+
+    ...
+    instances_path = /opt/stack/data/nova/instances
+    state_path = /opt/stack/data/nova
 ```
 
-### devstack 服务的管理
-
-## Lesson 04：Nova
+## Lesson 04 Nova ( [Catalog](#catalog) )
 
 ### 理解虚拟化
 
@@ -333,15 +291,13 @@ state_path = /opt/stack/data/nova
 1. Hypervisor 是什么? a piece of software or driver which run on the physical device 
 
 1. Hypervisor function
-
-- 将物理资源池化
-- 分配资源给虚拟机
-- 管理虚拟机生命周期
+    - 将物理资源池化
+    - 分配资源给虚拟机
+    - 管理虚拟机生命周期
 
 1. 虚拟化的类型
-
-- Type1: installed directly on top of physical, named as bare metal hypervisors (ex: VMware ESXi, Microsoft Hyper-V, KVM)
-- Type2: installed on Host OS which sits between physical serer and hypervisor, named as hosted hypervisors(VMware Workstation, VirtualBox)
+    - Type1: installed directly on top of physical, named as bare metal hypervisors (ex: VMware ESXi, Microsoft Hyper-V, KVM)
+    - Type2: installed on Host OS which sits between physical serer and hypervisor, named as hosted hypervisors(VMware Workstation, VirtualBox)
 
     - ![](../img/virtual1.png)
 	
@@ -359,7 +315,6 @@ state_path = /opt/stack/data/nova
 ### nova Concepts
 
 1. 我们回到 nova ，之前提到 openstack 使用的 hypervisor 是用 kvm , 除此之外还可以支持其他的 hypervisor 比如 virtual box、vmware、xen、qemu 当我们的计算的节点的 cpu 不支持硬件加速的时候我们可以使用 qemu 来代替
-
     - ![](../img/virtual5.png)
 
 1. 虚拟机属性？
@@ -389,26 +344,27 @@ state_path = /opt/stack/data/nova
 ### Nova Capablities
 
 1. nova 计算资源池的划分方式
+
     ```console
-	# 首先创建一个 host aggregation 叫 vip_host_aggr 做并创建一个 available zone 叫做 demo
-	$ nova aggregate-create [vip_host_aggr] [vip_zone]
+    # 首先创建一个 host aggregation 叫 vip_host_aggr 做并创建一个 available zone 叫做 demo
+    $ nova aggregate-create [vip_host_aggr] [vip_zone]
 	
-	# 创建一个 host aggregation 叫 regular_host_aggr 并将它加入到 available zone vip_zone 和 regular_zone 中, 程序会自动判断是新建 az 还是关联现有 az
-	$ nova aggregate-create [regular_host_aggr] [regular_zone]
+    # 创建一个 host aggregation 叫 regular_host_aggr 并将它加入到 available zone vip_zone 和 regular_zone 中, 程序会自动判断是新建 az 还是关联现有 az
+    $ nova aggregate-create [regular_host_aggr] [regular_zone]
 	
-	# 将计算节点加入到各自的 host aggregation 中去
-	$ nova aggregate-add-host [vip_host_aggr] [I7_compute_node]
-	$ nova aggregate-add-host [regular_host_aggr] [I5_compute_node]
+    # 将计算节点加入到各自的 host aggregation 中去
+    $ nova aggregate-add-host [vip_host_aggr] [I7_compute_node]
+    $ nova aggregate-add-host [regular_host_aggr] [I5_compute_node]
 	
-	# 为 vip_host_aggr 设置特殊的属性来和 flavor 产生关联
-	$ nova aggregate-set-metadata [vip_host_aggr] [ForVip=true]
+    # 为 vip_host_aggr 设置特殊的属性来和 flavor 产生关联
+    $ nova aggregate-set-metadata [vip_host_aggr] [ForVip=true]
     $ nova aggregate-set-metadata [regular_host_aggr] [ForRegular=true]
-	
+
     # 为了 vip 租户创建一个 flavor
     $ openstack flavor create --private-ram 256 --disk 1 --vcpus 4 m1.flavor_vip
-	$ nova flavor-access-add [m1.flavor_vip] [project_vip]
-	$ nova flavor-key m1.flavor_vip set ForVip=true
-	
+    $ nova flavor-access-add [m1.flavor_vip] [project_vip]
+    $ nova flavor-key m1.flavor_vip set ForVip=true
+
     # 到此, 完成 vip i7 调度的关联创建, 接下来说明如何使用
     $ source project_vip_userrc
     $ openstack server create --flavor m1.flavor_vip ……
@@ -417,51 +373,54 @@ state_path = /opt/stack/data/nova
 1. nova cloud-init 服务
     - 当虚拟机在 OpenStack 启动过的时候，一些信息比如 SSH key、语言设置、主机名都是放在 nova 的 metadata 服务中的，这样可以方便虚拟机的迁移
     - linux 安装 cloud-init daemon: 我们使用的镜像中预装的软件，为了执行预启动的脚本
+	
     ```console
 	# 举例: 创建使用者
 	$ cat > create_user.yaml << EOF
-	#cloud-config
-	groups:
-	  - ubuntu: [root,sys]
-	  - cloud-users
-	users:
-	  - default
-	  - name: foobar
-	    gecos: Foo B. Bar
-	    primary_group: foobar
-	    groups: users
-	    selinux_user: staff_u
-	    expiredate: '2032-09-01'
-	    ssh_import_id: foobar
-	    lock_passwd: false
-	    passwd: $6$j212wezy$7H/1LT4f9/N3wpgNunhsIqtMj62OKiS3nyNwuizouQc3u7MbYCarYeAHWYPYb2FT.lbioDm2RrkJPb9BZMN1O/
-	  - name: barfoo
-	    gecos: Bar B. Foo
-	    sudo: ALL=(ALL) NOPASSWD:ALL
-	    groups: users, admin
-	    ssh_import_id: None
-	    lock_passwd: true
-	    ssh_authorized_keys:
-	      - <ssh pub key 1>
-	      - <ssh pub key 2>
-	  - name: cloudy
-	    gecos: Magic Cloud App Daemon User
-	    inactive: '5'
-	    system: true
-	  - name: fizzbuzz
-	    sudo: False
-	    ssh_authorized_keys:
-	      - <ssh pub key 1>
-	      - <ssh pub key 2>
-	  - snapuser: joe@joeuser.io
-	  - name: nosshlogins
-	    ssh_redirect_user: true
-	EOF
+
+        #cloud-config
+        groups:
+          - ubuntu: [root,sys]
+          - cloud-users
+        users:
+          - default
+          - name: foobar
+            gecos: Foo B. Bar
+            primary_group: foobar
+            groups: users
+            selinux_user: staff_u
+            expiredate: '2032-09-01'
+            ssh_import_id: foobar
+            lock_passwd: false
+            passwd: $6$j212wezy$7H/1LT4f9/N3wpgNunhsIqtMj62OKiS3nyNwuizouQc3u7MbYCarYeAHWYPYb2FT.lbioDm2RrkJPb9BZMN1O/
+      - name: barfoo
+            gecos: Bar B. Foo
+            sudo: ALL=(ALL) NOPASSWD:ALL
+            groups: users, admin
+            ssh_import_id: None
+            lock_passwd: true
+            ssh_authorized_keys:
+              - <ssh pub key 1>
+              - <ssh pub key 2>
+          - name: cloudy
+            gecos: Magic Cloud App Daemon User
+            inactive: '5'
+            system: true
+          - name: fizzbuzz
+            sudo: False
+            ssh_authorized_keys:
+              - <ssh pub key 1>
+              - <ssh pub key 2>
+          - snapuser: joe@joeuser.io
+          - name: nosshlogins
+            ssh_redirect_user: true
+        EOF
 	```
 
     - ![](../img/cloudinit.png)
 
 1. nova 创建虚拟机
+
     ```console
 	$ openstack server create --image [cirros] --flavor [m1.mysmall] --security-group [default] --key-name [mykey] --nic net-id=[network_id] [instance1]
     # 为虚拟机绑定 floating ip
@@ -472,11 +431,11 @@ state_path = /opt/stack/data/nova
 
 ### Nova Summary
 
-    - ![](../img/virtual9.png)
+- ![](../img/virtual9.png)
 
 ### 学习规划硬件计算资源（ 算你需要买多少服务器 ）
 
-## Lesson 05：Glance
+## Lesson 05 Glance ( [Catalog](#catalog) )
 
 ### 理解 OpenStack 中使⽤的镜像
 
@@ -503,36 +462,36 @@ state_path = /opt/stack/data/nova
 
     - ![](../img/glance1.png)
 
-1. glance summary
+### glance summary
 
-    - ![](../img/glance2.png)
+- ![](../img/glance2.png)
 
 ### glance Capablities
 
 1. 从本地上传镜像
+
     ```console
 	$ openstack image create --file cirros—disk_x86_64.img  --container-format bare --disk-format qcow2 myimage
 	```
 	
 1. 更新镜像
+
     ```console
 	$ openstack image set --min-ram 8 myimage
 	```
 
 1. 删除镜像
+
     ```console
 	$ openstack image delete myimage
 	```
 1. 创建快照
+
     ```console
     $ openstack server image create --name [instance_snapshot] [instance1]
     ```
 
-### 管理镜像类型和后端
-
-### 管理镜像（ 如添加、更新、移除 ）
-
-## Lesson 06：Cinder
+## Lesson 06 Cinder ( [Catalog](#catalog) )
 
 ### 理解 Cinder 的作⽤
 
@@ -558,15 +517,11 @@ state_path = /opt/stack/data/nova
     - cinder backup: 负责通过驱动和备份的后台打交道, 是我们在使用备份的命令的时候，能在正确的位置备份数据
 
     - ![](../img/cinder1.png)
-	
-1. cinder summary
 
-    - ![](../img/cinder2.png)
 
 ### 统⼀的存储解决⽅案 Ceph 的简介
 
 1. Ceph 作为 SDS 的解决方案已经是大家公认的做法了，当成本有限的时候 SDS 可以带来很好性能和成本之间的平衡, 一般我们的做法是将 glance、cinder 都集成到 ceph 当中
-
     - ![](../img/ceph1.png)
     - ![](../img/ceph2.png)
 
@@ -584,16 +539,19 @@ state_path = /opt/stack/data/nova
 ### cinder Capablities
 
 1. 创建一个附加卷
+
     ```console
 	$ openstack volume create ——size 2 myvol
 	```
 
 1. 创建一个启动卷, 这样一来虚拟机的root disk就在云盘上了，就不用担心因为计算节点的硬盘损坏带来的数据丢失的风险
+
     ```console
 	$ openstack volume create --size 2 --image [cirros] [myvol]
 	```
 	
 1. 为虚拟机添加一附加卷
+
     ```console
     $ openstack server add volume [vol1] [instance1]
 	#注意! 虚拟机添加一新的磁盘并不会主动 mount
@@ -602,63 +560,52 @@ state_path = /opt/stack/data/nova
     ```
 	
 1. 从虚拟机删除一附加卷
+
     ```console
     $ openstack server remove  volume [vol1] [instance1]
     ```
 
 1. 创建一个卷的备份
+
     ```console
 	$ openstack backup create --container [cinder-backup] --name [myvol_backup] [myvol]
 	```
 1. 从备份中恢复
+
     ```console
 	$ openstack volume backup restore [myvol_backup] [myvol1]
 	```
 1. 创建一卷的快照
+
     ```console
-	$ openstack volume snapshot create --name [myvol_ss] [myvol]
+	$ openstack volume snapshot create --volume [myvol] [myvol_snapshot]
 	```
 	
 1. 从快照中创建新卷
+
     ```console
 	$ openstack volume create --snapshot [myvol_ss] --size 2 [myvol2]
 	```
+### cinder summary
+
+- ![](../img/cinder2.png)
 
 ### 备份与快照的差别
+
 1. qcow2 快照 copy-on-write
 
     - ![](../img/cinder3.png)
 
 1. 透过 snapshot 做 rollback 和 rebuild
+
     ```console
 	$ openstack server image create --name my-snapshot --wait my-vm
     $ openstack image show --fit-width my-snapshot
 	$ openstack server rebuild --image my-snapshot my-vm
-	```	
-	
-### 创建块存储的卷组
+	```
 
-### 创建⼀个新的卷并将其安装到 Nova 实例上
 
-### 管理配额
-
-### 管理卷的配额
-
-### 管理卷的备份
-
-### 备份和恢复卷
-
-## Lesson 07：Swift
-
-### 理解 Swift 的使⽤场景
-
-### Ring 的设计简介
-
-### 管理对象存储的
-
-### 管理到期的对象
-
-## Lesson 08：Neutron
+## Lesson 07 Neutron ( [Catalog](#catalog) )
 
 ### 理解 Neutron 的作⽤
 
@@ -676,7 +623,6 @@ state_path = /opt/stack/data/nova
 	- 先解包最外层的封包
 
 1. 网络中的术语
-
     - tap: 虚拟的网络设备, 处理二层数据帧
     - tun: 虚拟的网络设备, 处理三层数据包
     - veth: 虚拟的网络线
@@ -747,7 +693,7 @@ state_path = /opt/stack/data/nova
 	$ ip netns exec ns2 ip addr add 192.168.0.3/24 dev tap2
 	# ping to each other
 	$ ip netns exec ns1 ping 192.168.0.3
-	```	
+	```
 
 1. 透过 OVS Bridge 创建两台虚机能互通的网络
 
@@ -785,7 +731,7 @@ state_path = /opt/stack/data/nova
 	$ ip netns exec ns2 ip addr add 192.168.0.3/24 dev tap2
 	# ping to each other
 	$ ip netns exec ns1 ping 192.168.0.3
-	```	
+	```
 
 1. 透过 neutron 创建两台虚机能互通的网络
     - Neutron ML2.OVS_agent, L3_agent, dhcp_agent 疯了...
@@ -805,7 +751,6 @@ state_path = /opt/stack/data/nova
     - ![](../img/neutron6.png)
 	
 1. Plugin 和 Agents
-
     - Q: plugin 和 agents 是否是一对? 是的
     - A:  plugin 有分core plugin 和 service plugin, service_plugins = router, core_plugin = ml2
 	
@@ -816,7 +761,6 @@ state_path = /opt/stack/data/nova
     - A: ml2
 	
 1. ml2 plugin 介绍
-
     - ML2 提供 neutron 异构部署的可能性, 可以在不同的节点部署不同的网络架构
 	- Type Driver: 决定逻辑网络类型
     - Techanism Driver: 决定如何在 provider 实现网络类型的办法
@@ -890,25 +834,27 @@ state_path = /opt/stack/data/nova
 
     ```console 
 	cat /etc/neutron.conf
-	# System-wide flag to determine the type of router that tenants can create.
-    # Only admin can override. (boolean value)
-    router_distributed = true
+        # System-wide flag to determine the type of router that tenants can create.
+        # Only admin can override. (boolean value)
+        router_distributed = true
 
     cat l3_Agent.ini
-	# Possible values:
-    # dvr - <No description provided>
-    # dvr_snat - <No description provided>
-    # legacy - <No description provided>
-    # dvr_no_external - <No description provided>
-    agent_mode = dvr_snat
 
-    cat L2_agent.ini
-	enable_distributed_routing = True 
+        # Possible values:
+        # dvr - <No description provided>
+        # dvr_snat - <No description provided>
+        # legacy - <No description provided>
+        # dvr_no_external - <No description provided>
+        agent_mode = dvr_snat
+
+        cat L2_agent.ini
+        enable_distributed_routing = True 
 	```
 
 ### ⽹络加速的技术 dpdk、sr-iov、TSN 的介绍
 
 1. DPDK 是什么? 
+
 1. 为什么要整 DPDK? OVS had kernel overhead and kernel bottleneck
 
     - ![](../img/neutron13.png)
@@ -920,6 +866,7 @@ state_path = /opt/stack/data/nova
     - ![](../img/neutron14.png)
 	
 1. sr-iov 是什么?
+
 1. 为什么要搞 sr-iov? Network controller is transparent to physical device
 
     - ![](../img/neutron15.png)
@@ -929,7 +876,9 @@ state_path = /opt/stack/data/nova
 	- 底层创建 PF 跟 VF
 
 1. TSN 是什么?
+
 1. 怎么又来了一个, 他能做什么? Time synchronization
+
 1. TSN标准 (IEEE 802.1 IEEE 1588)
     - 提高同步性能
 	- 数据帧抢占优先
@@ -948,27 +897,24 @@ state_path = /opt/stack/data/nova
 ### neutron Capablities
 
 1. 创建外部网络
+
     ```console
-	$ openstack network create --provider-network-type [flat] --provider-physical-network [public] --external [public]
+	$ openstack network create --provider-network-type --enable --project admin --external [public]
 	```
 	
 1. 创建外部网络的子网
+
     ```console
-    $ openstack subnet create --subnet-range [192.168.100.0/24] --gateway [192.168.100.1] --no-dhcp --network [public] [pubsub]
+    $ openstack subnet create --subnet-range [192.168.100.0/24] --gateway [192.168.100.1] --dhcp --network [public] [pubsub]
 	```
 
 1. 将租户网络和外部链接
+
     ```console 
 	$ openstack router create [虚拟路由器名字]
 	$ neutron router-gateway-set [虚拟路由器名字] [外部网络的名称]
     $ neutron router-interface-add [虚拟路由器名字] [租户网络的名称]
 	```
-
-### 管理⽹络资源（ 如路由、⼦⽹ ）
-
-### 创建外部⽹络
-
-### 创建路由
 
 ### 在虚拟环境中管理⽹络服务
 
@@ -988,17 +934,210 @@ state_path = /opt/stack/data/nova
     Jul 28 16:48:10 test-coa-5 nova-conductor[7519]: 2020-07-28 16:48:10.626 8393 ERROR nova.scheduler.utils [req-9b59c38d-c943-4d56-82ca-5cf9f1b5bfe9 cee4ec5181d24cc2a3a3c4975c3277a2 4452a8c2601b482fb13639c8839c80f9 - default default] [instance: a5a972b4-b779-4931-94c3-c43956f4d7ee] Error from last host: test-coa-5 (node test-coa-5): [u'Traceback (most recent call last):\n', u'  File "/opt/stack/nova/nova/compute/manager.py", line 1996, in _do_build_and_run_instance\n    filter_properties)\n', u'  File "/opt/stack/nova/nova/compute/manager.py", line 2237, in _build_and_run_instance\n    instance_uuid=instance.uuid, reason=six.text_type(e))\n', u"RescheduledException: Build of instance a5a972b4-b779-4931-94c3-c43956f4d7ee was re-scheduled: XML error: expected unicast mac address, found multicast '11:22:33:44:55:66'\n"]
     ```
 
-## Lesson 09：Heat
+## Lesson 08 devstack 服务的管理 ( [Catalog](#catalog) )
+
+1. https://docs.openstack.org/tacker/latest/install/devstack.html
+1. https://docs.openstack.org/devstack/latest/
+
+### 理解 devstack 的作⽤
+
+1. DevStack 是一系列可扩展的脚本，用于基于 git master 的最新版本快速调出完整的 OpenStack 环境。它以交互方式用作开发环境和 OpenStack 项目大部分功能测试的基础。
+
+### devstack Concepts
+
+1. devstack 透过执行 stack.sh 脚本, 搭建 openstack 环境, 依据 local.conf 参数, 决定提供哪些服务
+
+1. 使用 systemd 来管理 devstack 部署的 OpenStack
+
+1. DevStack 插件。支持额外的 Openstack 服务, 以插件接口的概念, 扩展 openstack 服务
+
+### devstack Capablities
+
+1. 重启 glance api 服务
+
+    ```console
+    # 检查服务
+	$ systemctl list-units | grep -rn "devstack@*"
+
+	# 重启 glance api 服务
+	$ systemctl restart "devstack@g-api"
+
+    # 查看 glance api 状态
+	$ systemctl status "devstack@g-api"
+      devstack@g-api.service - Devstack devstack@g-api.service
+       Loaded: loaded (/etc/systemd/system/devstack@g-api.service; enabled; vendor preset:
+       Active: active (running) since Sat 2021-05-29 08:25:20 UTC; 2h 56min ago
+       Main PID: 18213 (glance-api)
+       Tasks: 3 (limit: 4915)
+       CGroup: /system.slice/system-devstack.slice/devstack@g-api.service
+           ├─18213 /usr/bin/python3.6 /usr/local/bin/glance-api --config-dir=/etc/glan
+           ├─18450 /usr/bin/python3.6 /usr/local/bin/glance-api --config-dir=/etc/glan
+           └─18451 /usr/bin/python3.6 /usr/local/bin/glance-api --config-dir=/etc/glan
+    ```
+
+1. 添加 plugin, 提供 swift 服务
+
+    ```console
+	vi local.conf
+
+	    ...
+	    [[local|localrc]]
+	    ...
+        # Swift
+        # -----
+        SWIFT_HASH=66a3d6b56c1f479c8b4e70ab5c2000f5
+        SWIFT_REPLICAS=1
+        SWIFT_DATA_DIR=$DEST/data
+        enable_service s-proxy s-object s-container s-account
+
+	# 部署
+	$ ./stack.sh
+    ```
+
+## Lesson 09 Swift ( [Catalog](#catalog) )
+
+### 理解 Swift 的使⽤场景
+
+1. Swift 为 Openstack 提供对象存储，透过调用 API 实现存储和检索大量数据。 Swift 将数据存储为二进制对象。像 AWS S3。
+
+
+### swift Concepts
+
+1. swift 核心组件
+    - Proxy service: 一个管理接口, 处理 REST API 请求
+    - Accounts service: 一组 account database 管理 container 列表
+    - Containers service: 一组 container database 管理 object 列表
+    - Objects service: 数据本身
+    - ![](../img/swift1.png)
+
+1. 每个存储节点上的设备被 swift 暴露出来称为一个存储设备，swift 通过 ring 的算法将每个设备 hash 得到一个值，很多设备从最小的 hash 到最大组成了一个环，然后将要上传对象的 Account、Container 和 Object 一起 hash 出来一个值，放入环中，按照向左的原则找到一个存储 Driver 对应的设备的 ip 地址和位置，将文件存入
+
+1. Rings: Map logical names of data to locations on particular disks.
+
+    - ![](../img/swift2.png)
+    - ![](../img/swift3.png)
+
+### swift Capablities
+
+1. 查询 swift 状态
+
+    ```console
+    $ swift -V 3 stat
+                   Account: AUTH_0ae8ec62a38b4ccf99f40d5308064023
+                Containers: 0
+                   Objects: 0
+                     Bytes: 0
+              Content-Type: text/plain; charset=utf-8
+               X-Timestamp: 1622289439.60654
+           X-Put-Timestamp: 1622289439.60654
+                      Vary: Accept
+                X-Trans-Id: tx0d86462bd35a488d88809-0060b22c1f
+    X-Openstack-Request-Id: tx0d86462bd35a488d88809-0060b22c1f
+    ```
+
+1. swift 创建 container
+
+    ```console
+	$ openstack container create my_container
+    ```
+
+1. 上传下载一对象
+
+    ```console
+    $ openstack object create coa.txt
+	$ openstack object save coa.txt
+    ```
+
+    ```console
+	$ swift -V 3  upload demo-container1 hello_swift.txt
+    $ swift -V 3 list
+	$ swift -V 3 download demo-container1 Imback_swift.txt
+    ```
+
+### 管理到期的对象
+
+
+## Lesson 10 Heat ( [Catalog](#catalog) )
 
 ### Heat 的模版中的讲解
 
-### 通过⼀个模版创建 OpenStack 的资源
+1. heat 是 OpenStack 核心组件中的一个，它可以实现自动的在我们的 OpenStack 环境中创建资源，比如虚拟机、网络、虚拟路由、安全等资源，也是很多 OpenStack 周边的项目需要依赖的项目，比如 Tacker 等等
+
+### heat Concepts
+
+1. heat 核心组件
+
+    - heat-api: heat-api 组件提供了一个 OpenStack 原生 REST API，它通过通过 RPC 将 API 请求发送到热引擎来处理 API 请求
+    - heat-api-cfn: heat-api-cfn 组件提供了一个与 AWS CloudFormation 兼容的 AWS 查询 API，并通过通过 RPC 将 API 请求发送到热引擎来处理 API 请求
+    - heat-engine: heat-engine 的主要职责是协调模板的启动并将事件提供给 API 使用者
+
+    - ![](../img/heat1.png)
+
+1. heat 模版默认以 yaml 格式编辑
+
+    - heat_template_version: 重要! 不仅告诉 Heat 模板的格式，还告诉 Heat 将被验证和支持的功能
+	- description: 可选, 功能描述
+	- parameters: 宣告变量, 可在 resources 模块使用
+	- resources: 宣告需要使用的资源
+
+1. https://docs.openstack.org/heat/latest/template_guide/hot_spec.html
+
+### heat Capablities
+
+1. 使用 heat 模版创建 OpenStack 的资源
+
+    ```console
+	$ vi fedora20.yaml
+
+    	heat_template_version: 2013-05-23
+
+        description: create a fedora vm through heat template
+
+        parameter:
+          key_name:
+            type: string
+            description: Enable SSH access to instance
+            default: key_ms
+          instance_type:
+            type: string
+            description: Instance type for WordPress server
+            default: 2p2g100g
+          image_id:
+            tyep: string
+            description: Fedroa cloud image
+            default: fedora-20.x86_64
+
+        resource:
+          instance_port:
+            type: OS::Neutron::Port
+            properties:
+              network: net_coa
+              security_group:
+                - default
+              fixed_ips:
+                - subnet_id" "sub_coa"
+          fedora_instance:
+            type: OS::Nova::Server
+            properties:
+              image: { get_param: image_id }
+              flavor: { get_param: instance_type }
+              key_name: { get_param: key_name }
+              networks:
+                - port: { get_resource: instance_port }
+
+	# 透过 heat template 创建虚拟机
+	$ heat stack-create -f fedora20.yaml  teststack
+    $ heat stack-show teststack
+    ```
+
+    - ![](../img/heat2.png)
+    - ![](../img/heat3.png)
 
 ### 更新⼀个模版
 
 ### 创建互相依赖 yaml 模版
 
-## Lesson 10：Quiz
+## Lesson 11 Quiz ( [Catalog](#catalog) )
 
 ### 模拟题讲解
 
