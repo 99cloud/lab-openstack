@@ -15,7 +15,7 @@
 
 | Date | Time | Title | Content |
 | ---- | ---- | ----- | ------- |
-| 第 1 天 | 上午 | [Lesson 01：OpenStack 概述] ( [Catalog](#Lesson-01-OpenStack Introduction) ) |
+| 第 1 天 | 上午 | [Lesson 01：OpenStack 概述] ( [Catalog](#Lesson-01-OpenStack-Introduction) ) |
 | | 下午 | [Lesson 02：管理身份认证服务 - Keystone] ( [Catalog](#Lesson-02-Keystone) ) |
 | | | [Lesson 03：管理看板服务 - Horizon] ( [Catalog](#Lesson-03-Horizon) ) |
 | 第 2 天 | 上午 | [Lesson 04：管理计算服务 - Nova] ( [Catalog](#Lesson-04-Nova) ) |
