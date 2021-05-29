@@ -320,8 +320,6 @@ instances_path = /opt/stack/data/nova/instances
 state_path = /opt/stack/data/nova
 ```
 
-### devstack 服务的管理
-
 ## Lesson 04：Nova
 
 ### 理解虚拟化
@@ -334,14 +332,14 @@ state_path = /opt/stack/data/nova
 
 1. Hypervisor function
 
-- 将物理资源池化
-- 分配资源给虚拟机
-- 管理虚拟机生命周期
+    - 将物理资源池化
+    - 分配资源给虚拟机
+    - 管理虚拟机生命周期
 
 1. 虚拟化的类型
 
-- Type1: installed directly on top of physical, named as bare metal hypervisors (ex: VMware ESXi, Microsoft Hyper-V, KVM)
-- Type2: installed on Host OS which sits between physical serer and hypervisor, named as hosted hypervisors(VMware Workstation, VirtualBox)
+    - Type1: installed directly on top of physical, named as bare metal hypervisors (ex: VMware ESXi, Microsoft Hyper-V, KVM)
+    - Type2: installed on Host OS which sits between physical serer and hypervisor, named as hosted hypervisors(VMware Workstation, VirtualBox)
 
     - ![](../img/virtual1.png)
 	
@@ -390,25 +388,25 @@ state_path = /opt/stack/data/nova
 
 1. nova 计算资源池的划分方式
     ```console
-	# 首先创建一个 host aggregation 叫 vip_host_aggr 做并创建一个 available zone 叫做 demo
-	$ nova aggregate-create [vip_host_aggr] [vip_zone]
+    # 首先创建一个 host aggregation 叫 vip_host_aggr 做并创建一个 available zone 叫做 demo
+    $ nova aggregate-create [vip_host_aggr] [vip_zone]
 	
-	# 创建一个 host aggregation 叫 regular_host_aggr 并将它加入到 available zone vip_zone 和 regular_zone 中, 程序会自动判断是新建 az 还是关联现有 az
-	$ nova aggregate-create [regular_host_aggr] [regular_zone]
+    # 创建一个 host aggregation 叫 regular_host_aggr 并将它加入到 available zone vip_zone 和 regular_zone 中, 程序会自动判断是新建 az 还是关联现有 az
+    $ nova aggregate-create [regular_host_aggr] [regular_zone]
 	
-	# 将计算节点加入到各自的 host aggregation 中去
-	$ nova aggregate-add-host [vip_host_aggr] [I7_compute_node]
-	$ nova aggregate-add-host [regular_host_aggr] [I5_compute_node]
+    # 将计算节点加入到各自的 host aggregation 中去
+    $ nova aggregate-add-host [vip_host_aggr] [I7_compute_node]
+    $ nova aggregate-add-host [regular_host_aggr] [I5_compute_node]
 	
-	# 为 vip_host_aggr 设置特殊的属性来和 flavor 产生关联
-	$ nova aggregate-set-metadata [vip_host_aggr] [ForVip=true]
+    # 为 vip_host_aggr 设置特殊的属性来和 flavor 产生关联
+    $ nova aggregate-set-metadata [vip_host_aggr] [ForVip=true]
     $ nova aggregate-set-metadata [regular_host_aggr] [ForRegular=true]
-	
+
     # 为了 vip 租户创建一个 flavor
     $ openstack flavor create --private-ram 256 --disk 1 --vcpus 4 m1.flavor_vip
-	$ nova flavor-access-add [m1.flavor_vip] [project_vip]
-	$ nova flavor-key m1.flavor_vip set ForVip=true
-	
+    $ nova flavor-access-add [m1.flavor_vip] [project_vip]
+    $ nova flavor-key m1.flavor_vip set ForVip=true
+
     # 到此, 完成 vip i7 调度的关联创建, 接下来说明如何使用
     $ source project_vip_userrc
     $ openstack server create --flavor m1.flavor_vip ……
@@ -472,7 +470,7 @@ state_path = /opt/stack/data/nova
 
 ### Nova Summary
 
-    - ![](../img/virtual9.png)
+- ![](../img/virtual9.png)
 
 ### 学习规划硬件计算资源（ 算你需要买多少服务器 ）
 
@@ -616,7 +614,7 @@ state_path = /opt/stack/data/nova
 	```
 1. 创建一卷的快照
     ```console
-	$ openstack volume snapshot create --name [myvol_ss] [myvol]
+	$ openstack volume snapshot create --volume [myvol] [myvol_snapshot]
 	```
 	
 1. 从快照中创建新卷
@@ -625,16 +623,18 @@ state_path = /opt/stack/data/nova
 	```
 
 ### 备份与快照的差别
+
 1. qcow2 快照 copy-on-write
 
     - ![](../img/cinder3.png)
 
 1. 透过 snapshot 做 rollback 和 rebuild
+
     ```console
 	$ openstack server image create --name my-snapshot --wait my-vm
     $ openstack image show --fit-width my-snapshot
 	$ openstack server rebuild --image my-snapshot my-vm
-	```	
+	```
 	
 ### 创建块存储的卷组
 
@@ -648,17 +648,8 @@ state_path = /opt/stack/data/nova
 
 ### 备份和恢复卷
 
-## Lesson 07：Swift
 
-### 理解 Swift 的使⽤场景
-
-### Ring 的设计简介
-
-### 管理对象存储的
-
-### 管理到期的对象
-
-## Lesson 08：Neutron
+## Lesson 07：Neutron
 
 ### 理解 Neutron 的作⽤
 
@@ -747,7 +738,7 @@ state_path = /opt/stack/data/nova
 	$ ip netns exec ns2 ip addr add 192.168.0.3/24 dev tap2
 	# ping to each other
 	$ ip netns exec ns1 ping 192.168.0.3
-	```	
+	```
 
 1. 透过 OVS Bridge 创建两台虚机能互通的网络
 
@@ -785,7 +776,7 @@ state_path = /opt/stack/data/nova
 	$ ip netns exec ns2 ip addr add 192.168.0.3/24 dev tap2
 	# ping to each other
 	$ ip netns exec ns1 ping 192.168.0.3
-	```	
+	```
 
 1. 透过 neutron 创建两台虚机能互通的网络
     - Neutron ML2.OVS_agent, L3_agent, dhcp_agent 疯了...
@@ -949,12 +940,12 @@ state_path = /opt/stack/data/nova
 
 1. 创建外部网络
     ```console
-	$ openstack network create --provider-network-type [flat] --provider-physical-network [public] --external [public]
+	$ openstack network create --provider-network-type --enable --project admin --external [public]
 	```
 	
 1. 创建外部网络的子网
     ```console
-    $ openstack subnet create --subnet-range [192.168.100.0/24] --gateway [192.168.100.1] --no-dhcp --network [public] [pubsub]
+    $ openstack subnet create --subnet-range [192.168.100.0/24] --gateway [192.168.100.1] --dhcp --network [public] [pubsub]
 	```
 
 1. 将租户网络和外部链接
@@ -988,9 +979,201 @@ state_path = /opt/stack/data/nova
     Jul 28 16:48:10 test-coa-5 nova-conductor[7519]: 2020-07-28 16:48:10.626 8393 ERROR nova.scheduler.utils [req-9b59c38d-c943-4d56-82ca-5cf9f1b5bfe9 cee4ec5181d24cc2a3a3c4975c3277a2 4452a8c2601b482fb13639c8839c80f9 - default default] [instance: a5a972b4-b779-4931-94c3-c43956f4d7ee] Error from last host: test-coa-5 (node test-coa-5): [u'Traceback (most recent call last):\n', u'  File "/opt/stack/nova/nova/compute/manager.py", line 1996, in _do_build_and_run_instance\n    filter_properties)\n', u'  File "/opt/stack/nova/nova/compute/manager.py", line 2237, in _build_and_run_instance\n    instance_uuid=instance.uuid, reason=six.text_type(e))\n', u"RescheduledException: Build of instance a5a972b4-b779-4931-94c3-c43956f4d7ee was re-scheduled: XML error: expected unicast mac address, found multicast '11:22:33:44:55:66'\n"]
     ```
 
-## Lesson 09：Heat
+## Lesson 08: devstack 服务的管理
+
+1. https://docs.openstack.org/tacker/latest/install/devstack.html
+1. https://docs.openstack.org/devstack/latest/
+
+### 理解 devstack 的作⽤
+
+1. DevStack 是一系列可扩展的脚本，用于基于 git master 的最新版本快速调出完整的 OpenStack 环境。它以交互方式用作开发环境和 OpenStack 项目大部分功能测试的基础。
+
+### devstack Concepts
+
+1. devstack 透过执行 stack.sh 脚本, 搭建 openstack 环境, 依据 local.conf 参数, 决定提供哪些服务
+
+1. 使用 systemd 来管理 devstack 部署的 OpenStack
+
+1. DevStack 插件。支持额外的 Openstack 服务, 以插件接口的概念, 扩展 openstack 服务
+
+### cinder Capablities
+
+1. 重启 glance api 服务
+    ```console
+    # 检查服务
+	$ systemctl list-units | grep -rn "devstack@*"
+
+	# 重启 glance api 服务
+	$ systemctl restart "devstack@g-api"
+
+    # 查看 glance api 状态
+	$ systemctl status "devstack@g-api"
+      devstack@g-api.service - Devstack devstack@g-api.service
+       Loaded: loaded (/etc/systemd/system/devstack@g-api.service; enabled; vendor preset:
+       Active: active (running) since Sat 2021-05-29 08:25:20 UTC; 2h 56min ago
+       Main PID: 18213 (glance-api)
+       Tasks: 3 (limit: 4915)
+       CGroup: /system.slice/system-devstack.slice/devstack@g-api.service
+           ├─18213 /usr/bin/python3.6 /usr/local/bin/glance-api --config-dir=/etc/glan
+           ├─18450 /usr/bin/python3.6 /usr/local/bin/glance-api --config-dir=/etc/glan
+           └─18451 /usr/bin/python3.6 /usr/local/bin/glance-api --config-dir=/etc/glan
+    ```
+
+1. 添加 plugin, 提供 swift 服务
+    ```console
+	vi local.conf
+	...
+	[[local|localrc]]
+	...
+    # Swift
+    # -----
+    SWIFT_HASH=66a3d6b56c1f479c8b4e70ab5c2000f5
+    SWIFT_REPLICAS=1
+    SWIFT_DATA_DIR=$DEST/data
+    enable_service s-proxy s-object s-container s-account
+
+	# 部署
+	$ ./stack.sh
+    ```
+
+## Lesson 09：Swift
+
+### 理解 Swift 的使⽤场景
+
+1. Swift 为 Openstack 提供对象存储，透过调用 API 实现存储和检索大量数据。 Swift 将数据存储为二进制对象。像 AWS S3。
+
+
+### swift Concepts
+
+1. swift 核心组件
+
+    - Proxy service: 一个管理接口, 处理 REST API 请求
+    - Accounts service: 一组 account database 管理 container 列表
+    - Containers service: 一组 container database 管理 object 列表
+    - Objects service: 数据本身
+    - ![](../img/swift1.png)
+
+1. 每个存储节点上的设备被 swift 暴露出来称为一个存储设备，swift 通过 ring 的算法将每个设备 hash 得到一个值，很多设备从最小的 hash 到最大组成了一个环，然后将要上传对象的 Account、Container 和 Object 一起 hash 出来一个值，放入环中，按照向左的原则找到一个存储 Driver 对应的设备的 ip 地址和位置，将文件存入
+
+1. Rings: Map logical names of data to locations on particular disks.
+
+    - ![](../img/swift2.png)
+    - ![](../img/swift3.png)
+
+### swift Capablities
+
+1. 查询 swift 状态
+    ```console
+    $ swift -V 3 stat
+                   Account: AUTH_0ae8ec62a38b4ccf99f40d5308064023
+                Containers: 0
+                   Objects: 0
+                     Bytes: 0
+              Content-Type: text/plain; charset=utf-8
+               X-Timestamp: 1622289439.60654
+           X-Put-Timestamp: 1622289439.60654
+                      Vary: Accept
+                X-Trans-Id: tx0d86462bd35a488d88809-0060b22c1f
+    X-Openstack-Request-Id: tx0d86462bd35a488d88809-0060b22c1f
+    ```
+
+1. swift 创建 container
+    ```console
+	$ openstack container create my_container
+    ```
+
+1. 上传下载一对象
+    ```console
+    $ openstack object create coa.txt
+	$ openstack object save coa.txt
+    ```
+
+    ```console
+	$ swift -V 3  upload demo-container1 hello_swift.txt
+    $ swift -V 3 list
+	$ swift -V 3 download demo-container1 Imback_swift.txt
+    ```
+
+### Ring 的设计简介
+
+### 管理对象存储的
+
+### 管理到期的对象
+
+
+## Lesson 10：Heat
 
 ### Heat 的模版中的讲解
+
+1. heat 是 OpenStack 核心组件中的一个，它可以实现自动的在我们的 OpenStack 环境中创建资源，比如虚拟机、网络、虚拟路由、安全等资源，也是很多 OpenStack 周边的项目需要依赖的项目，比如 Tacker 等等
+
+### heat Concepts
+
+1. heat 核心组件
+
+    - heat-api: heat-api 组件提供了一个 OpenStack 原生 REST API，它通过通过 RPC 将 API 请求发送到热引擎来处理 API 请求
+    - heat-api-cfn: heat-api-cfn 组件提供了一个与 AWS CloudFormation 兼容的 AWS 查询 API，并通过通过 RPC 将 API 请求发送到热引擎来处理 API 请求
+    - heat-engine: heat-engine 的主要职责是协调模板的启动并将事件提供给 API 使用者
+
+    - ![](../img/heat1.png)
+
+1. heat 模版默认以 yaml 格式编辑
+
+    - heat_template_version: 重要! 不仅告诉 Heat 模板的格式，还告诉 Heat 将被验证和支持的功能
+	- description: 可选, 功能描述
+	- parameters: 宣告变量, 可在 resources 模块使用
+	- resources: 宣告需要使用的资源
+
+1. https://docs.openstack.org/heat/latest/template_guide/hot_spec.html
+
+### heat Capablities
+
+1. 使用 heat 模版创建一虚拟机
+    ```console
+	$ vi fedora20.yaml
+	heat_template_version: 2013-05-23
+
+	description: create a fedora vm through heat template
+
+	parameter:
+	  key_name:
+	    type: string
+		description: Enable SSH access to instance
+		default: key_ms
+	  instance_type:
+	    type: string
+		description: Instance type for WordPress server
+		default: 2p2g100g
+	  image_id:
+	    tyep: string
+		description: Fedroa cloud image
+		default: fedora-20.x86_64
+
+	resource:
+	  instance_port:
+	    type: OS::Neutron::Port
+		properties:
+		  network: net_coa
+		  security_group:
+		    - default
+		  fixed_ips:
+		    - subnet_id" "sub_coa"
+	  fedora_instance:
+	    type: OS::Nova::Server
+		properties:
+		  image: { get_param: image_id }
+		  flavor: { get_param: instance_type }
+		  key_name: { get_param: key_name }
+		  networks:
+		    - port: { get_resource: instance_port }
+
+	# 透过 heat template 创建虚拟机
+	$ heat stack-create -f fedora20.yaml  teststack
+    $ heat stack-show teststack
+    ```
+
+    - ![](../img/heat2.png)
+    - ![](../img/heat3.png)
 
 ### 通过⼀个模版创建 OpenStack 的资源
 
@@ -998,7 +1181,7 @@ state_path = /opt/stack/data/nova
 
 ### 创建互相依赖 yaml 模版
 
-## Lesson 10：Quiz
+## Lesson 11：Quiz
 
 ### 模拟题讲解
 
