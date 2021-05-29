@@ -15,19 +15,19 @@
 
 | Date | Time | Title | Content |
 | ---- | ---- | ----- | ------- |
-| 第 1 天 | 上午 | [Lesson 01：OpenStack 概述] ( [Catalog](#Lesson 01：OpenStack Introduction) ) |
-| | 下午 | [Lesson 02：管理身份认证服务 - Keystone] ( [Catalog](#Lesson 02：Keystone) ) |
-| | | [Lesson 03：管理看板服务 - Horizon] ( [Catalog](#Lesson 03：Horizon) ) |
-| 第 2 天 | 上午 | [Lesson 04：管理计算服务 - Nova] ( [Catalog](#Lesson 04：Nova) ) |
-| | 下午 | [Lesson 05：管理镜像服务 - Glance] ( [Catalog](#Lesson 05：Glance) ) |
-| | | [Lesson 06：管理块存储 - Cinder] ( [Catalog](#Lesson 06：Cinder) ) |
-| | | [Lesson 07：管理⽹络服务 - Neutron] ( [Catalog](#Lesson 07：Neutron) ) |
-| 第 3 天 | 上午 | [Lesson 08: devstack 部署与管理] ( [Catalog](#Lesson 08: devstack 服务的管理) ) |
-| | | [Lesson 09：管理对象存储 - Swift] ( [Catalog](#Lesson 09：Swift) ) |
-| | | [Lesson 10：编排服务 - Heat] ( [Catalog](#Lesson 10：Heat) ) |
-| | 下午 | [Lesson 11：Quiz] ( [Catalog](#Lesson 11：Quiz) ) |
+| 第 1 天 | 上午 | [Lesson 01：OpenStack 概述] ( [Catalog](#Lesson-01-OpenStack Introduction) ) |
+| | 下午 | [Lesson 02：管理身份认证服务 - Keystone] ( [Catalog](#Lesson-02-Keystone) ) |
+| | | [Lesson 03：管理看板服务 - Horizon] ( [Catalog](#Lesson-03-Horizon) ) |
+| 第 2 天 | 上午 | [Lesson 04：管理计算服务 - Nova] ( [Catalog](#Lesson-04-Nova) ) |
+| | 下午 | [Lesson 05：管理镜像服务 - Glance] ( [Catalog](#Lesson-05-Glance) ) |
+| | | [Lesson 06：管理块存储 - Cinder] ( [Catalog](#Lesson-06-Cinder) ) |
+| | | [Lesson 07：管理⽹络服务 - Neutron] ( [Catalog](#Lesson-07-Neutron) ) |
+| 第 3 天 | 上午 | [Lesson 08: devstack 部署与管理] ( [Catalog](#Lesson-08-devstack-服务的管理) ) |
+| | | [Lesson 09：管理对象存储 - Swift] ( [Catalog](#Lesson-09-Swift) ) |
+| | | [Lesson 10：编排服务 - Heat] ( [Catalog](#Lesson-10-Heat) ) |
+| | 下午 | [Lesson 11：Quiz] ( [Catalog](#Lesson-11-Quiz) ) |
 
-## Lesson 01：OpenStack Introduction ( [Catalog](#catalog) )
+## Lesson 01 OpenStack Introduction ( [Catalog](#catalog) )
 
 云计算最初的概念是”网络即是电脑”, 尔后 Amazon 推出的弹性云计算 (EC2) 提供用户使用资源并且收费, 大致顶定了云计算的商业用途。OpenStack 是一个开源的云平台, 他属于云计算当中我们常说的 IAAS(infrastructure as a service), 简单的讲他是来管理我们的硬件设施的, 我们在我们的设备上部署 Linux 与 OpenStack, 然后由 OpenStack 来帮助我们决定哪些虚拟机应该启动在哪些物理的计算节点上
 
@@ -139,7 +139,7 @@ Openstack 以 Python 语法实现 IaaS 架构, 在各组件调度资源的过程
 
 ![](../img/sqlachemy.png)
 
-## Lesson 02：Keystone ( [Catalog](#catalog) )
+## Lesson 02 Keystone ( [Catalog](#catalog) )
 
 1. keystone 在 openstack 扮演什么角色
 
@@ -240,7 +240,7 @@ https://docs.openstack.org/keystone/latest/
     $ systemctl restart devstack@c-api
     ```
 
-## Lesson 03：Horizon ( [Catalog](#catalog) )
+## Lesson 03 Horizon ( [Catalog](#catalog) )
 
 ### Horizon Concepts
 
@@ -289,7 +289,7 @@ $ vi /etc/nova/nova.conf
     state_path = /opt/stack/data/nova
 ```
 
-## Lesson 04：Nova ( [Catalog](#catalog) )
+## Lesson 04 Nova ( [Catalog](#catalog) )
 
 ### 理解虚拟化
 
@@ -451,7 +451,7 @@ $ vi /etc/nova/nova.conf
 
 ### 学习规划硬件计算资源（ 算你需要买多少服务器 ）
 
-## Lesson 05：Glance ( [Catalog](#catalog) )
+## Lesson 05 Glance ( [Catalog](#catalog) )
 
 ### 理解 OpenStack 中使⽤的镜像
 
@@ -509,7 +509,7 @@ $ vi /etc/nova/nova.conf
     $ openstack server image create --name [instance_snapshot] [instance1]
     ```
 
-## Lesson 06：Cinder ( [Catalog](#catalog) )
+## Lesson 06 Cinder ( [Catalog](#catalog) )
 
 ### 理解 Cinder 的作⽤
 
@@ -623,7 +623,7 @@ $ vi /etc/nova/nova.conf
 	```
 
 
-## Lesson 07：Neutron ( [Catalog](#catalog) )
+## Lesson 07 Neutron ( [Catalog](#catalog) )
 
 ### 理解 Neutron 的作⽤
 
@@ -964,7 +964,7 @@ $ vi /etc/nova/nova.conf
     Jul 28 16:48:10 test-coa-5 nova-conductor[7519]: 2020-07-28 16:48:10.626 8393 ERROR nova.scheduler.utils [req-9b59c38d-c943-4d56-82ca-5cf9f1b5bfe9 cee4ec5181d24cc2a3a3c4975c3277a2 4452a8c2601b482fb13639c8839c80f9 - default default] [instance: a5a972b4-b779-4931-94c3-c43956f4d7ee] Error from last host: test-coa-5 (node test-coa-5): [u'Traceback (most recent call last):\n', u'  File "/opt/stack/nova/nova/compute/manager.py", line 1996, in _do_build_and_run_instance\n    filter_properties)\n', u'  File "/opt/stack/nova/nova/compute/manager.py", line 2237, in _build_and_run_instance\n    instance_uuid=instance.uuid, reason=six.text_type(e))\n', u"RescheduledException: Build of instance a5a972b4-b779-4931-94c3-c43956f4d7ee was re-scheduled: XML error: expected unicast mac address, found multicast '11:22:33:44:55:66'\n"]
     ```
 
-## Lesson 08: devstack 服务的管理 ( [Catalog](#catalog) )
+## Lesson 08 devstack 服务的管理 ( [Catalog](#catalog) )
 
 1. https://docs.openstack.org/tacker/latest/install/devstack.html
 1. https://docs.openstack.org/devstack/latest/
@@ -1024,7 +1024,7 @@ $ vi /etc/nova/nova.conf
 	$ ./stack.sh
     ```
 
-## Lesson 09：Swift ( [Catalog](#catalog) )
+## Lesson 09 Swift ( [Catalog](#catalog) )
 
 ### 理解 Swift 的使⽤场景
 
@@ -1088,7 +1088,7 @@ $ vi /etc/nova/nova.conf
 ### 管理到期的对象
 
 
-## Lesson 10：Heat ( [Catalog](#catalog) )
+## Lesson 10 Heat ( [Catalog](#catalog) )
 
 ### Heat 的模版中的讲解
 
@@ -1168,7 +1168,7 @@ $ vi /etc/nova/nova.conf
 
 ### 创建互相依赖 yaml 模版
 
-## Lesson 11：Quiz ( [Catalog](#catalog) )
+## Lesson 11 Quiz ( [Catalog](#catalog) )
 
 ### 模拟题讲解
 
