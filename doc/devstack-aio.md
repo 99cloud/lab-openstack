@@ -4,7 +4,7 @@
 1. 6Core / 16G 内存 / 40G 硬盘 2 块 / NAT 网络单张网卡 / 对虚拟机打开 VT 允许嵌套虚拟化
 1. Ubuntu 20.04 Server ISO，安装系统，配置 SSH 密钥登陆，关机，打快照
 1. 配置 Ubuntu [apt 清华源](https://mirrors.tuna.tsinghua.edu.cn/help/ubuntu/)，apt-get update && apt-get upgrade
-1. 配置 pip 豆瓣源，其它源（ 比如阿里、清华、中科大 ）更新速度稍慢，比如 os-brick===3.2.0 会找不到，最多 3.1.0
+1. 配置 pip 豆瓣源，其它源（ 比如阿里、清华、中科大 ）更新速度稍慢，比如 os-brick===3.2.0 会找不到，最多 3.1.0。如果你发现 pip 速度不慢，就不要配置这里，因为 wallaby 时，豆瓣源对 tempest 的 oslo.log 的高版本无法下载到。
 
     ```console
     $ sudo touch /etc/pip.conf
