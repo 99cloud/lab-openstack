@@ -1,4 +1,4 @@
-# DevStack AIO 环境搭建步骤
+# DevStack AIO 本地环境搭建步骤
 
 1. MacOS / VMWare Fusion 15
 1. 6Core / 16G 内存 / 40G 硬盘 2 块 / NAT 网络单张网卡 / 对虚拟机打开 VT 允许嵌套虚拟化
@@ -178,3 +178,43 @@
 
     nothing to commit, working tree clean
     ```
+
+# DevStack AIO Vultr 环境搭建步骤
+
+1. 选 20.04
+1. 参考 <https://stackoverflow.com/questions/63439723/error-in-installation-of-openstack-in-ubuntu>
+
+    ```bash
+    apt-get update
+    apt-get upgrade
+    apt-get install iptables
+    apt-get install arptables
+    apt-get install ebtables
+
+    update-alternatives --set iptables /usr/sbin/iptables-legacy || true
+    update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy || true
+    update-alternatives --set arptables /usr/sbin/arptables-legacy || true
+    update-alternatives --set ebtables /usr/sbin/ebtables-legacy || true
+    ```
+
+1. 改配置文件 local.conf
+
+    ```bash
+    stack@coalab001:~/devstack$ cat local.conf | grep -v '^$' | grep -v '^#'
+    [[local|localrc]]
+    ADMIN_PASSWORD=trystack99cloud
+    DATABASE_PASSWORD=$ADMIN_PASSWORD
+    RABBIT_PASSWORD=$ADMIN_PASSWORD
+    SERVICE_PASSWORD=$ADMIN_PASSWORD
+    enable_service s-proxy s-object s-container s-account h-eng h-api h-api-cfn h- api-cw q-svc q-dhcp q-meta q-agt q-l3 c-bak n-spice
+    enable_plugin heat https://git.openstack.org/openstack/heat stable/wallaby
+    enable_plugin heat-dashboard https://git.openstack.org/openstack/heat-dashboard stable/wallaby
+    LOGFILE=$DEST/logs/stack.sh.log
+    LOGDAYS=2
+    SWIFT_HASH=66a3d6b56c1f479c8b4e70ab5c2000f5
+    SWIFT_REPLICAS=1
+    SWIFT_DATA_DIR=$DEST/data
+    ```
+
+1. 创建 pv：`pvcreate /dev/sdb`
+1. 然后可以开始：`./unstack.sh && ./statck.sh`
