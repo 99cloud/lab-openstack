@@ -15,32 +15,87 @@
 
 | Date | Time | Title | Content |
 | ---- | ---- | ----- | ------- |
-| 第 1 天 | 上午 | [Lesson 01：OpenStack 概述] ( [Catalog](#Lesson-01-OpenStack-Introduction) ) |
-| | 下午 | [Lesson 02：管理身份认证服务 - Keystone] ( [Catalog](#Lesson-02-Keystone) ) |
-| | | [Lesson 03：管理看板服务 - Horizon] ( [Catalog](#Lesson-03-Horizon) ) |
-| 第 2 天 | 上午 | [Lesson 04：管理计算服务 - Nova] ( [Catalog](#Lesson-04-Nova) ) |
-| | 下午 | [Lesson 05：管理镜像服务 - Glance] ( [Catalog](#Lesson-05-Glance) ) |
-| | | [Lesson 06：管理块存储 - Cinder] ( [Catalog](#Lesson-06-Cinder) ) |
-| | | [Lesson 07：管理⽹络服务 - Neutron] ( [Catalog](#Lesson-07-Neutron) ) |
-| 第 3 天 | 上午 | [Lesson 08: devstack 部署与管理] ( [Catalog](#Lesson-08-devstack-服务的管理) ) |
-| | | [Lesson 09：管理对象存储 - Swift] ( [Catalog](#Lesson-09-Swift) ) |
-| | | [Lesson 10：编排服务 - Heat] ( [Catalog](#Lesson-10-Heat) ) |
-| | 下午 | [Lesson 11：Quiz] ( [Catalog](#Lesson-11-Quiz) ) |
+| 第 1 天 | 上午 | [1. OpenStack 概述]() | [OpenStack 从何而来？]() |
+| | | | [OpenStack 的组件架构是怎样的？]() |
+| | | | [云计算的技术发展趋势是怎样的？]() |
+| | | | [OpenStack 的参考资料有哪些？]() |
+| | | [Lesson 02：管理身份认证服务 - Keystone](#) | [Keystone 的概念空间中有哪些对象？](#) |
+| | | | [Keystone 能提供哪些服务？]() |
+| | 下午 | [Lesson 03：管理看板服务 - Horizon]() | [如何通过 Dashboard 来管理 OpenStack 平台？](#) |
+| | | | [如何配置 Horizon 来⽀持多 Domain 登录？](#) |
+| | | [Lesson 04：管理计算服务 - Nova](#) | [理解虚拟化](#) |
+| | | | [学习规划硬件计算资源（ 算你需要买多少服务器 ）](#) |
+| | | | [管理 flavor](#) |
+| | | | [管理 compute instance（ 如启动、关闭、终⽌ ）](#) |
+| | | | [管理Nova⽤户密钥对（ keypair ）](#) |
+| | | | [启动⼀个新实例](#) |
+| | | | [关闭⼀个实例](#) |
+| | | | [终⽌实例](#) |
+| | | | [配置⼀个拥有 floating IP 的实例]() |
+| | | | [管理项⽬的安全组规则]() |
+| | | | [分配安全组给实例]() |
+| | | | [分配 floating IP 给实例]() |
+| | | | [从实例上分离 floating IP]() |
+| 第 2 天 | 上午 | | [理解虚拟机从镜像启动和从云盘启动的区别](#) |
+| | | | [nova 管理虚拟机的静态数据的位置](#) |
+| | | | [devstack 服务的管理](#) |
+| | | [Lesson 05：管理镜像服务 - Glance](#) | [理解 OpenStack 中使⽤的镜像](#) |
+| | | | [上传⼀个镜像](#) |
+| | | | [管理镜像类型和后端](#) |
+| | | | [管理镜像（ 如添加、更新、移除 ）](#) |
+| | 下午 | [Lesson 06：管理块存储 - Cinder]() | [理解 Cinder 的作⽤](#) |
+| | | | [统⼀的存储解决⽅案 Ceph 的简介](#) |
+| | | | [管理卷](#) |
+| | | | [创建块存储的卷组](#) |
+| | | | [创建⼀个新的卷并将其安装到 Nova 实例上](#) |
+| | | | [管理配额](#) |
+| | | | [管理卷的配额](#) |
+| | | | [管理卷的备份](#) |
+| | | | [备份和恢复卷](#) |
+| | | [Lesson 07：管理对象存储 - Swift](#) | [理解 Swift 的使⽤场景](#) |
+| | | | [Ring 的设计简介](#) |
+| | | | [管理对象存储的](#) |
+| | | | [管理到期的对象](#) |
+| | | [Lesson 08：管理⽹络服务 - Neutron](#) | [理解 Neutron 的作⽤](#) |
+| | | | [⽣产环境中的实施⽅案](#) |
+| | | | [⽹络加速的技术 dpdk、sr-iov 的介绍](#) |
+| | | | [理解节点的内部⽹络的实现](#) |
+| | | | [管理⽹络资源（ 如路由、⼦⽹ ）](#) |
+| | | | [创建外部⽹络](#) |
+| | | | [创建路由](#) |
+| | | | [在虚拟环境中管理⽹络服务](#) |
+| | | | [管理安全组规则](#) |
+| 第 3 天 | 上午 | [Lesson 09：编排服务 - Heat](#) | [Heat 的模版中的讲解](#) |
+| | | | [通过⼀个模版创建 OpenStack 的资源](#) |
+| | | | [更新⼀个模版](#) |
+| | | | [创建互相依赖 yaml 模版]() |
+| | 下午 | [Lesson 10：模拟管理员练习题]() | [模拟题讲解](#) |
+| | | | [模拟题练习]() |
 
-## Lesson 01 OpenStack Introduction ( [Catalog](#catalog) )
+## Lesson 01：OpenStack Introduction ( [Catalog](#catalog) )
 
-云计算最初的概念是”网络即是电脑”, 尔后 Amazon 推出的弹性云计算 (EC2) 提供用户使用资源并且收费, 大致顶定了云计算的商业用途。OpenStack 是一个开源的云平台, 他属于云计算当中我们常说的 IAAS(infrastructure as a service), 简单的讲他是来管理我们的硬件设施的, 我们在我们的设备上部署 Linux 与 OpenStack, 然后由 OpenStack 来帮助我们决定哪些虚拟机应该启动在哪些物理的计算节点上
+计算发展
 
-![simpleOpenstackArch](../img/simpleOpenstackArch.png)
+- 大型机：集中式计算
+- 个人 PC：分布式计算
+- 移动互联网 + 云计算：泛在计算
+
+云计算发展
+
+- 最初的概念是”网络即是电脑”
+- 尔后 Amazon 推出的弹性云计算 (EC2) 提供用户使用资源并且收费, 大致顶定了云计算的商业用途。
+- OpenStack 是一个开源的云平台, 他属于云计算当中我们常说的 IaaS(infrastructure as a service), 简单的讲他是来管理我们的硬件设施的, 我们在我们的设备上部署 Linux 与 OpenStack, 然后由 OpenStack 来帮助我们决定哪些虚拟机应该启动在哪些物理的计算节点上
+
+    ![simpleOpenstackArch](/img/simpleOpenstackArch.png)
     
-![iaas](../img/iaas.png)
+    ![iaas](/img/iaas.png)
 
-### Virtualization & OpenStack
+### Virtualization & OpenStack ( [Catalog](#catalog) )
 
 1. 什么是虚拟化？虚拟化的发展历程如何？60-70 IBM / 80-90 VMWare / 2005-2010 Amazon / 2010 NASA Nebula & RackSpace Cloud Storage
 1. 云计算的类型有几种类型？IaaS / PaaS / SaaS，只有 IaaS 是必须基于虚拟化的
 
-### OpenStack Infrastructure
+### OpenStack Infrastructure ( [Catalog](#catalog) )
 
 1. OpenStack 哪些是核心项目？Keystone / Nova / Cinder / Neutron / Glance
 1. [Design](https://docs.openstack.org/arch-design/design.html)
@@ -49,7 +104,7 @@
 
 1. [Logical architecture](https://docs.openstack.org/install-guide/get-started-logical-architecture.html)
 
-    ![](../img/openstack-arch-kilo-logical-v1.png)
+    ![](/img/openstack-arch-kilo-logical-v1.png)
 
 1. [Conceptual architecture](https://docs.openstack.org/ocata/admin-guide/common/get-started-conceptual-architecture.html)
 
@@ -62,9 +117,9 @@
 1. [launchpad](https://bugs.launchpad.net/)
 1. [review](https://review.opendev.org/)
 
-    ![](../img/qualityfordevelop.png)
+    ![](/img/qualityfordevelop.png)
 
-### The Trend of Cloud Computing
+### The Trend of Cloud Computing ( [Catalog](#catalog) )
 
 1. 私有云、公有云、混合云的发展趋势如何？Azure / Aliyun / HW
 1. IaaS & CaaS 谁会是未来的主流？
@@ -84,86 +139,77 @@
 
 1. 数据池化  SDS -- Ceph and Cinder-volume
     - 高性能 高可用性 高可扩展性 支持三种存储接口(文件, 块, 物件)
-
 1. 网络资源池化 SDN -- Neutron Server
     - 控制转发分离 集中控制 虚拟化
 
-### OpenStack Reference
+### OpenStack Reference ( [Catalog](#catalog) )
 
 1. 官方文档在哪里？
 1. 有哪些推荐的入门书？《每天五分钟玩转 OpenStack》，《OpenStack 设计与实现》
-
-### reference
 
 #### How openstack service implements communication?
 
 1.   infra: restful api
 1.   inner: message queue
 
-![](../img/communication.png)
+![](/img/communication.png)
 
 #### Restful api
 
 OpenStack 是由很多个核心组件组合而成，每个组件都负责他们自己的一小块的功能比如负责提供计算服务的是Nova，提供网络服务的是 Neutron, 他们各自都有属于自己的管理接口，所谓管理接口就是一个基于 http 请求的一个 Web 服务，主要是用于接受命令行工具或者组件的 http 请求。访问管理接口的过程, 使用者发出请求 (request) 以 RESTful 的风格,基于 http 网络协议, 传送送到处理RESTful 封包的接口, 又称 REST API, 完成对数据库的增删查找.
 
-![](../img/restfulapi.png)
+![](/img/restfulapi.png)
 
 #### Message queue
 
-![](../img/rabbitmqex.png)
+![](/img/rabbitmqex.png)
     
-![](../img/rabbitmqex2.png)
+![](/img/rabbitmqex2.png)
     
-![](../img/rabbitmqex3.png)
+![](/img/rabbitmqex3.png)
 
 #### message for openstack oslo.messageing
 
 1. Event Notification
-
-    将讯息发送到总线上面, 对此类讯息感兴趣的服务进程会去获取此讯息, 做进一步的处理
-
-    举例来说: 计量服务的 Ceilometer 就是监听总线获取其他服务的事件, 进而实现计量与监控
-
+    - 将讯息发送到总线上面, 对此类讯息感兴趣的服务进程会去获取此讯息, 做进一步的处理
+    - 举例来说: 计量服务的 Ceilometer 就是监听总线获取其他服务的事件, 进而实现计量与监控
 1. Remote Procedure Call(RPC)
-
     - Cast: 异步执行远程方法,调用者不会等待结果返回
     - Call: 同步执行远程方法,调用者会等待结果返回
 
-    ![](../img/oslo.png)
+    ![](/img/oslo.png)
 
 #### database and sqlachemy
 
 Openstack 以 Python 语法实现 IaaS 架构, 在各组件调度资源的过程, 需要一数据库记录所有平台管理资料底层后台数据库琳琅满目 MySQL Mariadb PostgreSQL Sqlite3 等上层开发需要使用 Python 语法实现, 基于这样环境 Openstack 使用 SQLAchemy 来管理数据库, SQLAchemy 是一个以 Python 语法写成向下对数据库键值进行修改的工具 
 
-![](../img/sqlachemy.png)
+![](/img/sqlachemy.png)
 
-## Lesson 02 Keystone ( [Catalog](#catalog) )
+## Lesson 02 Keystone 
+
+[Catalog](#catalog)
 
 1. keystone 在 openstack 扮演什么角色
-
-**用户的身份认证服务包括组件和组件之间的身份认证**
-**为 OpenStack 提供目录服务**
-**规则服务**
-
-参考官方文件
-
-https://docs.openstack.org/keystone/latest/
+    - **用户的身份认证服务包括组件和组件之间的身份认证**
+    - **为 OpenStack 提供目录服务**
+    - **规则服务**
+1. 参考官方文件
+    - <https://docs.openstack.org/keystone/latest/>
 
 ### Keystone Concepts
 
 1. 什么是 User / Group / Project / Tenant / domain？
-    - User: 最基本的用户, 一个通常意义上的账号有用户名和密码还有一些相关的比如邮件等信息, 在 OpenStack 中只是创建一个用户是不可以使用OpenStack中的资源的
+    - User: 最基本的用户, 一个通常意义上的账号有用户名和密码还有一些相关的比如邮件等信息, 在 OpenStack 中只是创建一个用户是不可以使用 OpenStack 中的资源的
     - group: 组顾名思义就是一个用户的集合, 一般我们会把一个用户关联到一个项目中, 每次关联的时候都要设置一个角色比较麻烦, 有了组以后我们可以把组加到租户当中去并关联一个角色, 以后所以加入到这个组当中的用户就继承了这个组在这个租户当中的角色
     - project/tenant: project 顾名思义是项目的意思或者用我们熟知的话就是租户, 在本书中我们都会称之为项目而不是租户, 租户是 OpenStack 中一个核心的概念, 基本上所有的资源都是按照租户隔离, 比如网络、实例、路由等资源, 所以我们可以想象一个用户必须要先关联到一个项目中去才能正确使用 OpenStack 资源
     - domain: 在 OpenStack 当中域是用来实现真正的多项目/租户模>式的一种方法, 在没有域出现之前 OpenStack 有着一个权限的场景, 当你把一个用户任何一个项目/租户当中去的时候，你如果关联的是  admin 的角色的话, 这个时候这个用户突然就成为了 OpenStack 超级管理员, 这并非我们所希望的场景, 使用了域以后我们就可以实现真正意义上的多项目/租户模式了, 把一个用户加到 default 以外的域中的项目并关联到 admin 的时候, 这个用户就不再是整个 OpenStack 的管理员了, 他只能管理这个域下面的所有的项目/租户, 当然你要开启多项目/租户模式你得替换掉 /etc/keystone/policy.json 文件来开启
-    - ![](../img/DomainUserProjectRole.png)
+    
+        ![](/img/DomainUserProjectRole.png)
 
 1. 什么是服务终端 service endpoint？
     - 服务终点即一个服务提供的地址比如 http://192.168.100.20:5000/v3, 这就是一个服务终点, 服务终点是用来提供基于 http 请求的 API 方法的一个地址
-
 1. 什么是目录服务？
-    - 之前提到OpenStack有很多个核心组件组合而成的, 每个组件都有一个或多个管理接口, 每个管理接口提供服务都是以 web 服务的形式出现的, 那么他们都有一个服务的终点地址比如 keystone 的(http://ip:5000/v3), 我们怎么才能找到每个组件的终端呢？因为这些服务可以很方便的迁移到任何网络可达的物理服务器上, 所有这里我们要一个机制来集中管理服务的终点, 就像服务终点的路由器一样, 更好理解的是像 dns
-
+    - 之前提到 OpenStack 有很多个核心组件组合而成的, 每个组件都有一个或多个管理接口, 每个管理接口提供服务都是以 web 服务的形式出现的, 那么他们都有一个服务的终点地址比如 keystone 的(http://ip:5000/v3), 我们怎么才能找到每个组件的终端呢？因为这些服务可以很方便的迁移到任何网络可达的物理服务器上, 所有这里我们要一个机制来集中管理服务的终点, 就像服务终点的路由器一样
 1. 什么是 tokenid ? 
     - 令牌, 由 keystone 认证后发放, 可以透过此令牌在其他 opesntack service 发出请求提供服务
     - 发放与使用流程
@@ -172,11 +218,13 @@ https://docs.openstack.org/keystone/latest/
         - Nova API verifies token in Keystone
         - Nova requests Keystone to get all available quotas for project/user. Nova calculates amount of used resources and allows or permits operation
         - Nova API calls nova-compute via RPC to launch VM instance.
-    - ![](../img/token.png)
+    
+        ![](/img/token.png)
 
 1. 什么是 Role / Policy？
     - keystone 遇到不同的使用者做出不同请求的问题 ( 例如: 创建虚拟机 删除云盘 ) 要透过 role 跟 policy 协作来满足需求, 每一个调度请求都会有一个对应的 policy 里面存有多向属性, 其中一个就是 role。 再来, 每个被创建的使用者都会被绑定一个 role (admin / member), 当使用者发出请求调度服务的时后, keystone 收到后会确认这个服务的policy role 是不是这个使用者可以有权利访问的, 如果有才可以继续, 反之拒绝
-    - ![](../img/api3flow.png)
+    
+    ![](/img/api3flow.png)
 
 ### Keystone Capablities
 
@@ -231,7 +279,9 @@ https://docs.openstack.org/keystone/latest/
     $ systemctl restart devstack@c-api
     ```
 
-## Lesson 03 Horizon ( [Catalog](#catalog) )
+## Lesson 03 Horizon
+
+[Catalog](#catalog)
 
 ### Horizon Concepts
 
@@ -280,42 +330,41 @@ $ vi /etc/nova/nova.conf
     state_path = /opt/stack/data/nova
 ```
 
-## Lesson 04 Nova ( [Catalog](#catalog) )
+## Lesson 04 Nova
+
+[Catalog](#catalog)
 
 ### 理解虚拟化
 
 1. 对物理资源进行池化，允许单个物理硬件创建多个模拟环境或专用资源
-
 1. 是什么实现了虚拟化? Hypervisor
-
 1. Hypervisor 是什么? a piece of software or driver which run on the physical device 
-
 1. Hypervisor function
     - 将物理资源池化
     - 分配资源给虚拟机
     - 管理虚拟机生命周期
-
 1. 虚拟化的类型
     - Type1: installed directly on top of physical, named as bare metal hypervisors (ex: VMware ESXi, Microsoft Hyper-V, KVM)
     - Type2: installed on Host OS which sits between physical serer and hypervisor, named as hosted hypervisors(VMware Workstation, VirtualBox)
 
-    - ![](../img/virtual1.png)
+    ![](/img/virtual1.png)
 	
 ### 介绍硬件加速虚拟化 KVM 
 
 - kvm: kernel virtual machine 他属于硬件加速的虚拟化，他依赖于 cpu 的虚拟化功能 intel—vt 或者 amd—v 等技术, 可以对 NUMA 的框架的 CPU 做定制的调优
 - qemu-kvm: 帮助 kvm 进行 io 模拟的虚拟机监控器，主要负责模拟 io(input/output)
 
-    - ![](../img/virtual2.png)
+    ![](/img/virtual2.png)
 
-    - ![](../img/virtual3.png)
+    ![](/img/virtual3.png)
 
-    - ![](../img/virtual4.png)
+    ![](/img/virtual4.png)
 	
 ### nova Concepts
 
-1. 我们回到 nova ，之前提到 openstack 使用的 hypervisor 是用 kvm , 除此之外还可以支持其他的 hypervisor 比如 virtual box、vmware、xen、qemu 当我们的计算的节点的 cpu 不支持硬件加速的时候我们可以使用 qemu 来代替
-    - ![](../img/virtual5.png)
+1. 我们回到 nova，之前提到 openstack 使用的 hypervisor 是用 kvm , 除此之外还可以支持其他的 hypervisor 比如 virtual box、vmware、xen、qemu 当我们的计算的节点的 cpu 不支持硬件加速的时候我们可以使用 qemu 来代替
+    
+    ![](/img/virtual5.png)
 
 1. 虚拟机属性？
     - User:
@@ -324,12 +373,11 @@ $ vi /etc/nova/nova.conf
     - host aggregation: 我们把一组比较有特性的计算节点归类到一个分组中我们叫做 host aggregation, 比如把 I7 cpu 的计算节点归类到一个 host aggregation 中，结合 flavor 这个 host aggregation 下的计算节点只有特定租户下的用户才可以在上面启动虚拟机，host aggregation 用户是不可见的，是管理员来设置的，他会影响 nova scheduler 的算法
     - flavor: 预建的虚拟机配置的列表。
     - Host Group: 集群标签虚拟机, 可选择亲和或是反亲和, 来决定在哪台宿主机孵化
-
 1. host aggregation 示例:
     - AggregateCoreFilter: 针对HostAggregate设置一个metadata(Key，Value)，比如设置cpu_allocation_ratio=10, 超过则该宿主机被过滤
     - SameHostFilter: 在指定虚拟机所在主机上分配虚拟机
 
-    - ![](../img/virtual6.png)
+    ![](/img/virtual6.png)
 
 1. nova 核心组件
     - nova-api: 和其他核心项目组件一样都一个管理接口
@@ -338,8 +386,9 @@ $ vi /etc/nova/nova.conf
     - nova-compute: 运行在计算节点上的服务，负责调度libvirt启动虚拟机的服务
     - RabbitMQ: 是世界上比较主流的消息队列被广泛使用比
 
-    - ![](../img/virtual7.png)
-    - ![](../img/virtual8.png)	
+    ![](/img/virtual7.png)
+
+    ![](/img/virtual8.png)	
 
 ### Nova Capablities
 
@@ -417,7 +466,7 @@ $ vi /etc/nova/nova.conf
         EOF
 	```
 
-    - ![](../img/cloudinit.png)
+    - ![](/img/cloudinit.png)
 
 1. nova 创建虚拟机
 
@@ -431,11 +480,13 @@ $ vi /etc/nova/nova.conf
 
 ### Nova Summary
 
-- ![](../img/virtual9.png)
+![](/img/virtual9.png)
 
 ### 学习规划硬件计算资源（ 算你需要买多少服务器 ）
 
-## Lesson 05 Glance ( [Catalog](#catalog) )
+## Lesson 05 Glance
+
+[Catalog](#catalog)
 
 ### 理解 OpenStack 中使⽤的镜像
 
@@ -460,11 +511,11 @@ $ vi /etc/nova/nova.conf
     - glance-api: 和其他核心项目组件一样都一个管理接口
     - glance-registry: 在 v2 版本, 提供存储镜像 metadata 与查找的服务, 在 v3 版本被 glance-api 取代 
 
-    - ![](../img/glance1.png)
+    - ![](/img/glance1.png)
 
 ### glance summary
 
-- ![](../img/glance2.png)
+- ![](/img/glance2.png)
 
 ### glance Capablities
 
@@ -491,7 +542,9 @@ $ vi /etc/nova/nova.conf
     $ openstack server image create --name [instance_snapshot] [instance1]
     ```
 
-## Lesson 06 Cinder ( [Catalog](#catalog) )
+## Lesson 06 Cinder
+
+[Catalog](#catalog)
 
 ### 理解 Cinder 的作⽤
 
@@ -500,7 +553,6 @@ $ vi /etc/nova/nova.conf
 ### Cinder Concepts
 
 1. cinder 为虚拟机提供管理块存储服务
-
 1. cinder 所支持的存储的文件系统
     - lvm/iscsi
     - ThinLVM
@@ -509,21 +561,21 @@ $ vi /etc/nova/nova.conf
     - Gluster
     - Dell Equall Logic
     - RBD
-
 1. cinder 核心组件
     - cinder api: 一个基于 http 的管理服务接口，用于接收命令行或者其他组件的的调用
     - cinder scheduler: 服务负责对提供块存储服务器分配任务, 当然如果集成了存储的后台有自己的调度的话他的作用就不太重要了
     - cinder volume: 服务负责和存储设备打交道，当它收到 scheduler 发来的消息后，它要处理新建、修改、删除等操作
     - cinder backup: 负责通过驱动和备份的后台打交道, 是我们在使用备份的命令的时候，能在正确的位置备份数据
 
-    - ![](../img/cinder1.png)
-
+    ![](/img/cinder1.png)
 
 ### 统⼀的存储解决⽅案 Ceph 的简介
 
 1. Ceph 作为 SDS 的解决方案已经是大家公认的做法了，当成本有限的时候 SDS 可以带来很好性能和成本之间的平衡, 一般我们的做法是将 glance、cinder 都集成到 ceph 当中
-    - ![](../img/ceph1.png)
-    - ![](../img/ceph2.png)
+    
+    ![](/img/ceph1.png)
+    
+    ![](/img/ceph2.png)
 
 ### 管理卷
 
@@ -588,13 +640,13 @@ $ vi /etc/nova/nova.conf
 	```
 ### cinder summary
 
-- ![](../img/cinder2.png)
+![](/img/cinder2.png)
 
 ### 备份与快照的差别
 
 1. qcow2 快照 copy-on-write
 
-    - ![](../img/cinder3.png)
+    - ![](/img/cinder3.png)
 
 1. 透过 snapshot 做 rollback 和 rebuild
 
@@ -604,8 +656,9 @@ $ vi /etc/nova/nova.conf
 	$ openstack server rebuild --image my-snapshot my-vm
 	```
 
+## Lesson 07 Neutron
 
-## Lesson 07 Neutron ( [Catalog](#catalog) )
+[Catalog](#catalog)
 
 ### 理解 Neutron 的作⽤
 
@@ -617,11 +670,10 @@ $ vi /etc/nova/nova.conf
 
 1. OSI 架构介绍
 
-    - ![](../img/neutron1.png)
+    ![](/img/neutron1.png)
 	
     - 封包由上到下依序包装  由下到上依序解包
 	- 先解包最外层的封包
-
 1. 网络中的术语
     - tap: 虚拟的网络设备, 处理二层数据帧
     - tun: 虚拟的网络设备, 处理三层数据包
@@ -635,7 +687,7 @@ $ vi /etc/nova/nova.conf
 
 1. 创建两台虚机能互通的网络
 
-    - ![](../img/neutron2.png)
+    ![](/img/neutron2.png)
 
     ```console
 	# add the namespaces
@@ -658,7 +710,7 @@ $ vi /etc/nova/nova.conf
 
 1. 透过 linux bridge 创建两台虚机能互通的网络
 
-    - ![](../img/neutron3.png)
+    ![](/img/neutron3.png)
 	
     ```console
     $ ip netns add ns1
@@ -697,7 +749,7 @@ $ vi /etc/nova/nova.conf
 
 1. 透过 OVS Bridge 创建两台虚机能互通的网络
 
-    - ![](../img/neutron4.png)
+    ![](/img/neutron4.png)
 	
     ```console
     # add the namespaces
@@ -736,7 +788,7 @@ $ vi /etc/nova/nova.conf
 1. 透过 neutron 创建两台虚机能互通的网络
     - Neutron ML2.OVS_agent, L3_agent, dhcp_agent 疯了...
 
-    - ![](../img/neutron5.png)
+    - ![](/img/neutron5.png)
 
 ### neutron Concepts
 
@@ -748,7 +800,7 @@ $ vi /etc/nova/nova.conf
     - neutron-dhcp-agent: 通过 dnsmasq 进程（轻量级服务器，可以提供 dns、dhcp、tftp 等服务）来实现的，该进程绑定到 dhcp 命名空间中的 br-int 的接口上, 可以查看相关的进程
     - neutron-l3-agent: 负责项目(租户)网络和 floating ip 之间的地址转换的服务，它通过 Linux iptables 的 SNAT、DNAT 来完成地址的双向转换
 
-    - ![](../img/neutron6.png)
+    - ![](/img/neutron6.png)
 	
 1. Plugin 和 Agents
     - Q: plugin 和 agents 是否是一对? 是的
@@ -765,7 +817,7 @@ $ vi /etc/nova/nova.conf
 	- Type Driver: 决定逻辑网络类型
     - Techanism Driver: 决定如何在 provider 实现网络类型的办法
 	
-    - ![](../img/neutron7.png)
+    - ![](/img/neutron7.png)
 	
 	```console
 	$ cat plugins/ml2/ml2_conf.init
@@ -810,11 +862,11 @@ $ vi /etc/nova/nova.conf
     - iptables: Linux 上常见的实现安全策略的防火墙软件，实例通过 br-ex 前都会通过 iptables 实现 Nat 地址转换
     - namespace: 用来实现隔离的一套机制，不同 namespace 中的资源之间彼此不可见
 
-    - ![](../img/neutron10.png)
+    ![](/img/neutron10.png)
 	
-    - ![](../img/neutron11.png)
+    ![](/img/neutron11.png)
 	
-    - ![](../img/neutron12.png)
+    ![](/img/neutron12.png)
 
 ### Distributed Virtual Router
 
@@ -822,7 +874,7 @@ $ vi /etc/nova/nova.conf
     - Neutron Routing: Neutron Server 透过 Linux IP Stack 和 iptables 執行 L3 轉發和 NAT Neutron Server 与 Network Node交互实现 高可用性
     - 问题: 网路管理的过程当中 某Neutron Node宕机会如何? 会成为NAT的阻塞点!!
 
-    - ![](../img/neutron8.png)
+    ![](/img/neutron8.png)
 
 1. After
     - 把原本 Network node 的工作分散到了 Compute Node 上
@@ -830,7 +882,7 @@ $ vi /etc/nova/nova.conf
 	- 东西流量不用可选择不用经过网路节点上
     - 大幅降低网络节点工作量,提升性能,带宽与高容错率
 
-    - ![](../img/neutron9.png)
+    ![](/img/neutron9.png)
 
     ```console 
 	cat /etc/neutron.conf
@@ -857,19 +909,19 @@ $ vi /etc/nova/nova.conf
 
 1. 为什么要整 DPDK? OVS had kernel overhead and kernel bottleneck
 
-    - ![](../img/neutron13.png)
+    ![](/img/neutron13.png)
 	
 1. 实现 DPDK 需满足以下
     - 需要特别网卡, 包含的驱动如: e1000, ixgbe i40e
     - 需要特别分配cpu，大页内存(Huge memory)，和 DPDK NIC 给 DPDK 使用
 
-    - ![](../img/neutron14.png)
+    ![](/img/neutron14.png)
 	
 1. sr-iov 是什么?
 
 1. 为什么要搞 sr-iov? Network controller is transparent to physical device
 
-    - ![](../img/neutron15.png)
+    ![](/img/neutron15.png)
 
 1. 实现 DPDK 需满足以下
     - 需要特别网卡, 包含的驱动如: e1000, ixgbe i40e
@@ -892,7 +944,7 @@ $ vi /etc/nova/nova.conf
     - tc(traffic control): IPROUTE2提供，控制数据帧的
     - TSN Sender/Receiver: 发送与接收TSN数据
 
-    - ![](../img/neutron16.png)
+    ![](/img/neutron16.png)
 
 ### neutron Capablities
 
@@ -934,7 +986,9 @@ $ vi /etc/nova/nova.conf
     Jul 28 16:48:10 test-coa-5 nova-conductor[7519]: 2020-07-28 16:48:10.626 8393 ERROR nova.scheduler.utils [req-9b59c38d-c943-4d56-82ca-5cf9f1b5bfe9 cee4ec5181d24cc2a3a3c4975c3277a2 4452a8c2601b482fb13639c8839c80f9 - default default] [instance: a5a972b4-b779-4931-94c3-c43956f4d7ee] Error from last host: test-coa-5 (node test-coa-5): [u'Traceback (most recent call last):\n', u'  File "/opt/stack/nova/nova/compute/manager.py", line 1996, in _do_build_and_run_instance\n    filter_properties)\n', u'  File "/opt/stack/nova/nova/compute/manager.py", line 2237, in _build_and_run_instance\n    instance_uuid=instance.uuid, reason=six.text_type(e))\n', u"RescheduledException: Build of instance a5a972b4-b779-4931-94c3-c43956f4d7ee was re-scheduled: XML error: expected unicast mac address, found multicast '11:22:33:44:55:66'\n"]
     ```
 
-## Lesson 08 devstack 服务的管理 ( [Catalog](#catalog) )
+## Lesson 08 devstack 服务的管理
+
+[Catalog](#catalog)
 
 1. https://docs.openstack.org/tacker/latest/install/devstack.html
 1. https://docs.openstack.org/devstack/latest/
@@ -994,7 +1048,9 @@ $ vi /etc/nova/nova.conf
 	$ ./stack.sh
     ```
 
-## Lesson 09 Swift ( [Catalog](#catalog) )
+## Lesson 09 Swift
+
+[Catalog](#catalog)
 
 ### 理解 Swift 的使⽤场景
 
@@ -1008,14 +1064,15 @@ $ vi /etc/nova/nova.conf
     - Accounts service: 一组 account database 管理 container 列表
     - Containers service: 一组 container database 管理 object 列表
     - Objects service: 数据本身
-    - ![](../img/swift1.png)
+    - ![](/img/swift1.png)
 
 1. 每个存储节点上的设备被 swift 暴露出来称为一个存储设备，swift 通过 ring 的算法将每个设备 hash 得到一个值，很多设备从最小的 hash 到最大组成了一个环，然后将要上传对象的 Account、Container 和 Object 一起 hash 出来一个值，放入环中，按照向左的原则找到一个存储 Driver 对应的设备的 ip 地址和位置，将文件存入
 
 1. Rings: Map logical names of data to locations on particular disks.
 
-    - ![](../img/swift2.png)
-    - ![](../img/swift3.png)
+    ![](/img/swift2.png)
+
+    ![](/img/swift3.png)
 
 ### swift Capablities
 
@@ -1057,7 +1114,9 @@ $ vi /etc/nova/nova.conf
 ### 管理到期的对象
 
 
-## Lesson 10 Heat ( [Catalog](#catalog) )
+## Lesson 10 Heat
+
+[Catalog](#catalog)
 
 ### Heat 的模版中的讲解
 
@@ -1071,7 +1130,7 @@ $ vi /etc/nova/nova.conf
     - heat-api-cfn: heat-api-cfn 组件提供了一个与 AWS CloudFormation 兼容的 AWS 查询 API，并通过通过 RPC 将 API 请求发送到热引擎来处理 API 请求
     - heat-engine: heat-engine 的主要职责是协调模板的启动并将事件提供给 API 使用者
 
-    - ![](../img/heat1.png)
+    ![](/img/heat1.png)
 
 1. heat 模版默认以 yaml 格式编辑
 
@@ -1130,14 +1189,16 @@ $ vi /etc/nova/nova.conf
     $ heat stack-show teststack
     ```
 
-    - ![](../img/heat2.png)
-    - ![](../img/heat3.png)
+    - ![](/img/heat2.png)
+    - ![](/img/heat3.png)
 
 ### 更新⼀个模版
 
 ### 创建互相依赖 yaml 模版
 
-## Lesson 11 Quiz ( [Catalog](#catalog) )
+## Lesson 11 Quiz
+
+[Catalog](#catalog)
 
 ### 模拟题讲解
 

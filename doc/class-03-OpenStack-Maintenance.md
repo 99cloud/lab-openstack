@@ -13,7 +13,7 @@
     - 负载均衡 / 防火墙 / VPN 等增值服务
 - Neutron 由哪些模块组成？
 
-    ![](../img/openstack-arch-kilo-logical-v1.png)
+    ![](/img/openstack-arch-kilo-logical-v1.png)
 
 - 怎么理解 Plugin 和 Agent 的关系？plugin 定义了网络对象的特征，agent 负责具体实现。
 - 有哪些 Agent？L2 / DHCP / L3（ routing / FW / SG ） / LB
@@ -55,7 +55,7 @@
     - **Share Server**：A logical entity that hosts the shares created on a specific share network
 - [Manila 由几个模块组成？](https://docs.openstack.org/security-guide/shared-file-systems/intro.html)
 
-    ![](../img/manila-intro.png)
+    ![](/img/manila-intro.png)
 
     - **manila-api**
     - **manila-data**：类似 nova-conductor，This service is responsible for managing data operations which may take a long time to complete and block other services if not handled separately.
@@ -63,7 +63,7 @@
     - **manila-share**：类似 nova-compute，Responsible for managing Shared File Service devices, specifically the back-end devices.
 - Manila 的网络架构和实现原理
 
-    ![](../img/manila-network.png)
+    ![](/img/manila-network.png)
 
     - [Manila 的配置](https://docs.openstack.org/openstack-ansible-os_manila/latest/configure-manila.html)
 
@@ -114,7 +114,7 @@
 - [商用中较为流行的 OpenStack HA 方案有哪些？](https://www.cnblogs.com/sammyliu/p/4741967.html)
     - 红帽：RDO 方案，分散式控制节点，硬件成本大，性能好
 
-        ![](../img/openstack-ha-rdo.jpg)
+        ![](/img/openstack-ha-rdo.jpg)
 
         该配置最少需要五台机器：
 
@@ -130,9 +130,9 @@
         - Cinder 这里标识为 A/A HA，但是不包括 cinder-volume
     - Marantis：集中式控制节点，控制节点上运行服务多，可能会影响其性能，但是在小规模云环境中节省了硬件成本。
 
-        ![](../img/openstack-ha-marantis-1.jpg)
+        ![](/img/openstack-ha-marantis-1.jpg)
 
-        ![](../img/openstack-ha-marantis-2.jpg)
+        ![](/img/openstack-ha-marantis-2.jpg)
 
 - 基础设施的 HA 方案推荐怎么做？
     - [MariaDB: Galera + Haproxy](https://computingforgeeks.com/how-to-setup-mariadb-galera-cluster-on-ubuntu-with-haproxy/)
@@ -142,13 +142,13 @@
 - 控制节点的 HA 方案推荐怎么做？
     - [社区的方案](https://docs.openstack.org/ha-guide/control-plane-stateless.html#api-services)：Keepalive + HAProxy
 
-        ![](../img/openstack-ha-proxy.png)
+        ![](/img/openstack-ha-proxy.png)
 
 - 计算节点的 HA 方案推荐怎么做？
 
-    ![](../img/openstack-ha-rdo-compute-1.jpg)
+    ![](/img/openstack-ha-rdo-compute-1.jpg)
 
-    ![](../img/openstack-ha-rdo-compute-2.jpg)
+    ![](/img/openstack-ha-rdo-compute-2.jpg)
 
     部署方式如下：
 
@@ -183,16 +183,16 @@
 - 网络节点的 HA 方案推荐怎么做？
     - [L3 HA](https://wiki.openstack.org/wiki/Neutron/L3_High_Availability_VRRP)
 
-        ![](../img/openstack-ha-l3.png)
+        ![](/img/openstack-ha-l3.png)
 
         - keepalive 跑在 vrouter 的 namespace 里面
         - 一主一备两个 vrouter 的 namespace，备 vrouter 里面的qr 口，qg 口在备的状态都没配 IP，主备切换就把 IP 配上，然后发个免费 ARP 出来
 
     - [DVR](https://docs.openstack.org/neutron/latest/admin/deploy-ovs-ha-dvr.html)，[wiki](https://wiki.openstack.org/wiki/Neutron/DVR)：DVR 的设计思想是在计算节点上起 L3 服务，缓解网络节点压力
 
-        ![](../img/deploy-ovs-ha-dvr-overview.png)
+        ![](/img/deploy-ovs-ha-dvr-overview.png)
 
-        ![](../img/deploy-ovs-ha-dvr-compconn1.png)
+        ![](/img/deploy-ovs-ha-dvr-compconn1.png)
 
     - vlan 网络 & L3 在物理交换机
 
@@ -207,7 +207,7 @@
 - 在 DHCP 启动的情况下，如何强制走 config drive 读取 metadata？[config_drive 参数](https://docs.openstack.org/api-ref/compute/?expanded=create-server-detail#create-server)
 - Cloudinit 的 workflow 是怎样的？
 
-    ![](../img/cloudinit-workflow.png)
+    ![](/img/cloudinit-workflow.png)
 
     1. Generator (`cloud-config.target`)：读取配置文件 `cloud.cfg`
     1. Local (`cloud-init-local.service`)：定位“本地”数据源和配置网络

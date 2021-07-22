@@ -302,7 +302,7 @@
     ```
 2. 计算pg数
     - 参考[ceph官网的pg计算器](https://ceph.com/pgcalc/)，调整`pg_num`和`pgp_num`
-    - ![image](../img/ceph-calc.png)
+    - ![image](/img/ceph-calc.png)
 
     ```bash
     [root@control01 ~]# docker exec -it -u root ceph_mon bash
