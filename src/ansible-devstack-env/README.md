@@ -16,6 +16,21 @@
 - 内部 openstack 主机切换 root：`sudo -s`，密码 trystack
 - openstack 网页 admin 帐号：admin，密码：trystack
 
+### 2.2 访问 OpenStack
+
+1. SSH
+
+    登陆内部 openstack 主机：`ssh trystack@172.25.0.10` 后
+
+    ```console
+    root@openstack:~# source /home/devstack/openrc admin
+
+    root@openstack:~# openstack token issue
+    ```
+
+1. 访问网页界面 Horizon Dashboard，比如 http://211.152.62.6:10119
+1. 访问虚拟机 novnc
+
 ## 3. 如何恢复环境？
 
 ### 3.1 虚拟机重启
