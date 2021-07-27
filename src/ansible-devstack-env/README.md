@@ -2,7 +2,7 @@
 
 ## 1. Topo 结构图
 
-![](image/devstack-env-architecture.png)
+![](image/coalab-devstack.png)
 
 ## 2. 环境访问方式
 

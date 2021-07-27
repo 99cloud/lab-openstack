@@ -72,32 +72,38 @@
 | | 下午 | [Lesson 10：模拟管理员练习题]() | [模拟题讲解](#) |
 | | | | [模拟题练习]() |
 
-## Lesson 01：OpenStack Introduction ( [Catalog](#catalog) )
+## Lesson 01：OpenStack Introduction
 
-计算发展
+[Catalog](#catalog)
 
-- 大型机：集中式计算
-- 个人 PC：分布式计算
-- 移动互联网 + 云计算：泛在计算
+### Virtualization & OpenStack
 
-云计算发展
+1. 什么是虚拟化？虚拟化的发展历程如何？
+    - 60-70 IBM
+    - 80-90 VMWare
+    - 2005-2010 Amazon
+    - 2010 NASA Nebula & RackSpace Cloud Storage
+1. 计算的发展历经了哪些阶段？
+    - 大型机：集中式计算
+    - 个人 PC：分布式计算
+    - 移动互联网 + 云计算：泛在计算
+1. 云计算的类型有几种类型？
+    - IaaS / PaaS / SaaS
+    - 只有 IaaS 是必须基于虚拟化的
 
-- 最初的概念是”网络即是电脑”
-- 尔后 Amazon 推出的弹性云计算 (EC2) 提供用户使用资源并且收费, 大致顶定了云计算的商业用途。
-- OpenStack 是一个开源的云平台, 他属于云计算当中我们常说的 IaaS(infrastructure as a service), 简单的讲他是来管理我们的硬件设施的, 我们在我们的设备上部署 Linux 与 OpenStack, 然后由 OpenStack 来帮助我们决定哪些虚拟机应该启动在哪些物理的计算节点上
+        ![iaas](/img/iaas.png)
 
-    ![simpleOpenstackArch](/img/simpleOpenstackArch.png)
-    
-    ![iaas](/img/iaas.png)
+1. 云计算发展历程是怎样的？
+    - 最初的概念是”网络即是电脑”
+    - 尔后 Amazon 推出的弹性云计算 (EC2) 提供用户使用资源并且收费, 大致顶定了云计算的商业用途。
+    - OpenStack 是一个开源的云平台, 他属于云计算当中我们常说的 IaaS(infrastructure as a service), 简单的讲他是来管理我们的硬件设施的, 我们在我们的设备上部署 Linux 与 OpenStack, 然后由 OpenStack 来帮助我们决定哪些虚拟机应该启动在哪些物理的计算节点上
 
-### Virtualization & OpenStack ( [Catalog](#catalog) )
-
-1. 什么是虚拟化？虚拟化的发展历程如何？60-70 IBM / 80-90 VMWare / 2005-2010 Amazon / 2010 NASA Nebula & RackSpace Cloud Storage
-1. 云计算的类型有几种类型？IaaS / PaaS / SaaS，只有 IaaS 是必须基于虚拟化的
-
-### OpenStack Infrastructure ( [Catalog](#catalog) )
+### OpenStack Infrastructure
 
 1. OpenStack 哪些是核心项目？Keystone / Nova / Cinder / Neutron / Glance
+
+    ![simpleOpenstackArch](/img/simpleOpenstackArch.png)
+
 1. [Design](https://docs.openstack.org/arch-design/design.html)
 
     ![](https://docs.openstack.org/arch-design/_images/osog_0001.png)
@@ -119,38 +125,28 @@
 
     ![](/img/qualityfordevelop.png)
 
-### The Trend of Cloud Computing ( [Catalog](#catalog) )
+### The Trend of Cloud Computing
 
-1. 私有云、公有云、混合云的发展趋势如何？Azure / Aliyun / HW
+1. 私有云、公有云、混合云的发展趋势如何？AWS / Azure / Aliyun / Huawei
 1. IaaS & CaaS 谁会是未来的主流？
-1. OpenStack 的发展趋势？
+    - VM、容器、裸机的编排需求长期共存
+    - OpenStack 擅长 VM & 裸机编排，以及存储和网络虚拟化。在容器化方面，Magnum 和 Kata 都看不到成为主流的趋势
+    - K8S 擅长容器编排，通过插件支持 VM 编排和网络多平面，但仍显稚嫩
+1. OpenStack 的优势和发展趋势？
+    - Ironic 裸机云的加强
+    - 容器化部署和运维：kolla-ansible & openstack-helm
+    - 软件定义存储：SDS -- Ceph and Cinder-volume，高性能 高可用性 高可扩展性 支持三种存储接口(文件, 块, 物件)
+    - 软件定义网络：SDN -- Neutron Server，控制转发分离 集中控制 虚拟化
 
-#### 裸机资源的管理:
-
-1. Ironic 裸机节点纳管, 精准的编排与调度, 实现裸机云
-
-#### 容器化:
-
-1. Docker Containerd CRIO, 到的 Kubernetes 容器管理平台, 弥补 openstack 原生云
-1. kolla-ansible 布署容器化 openstack
-1. openstack-helm 基于 kubernetes 管理平台部署 openstack
-
-#### 相容于主流资源池化:
-
-1. 数据池化  SDS -- Ceph and Cinder-volume
-    - 高性能 高可用性 高可扩展性 支持三种存储接口(文件, 块, 物件)
-1. 网络资源池化 SDN -- Neutron Server
-    - 控制转发分离 集中控制 虚拟化
-
-### OpenStack Reference ( [Catalog](#catalog) )
+### OpenStack Reference
 
 1. 官方文档在哪里？
 1. 有哪些推荐的入门书？《每天五分钟玩转 OpenStack》，《OpenStack 设计与实现》
 
 #### How openstack service implements communication?
 
-1.   infra: restful api
-1.   inner: message queue
+1. infra: restful api
+1. inner: message queue
 
 ![](/img/communication.png)
 
@@ -202,7 +198,7 @@ Openstack 以 Python 语法实现 IaaS 架构, 在各组件调度资源的过程
     - User: 最基本的用户, 一个通常意义上的账号有用户名和密码还有一些相关的比如邮件等信息, 在 OpenStack 中只是创建一个用户是不可以使用 OpenStack 中的资源的
     - group: 组顾名思义就是一个用户的集合, 一般我们会把一个用户关联到一个项目中, 每次关联的时候都要设置一个角色比较麻烦, 有了组以后我们可以把组加到租户当中去并关联一个角色, 以后所以加入到这个组当中的用户就继承了这个组在这个租户当中的角色
     - project/tenant: project 顾名思义是项目的意思或者用我们熟知的话就是租户, 在本书中我们都会称之为项目而不是租户, 租户是 OpenStack 中一个核心的概念, 基本上所有的资源都是按照租户隔离, 比如网络、实例、路由等资源, 所以我们可以想象一个用户必须要先关联到一个项目中去才能正确使用 OpenStack 资源
-    - domain: 在 OpenStack 当中域是用来实现真正的多项目/租户模>式的一种方法, 在没有域出现之前 OpenStack 有着一个权限的场景, 当你把一个用户任何一个项目/租户当中去的时候，你如果关联的是  admin 的角色的话, 这个时候这个用户突然就成为了 OpenStack 超级管理员, 这并非我们所希望的场景, 使用了域以后我们就可以实现真正意义上的多项目/租户模式了, 把一个用户加到 default 以外的域中的项目并关联到 admin 的时候, 这个用户就不再是整个 OpenStack 的管理员了, 他只能管理这个域下面的所有的项目/租户, 当然你要开启多项目/租户模式你得替换掉 /etc/keystone/policy.json 文件来开启
+    - domain: 在 OpenStack 当中域是用来实现真正的多项目/租户模式的一种方法, 在没有域出现之前 OpenStack 有着一个权限的场景, 当你把一个用户任何一个项目/租户当中去的时候，你如果关联的是  admin 的角色的话, 这个时候这个用户突然就成为了 OpenStack 超级管理员, 这并非我们所希望的场景, 使用了域以后我们就可以实现真正意义上的多项目/租户模式了, 把一个用户加到 default 以外的域中的项目并关联到 admin 的时候, 这个用户就不再是整个 OpenStack 的管理员了, 他只能管理这个域下面的所有的项目/租户, 当然你要开启多项目/租户模式你得替换掉 /etc/keystone/policy.json 文件来开启
     
         ![](/img/DomainUserProjectRole.png)
 
@@ -906,7 +902,6 @@ $ vi /etc/nova/nova.conf
 ### ⽹络加速的技术 dpdk、sr-iov、TSN 的介绍
 
 1. DPDK 是什么? 
-
 1. 为什么要整 DPDK? OVS had kernel overhead and kernel bottleneck
 
     ![](/img/neutron13.png)
@@ -918,7 +913,6 @@ $ vi /etc/nova/nova.conf
     ![](/img/neutron14.png)
 	
 1. sr-iov 是什么?
-
 1. 为什么要搞 sr-iov? Network controller is transparent to physical device
 
     ![](/img/neutron15.png)
@@ -926,18 +920,14 @@ $ vi /etc/nova/nova.conf
 1. 实现 DPDK 需满足以下
     - 需要特别网卡, 包含的驱动如: e1000, ixgbe i40e
 	- 底层创建 PF 跟 VF
-
 1. TSN 是什么?
-
 1. 怎么又来了一个, 他能做什么? Time synchronization
-
 1. TSN标准 (IEEE 802.1 IEEE 1588)
     - 提高同步性能
 	- 数据帧抢占优先
 	- 提升规划的通信!!
 	- 无缝冗余(HSR)
 	- 高速通道带宽预留
-
 1. 示例
     - 边缘云跟边缘传感设备
     - p2p4l, phc2sys: LinuxPTP项目提供的时间同步工具
