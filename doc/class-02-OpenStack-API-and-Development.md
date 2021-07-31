@@ -418,7 +418,7 @@
 		- 比如TDI防火墙，就可以直接附加到`tcpip.sys`创建的几个命名设备对象上面，就可以监听到`afd.sys`发下来的TDI命令，进而可以拦截，一些`socket`创建，绑定，发送和接收的命令，从而完成防火墙的功能。当然，如果别人直接注册一个协议驱动，然后直接进行发包，那么这个防火墙就不能对这样的操作对待监控，比如直接发ARP包到局域网中，就可以造成攻击。但是如果你的防火墙工作在链表层上面，即注册一个中间层驱动来完成防火墙的功能，那么就又可以拦截掉我刚才假设的那种操作，所以如果一个Ndis中间层驱动来完成防火墙功能，那么就可以有更大的监控范围。
 		- 再比如，想实现一个虚拟网卡，那么就可以完成一个Ndis小端口驱动，来让其它协议对你进行绑定，一些应用程序就可以直接选择这张网卡进行数据处理，便可完成一些特殊工作了。
 - Netmon
-	- ![Netmon-Layer.jpg](https://raw.githubusercontent.com/wu-wenxiang/Media-WebLink/master/qiniu/9e7c39ba1fa54c17b394a1918e4a0f3d-Netmon-Layer.jpg)
+	- ![Netmon-Layer.jpg](/img/9e7c39ba1fa54c17b394a1918e4a0f3d-Netmon-Layer.jpg)
 	- Netmon is between ndis and tcpip layer
 	- TCP 包从APP到网卡最后发送之前，是需要经过几层：`NIC-ndis-tcpip-afd-userMode`
 	- Application如果有杀毒软件，filter driver会load到其中的两个地方：`nic-ndis-<filter_driver>-tcpip-<filter_driver>-afd-userModeApp`
@@ -428,9 +428,9 @@
 		- [抓各种包](https://wiki.wireshark.org/CaptureSetup/)
 		- Architecture
 			- [WinPcap structure](https://www.winpcap.org/docs/docs_40_2/html/group__internals.html)
-			- ![internals-arch.gif](https://raw.githubusercontent.com/wu-wenxiang/Media-WebLink/master/qiniu/37369909dc8d43308cb7d298bf998297-internals-arch.gif)
+			- ![internals-arch.gif](/img/37369909dc8d43308cb7d298bf998297-internals-arch.gif)
 			- [Detail](https://www.winpcap.org/docs/iscc01-wpcap.pdf)
-			- ![winpcap.png](https://raw.githubusercontent.com/wu-wenxiang/Media-WebLink/master/qiniu/37369909dc8d43308cb7d298bf998297-winpcap.png)
+			- ![winpcap.png](/img/37369909dc8d43308cb7d298bf998297-winpcap.png)
 1. 操作：[Netmon](https://www.microsoft.com/en-us/download/details.aspx?id=4865) & [Wireshark](https://www.wireshark.org/download.html)
     - [Demo]: TCP handshake
     - [Demo]: TLS handshake
