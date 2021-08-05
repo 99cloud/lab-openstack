@@ -1,37 +1,35 @@
 [OSEv3:children]
 bastion
-aio_node
 nodes
 
 [OSEv3:vars]
-bastion_node_interface1_name=enp1s0
-public_ip=1.2.3.4
-resource_group_name=coa001
+bastion_node_interface1_name=eth0
+resource_group_name=coalab
 public_cluster_hostname=demotheworld.com
+public_ip=106.14.212.202
 ssh_public_key_path="~/.ssh/id_rsa_lab.pub"
 ssh_private_key_path="~/.ssh/id_rsa_lab"
 
-use_vmdisk_device=true
+use_vmdisk_device=false
 vmdisk_path="/home/vmdisk"
-vmdisk_device="/dev/sdb"
+vmdisk_device="/dev/vdb"
 vmdisk_fstype="xfs"
 vm_system_path="/var/lib/libvirt/vmdisk"
 
 internal_ssh_ip=200.0.0.200
 cluster_portal_ip=200.0.0.200
 # available value "lvm" or "ceph"
-cinder_backend="ceph"
-cinder_device="/dev/sdb"
+cinder_backend="lvm"
+cinder_device="/dev/vdb"
 openstack_internal_vip_address=172.25.0.100
 
 remote_image_url="http://linux-mirrors.fnal.gov/linux/centos/7.9.2009/isos/x86_64/CentOS-7-x86_64-Minimal-2009.iso"
 local_image_path="/var/lib/libvirt/images/CentOS-7-x86_64-Minimal-2009.iso"
 
 [bastion]
-training-01
+coalab
 
 [nodes:children]
-aio_node
+node01 hostname="node01" system_disk_size=20G storage_disk_size=20G ram_size=4096 vcpu_num=2 interface1_ip=172.25.0.200 interface1_mac=00:11:22:AA:BB:13 interface2_ip=10.0.2.200
+node02 hostname="node02" system_disk_size=20G storage_disk_size=20G ram_size=4096 vcpu_num=2 interface1_ip=172.25.0.202 interface1_mac=00:11:22:AA:BB:14 interface2_ip=10.0.2.202
 
-[aio_node]
-training-01_aio hostname="kolla-aio" system_disk_size=160G storage_disk_size=160G ram_size=28672 vcpu_num=7 interface1_ip=172.25.0.200 interface1_mac=00:11:22:AA:BB:13 interface2_ip=10.0.2.200 interface3_ip=192.168.100.200 interface4_ip=200.0.0.200

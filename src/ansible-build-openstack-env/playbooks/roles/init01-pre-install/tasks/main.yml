@@ -27,8 +27,8 @@
       - bind-utils
     state: present
 
-- name: Update pip
-  shell: "pip install --upgrade pip"
+# - name: Update pip
+#   shell: "pip install --upgrade pip"
 
 - name: Disable service firewalld
   service:

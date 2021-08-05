@@ -1,0 +1,26 @@
+---
+
+- hosts: bastion
+  roles:
+    - init00-mount-vmdisk
+    - init01-pre-install
+    - init02-bastion-config
+    - init03-cobbler
+    - init06-snapshot
+  vars:
+    snapshot_postfix: "init"
+  become: yes
+
+# - hosts: aio_node
+#   roles:
+#     - init01-pre-install
+#     - init04-aio-config-common
+#   become: yes
+
+# - hosts: bastion
+#   roles:
+#     - init06-snapshot
+#   vars:
+#     snapshot_postfix: "common_aio"
+#   become: yes
+  
