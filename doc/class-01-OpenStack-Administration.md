@@ -601,7 +601,7 @@ $ vi /etc/nova/nova.conf
 1. 为虚拟机添加一附加卷
 
     ```console
-    $ openstack server add volume [vol1] [instance1]
+    $ openstack server add volume [instance1] [vol1]
 	#注意! 虚拟机添加一新的磁盘并不会主动 mount
     $ mkfs.ext3 /dev/vdb
     $ mount /dev/vdb /mnt
@@ -941,7 +941,7 @@ $ vi /etc/nova/nova.conf
 1. 创建外部网络
 
     ```console
-	$ openstack network create --provider-network-type --enable --project admin --external [public]
+	$ openstack network create --enable --provider-network-type [flat]  --provider-physical-network [br-ex name] --project admin --external  [network-name]
 	```
 	
 1. 创建外部网络的子网
@@ -1131,56 +1131,104 @@ $ vi /etc/nova/nova.conf
 
 1. https://docs.openstack.org/heat/latest/template_guide/hot_spec.html
 
+1. https://docs.openstack.org/heat/latest/template_guide/basic_resources.html
+
+
 ### heat Capablities
 
 1. 使用 heat 模版创建 OpenStack 的资源
 
     ```console
-	$ vi fedora20.yaml
+	$ vi cirros_heat_template.yaml
 
-    	heat_template_version: 2013-05-23
+      heat_template_version: 2018-08-31
 
-        description: create a fedora vm through heat template
+      description: create a cirros vm through heat template
 
-        parameter:
-          key_name:
-            type: string
-            description: Enable SSH access to instance
-            default: key_ms
-          instance_type:
-            type: string
-            description: Instance type for WordPress server
-            default: 2p2g100g
-          image_id:
-            tyep: string
-            description: Fedroa cloud image
-            default: fedora-20.x86_64
+      parameters:
+        key_name:
+          type: string
+          description: Enable SSH access to instance
+          default: heat_key
+        instance_type:
+          type: string
+          description: Instance type for WordPress server
+          default: m1.tiny
+        image_id:
+          type: string
+          description: cirros cloud image
+          default: cirros-0.5.1-x86_64-disk
 
-        resource:
-          instance_port:
-            type: OS::Neutron::Port
-            properties:
-              network: net_coa
-              security_group:
-                - default
-              fixed_ips:
-                - subnet_id" "sub_coa"
-          fedora_instance:
-            type: OS::Nova::Server
-            properties:
-              image: { get_param: image_id }
-              flavor: { get_param: instance_type }
-              key_name: { get_param: key_name }
-              networks:
-                - port: { get_resource: instance_port }
+      resources:
+        instance_port:
+          type: OS::Neutron::Port
+          properties:
+            network: public
+            security_groups:
+              - default
+            fixed_ips:
+              - subnet_id: subnet_heat
+        cirros_instance:
+          type: OS::Nova::Server
+          properties:
+            image: { get_param: image_id }
+            flavor: { get_param: instance_type }
+            key_name: { get_param: key_name }
+            networks:
+              - port: { get_resource: instance_port }
 
 	# 透过 heat template 创建虚拟机
-	$ heat stack-create -f fedora20.yaml  teststack
-    $ heat stack-show teststack
+
+	$ openstack stack create -f yaml -t cirros_heat_template.yaml  teststack
+      id: a5a78571-5f47-4d09-ac9a-5a547c8d0927
+      stack_name: teststack
+      description: create a cirros vm through heat template
+      creation_time: '2021-08-05T12:25:17Z'
+      updated_time: null
+      stack_status: CREATE_IN_PROGRESS
+      stack_status_reason: Stack CREATE started
+
+    $ openstack stack show teststack
+      ...
+      | stack_status_reason   | Resource CREATE failed: StackValidationFailed: resources.instance_port: Property error: instance_port.Properties.fixed_ips[0]: Unable to find subnet with name or id 'subnet_heat' |
+      ...
+
+    $ openstack stack update teststack --existing
+      +---------------------+------------------------------------------+
+      | Field               | Value                                    |
+      +---------------------+------------------------------------------+
+      | id                  | a5a78571-5f47-4d09-ac9a-5a547c8d0927     |
+      | stack_name          | teststack                                |
+      | description         | create a cirros vm through heat template |
+      | creation_time       | 2021-08-05T12:25:17Z                     |
+      | updated_time        | 2021-08-05T12:31:49Z                     |
+      | stack_status        | UPDATE_IN_PROGRESS                       |
+      | stack_status_reason | Stack UPDATE started                     |
+      +---------------------+------------------------------------------+
+
+    $ openstack stack list
+      +--------------------------------------+------------+----------------------------------+-----------------+----------------------+----------------------+
+      | ID                                   | Stack Name | Project                          | Stack Status| Creation Time        | Updated Time         |
+      +--------------------------------------+------------+----------------------------------+-----------------+----------------------+----------------------+
+      | a5a78571-5f47-4d09-ac9a-5a547c8d0927 | teststack  | d69bb3c9954f49f991565dde26d8e8cb | UPDATE_COMPLETE| 2021-08-05T12:25:17Z | 2021-08-05T12:31:49Z |
+      +--------------------------------------+------------+----------------------------------+-----------------+----------------------+----------------------+
+      $ openstack server list
+      +--------------------------------------+----------------------------------------+--------+-----------------------+--------------------------+---------+
+      | ID                                   | Name                                   | Status | Networks        | Image                    | Flavor  |
+      +--------------------------------------+----------------------------------------+--------+-----------------------+--------------------------+---------+
+      | 587a8c5c-2041-4d09-bde0-a04c5ed67e7f | teststack-cirros_instance-ojqijaffb2pm | ACTIVE | public=192.168.191.44 | cirros-0.5.1-x86_64-disk | m1.tiny |
+      +--------------------------------------+----------------------------------------+--------+-----------------------+--------------------------+---------+
+
+    $ openstack stack delete teststack
+      Are you sure you want to delete this stack(s) [y/N]? y
+
+    $ openstack server list
+      (empty)
     ```
 
     - ![](/img/heat2.png)
     - ![](/img/heat3.png)
+
 
 ### 更新⼀个模版
 
