@@ -1,0 +1,89 @@
+- hosts: cloudlabs
+  tasks:
+    - name: Install epel release
+      yum:
+        name: epel-release
+
+    - name: Yum update all
+      yum:
+        name: '*'
+        state: latest
+        exclude: kernel*
+
+    - name: "Config sshd"
+      lineinfile:
+        path: "/etc/ssh/sshd_config"
+        state: present
+        regexp: "{{ item.regexp }}"
+        line: "{{ item.line }}"
+      loop:
+        - {regexp: '^\s*ClientAliveInterval\s+', line: 'ClientAliveInterval 120'}
+        - {regexp: '^\s*ClientAliveCountMax\s+', line: 'ClientAliveCountMax 720'}
+        - {regexp: '^\s*GSSAPIAuthentication\s+', line: 'GSSAPIAuthentication no'}
+        - {regexp: '^\s*UseDNS\s+', line: 'UseDNS no'}
+
+    - name: "Restart sshd"
+      systemd:
+        state: restarted
+        daemon_reload: yes
+        name: sshd
+
+    - name: change user passwd
+      user: name={{ item.name }} password={{ item.chpass | password_hash('sha512', 'mysecretsalt') }}
+      with_items:
+           - { name: 'root', chpass: '{{ rootpass }}' }
+    
+    # yum group list hidden ids | grep -i GNOME
+    - name: Install the 'GNOME Desktop' group
+      yum:
+        name: "@^gnome-desktop-environment"
+        state: present
+    
+    - name: Install xrdp
+      yum:
+        name: xrdp
+        enablerepo: "epel"
+    
+    - name: Install virt-*
+      yum:
+        name: "{{ item }}"
+      loop:
+        - virt-install
+        - virt-manager
+        - cloud-utils
+
+    - name: Enable service
+      service:
+        name: "{{ item }}"
+        enabled: yes
+      loop:
+        - xrdp
+
+    - name: Start service
+      service:
+        name: "{{ item }}"
+        state: started
+      loop:
+        - xrdp
+
+    - name: ensure direcroty exists
+      file:
+        path: "{{ centos_local_path | dirname }}"
+        state: "directory"
+        mode: "0555"
+
+    - name: Check image exists
+      stat:
+        path: "{{ centos_local_path }}"
+      register: stat_result
+
+    - name: Download images
+      get_url:
+        url: "{{ centos_remote_url }}"
+        dest: "{{ centos_local_path }}"
+      when: not stat_result.stat.exists
+
+    - name: Copy cloudinit to target
+      template:
+        src: "cloudinit.j2"
+        dest: "{{ cloudinit_path }}"
