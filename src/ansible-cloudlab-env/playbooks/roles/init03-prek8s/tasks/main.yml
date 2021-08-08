@@ -1,0 +1,8 @@
+---
+
+- name: Copy k8s files
+  copy:
+    src: "{{ item }}"
+    dest: "{{ cloudlab_dir }}"
+  loop:
+    - "calico_v3.10.yaml"

@@ -1,0 +1,18 @@
+- hosts: cloudlabs
+  roles:
+    - init01-prepare
+  become: yes
+
+# - hosts: cloudlabs
+#   roles:
+#     - init02-createvm
+#   vars:
+#     vms:
+#       - {name: node001, cpu: 2, ram: 4096}
+#       - {name: node002, cpu: 2, ram: 4096}
+#   become: yes
+
+- hosts: cloudlabs
+  roles:
+    - init03-prek8s
+  become: yes

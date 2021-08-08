@@ -43,3 +43,17 @@
   yum:
     name: xrdp
     enablerepo: "epel"
+
+- name: Enable service
+  service:
+    name: "{{ item }}"
+    enabled: yes
+  loop:
+    - xrdp
+
+- name: Start service
+  service:
+    name: "{{ item }}"
+    state: started
+  loop:
+    - xrdp
