@@ -1,7 +1,7 @@
-# - hosts: cloudlabs
-#   roles:
-#     - init01-prepare
-#   become: yes
+- hosts: cloudlabs
+  roles:
+    - init01-prepare
+  become: yes
 
 - hosts: cloudlabs
   roles:

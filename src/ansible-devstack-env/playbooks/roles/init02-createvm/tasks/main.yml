@@ -1,5 +1,65 @@
 ---
 
+- name: Install virt-*
+  yum:
+    name: "{{ item }}"
+  loop:
+    - virt-install
+    - virt-manager
+    - cloud-utils
+    - virt-viewer
+
+- name: Enable service
+  service:
+    name: "{{ item }}"
+    enabled: yes
+  loop:
+    - libvirtd
+
+- name: Start service
+  service:
+    name: "{{ item }}"
+    state: started
+  loop:
+    - libvirtd
+
+- name: ensure direcroty exists
+  file:
+    path: "{{ cloudlab_image_dir }}"
+    state: "directory"
+    mode: "0555"
+
+- name: Check image exists
+  stat:
+    path: "{{ cloudlab_image_dir }}/{{ centos_local_file }}"
+  register: stat_result
+
+- name: Download images
+  get_url:
+    url: "{{ centos_remote_url }}"
+    dest: "{{ cloudlab_image_dir }}/{{ centos_local_file }}"
+  when: not stat_result.stat.exists
+
+- name: Copy cloudinit to target
+  template:
+    src: "cloudinit.j2"
+    dest: "{{ cloudinit_txt }}"
+
+- name: Check cloudinit_image exists
+  stat:
+    path: "{{ cloudinit_img }}"
+  register: stat_result
+
+- name: cloud-localds
+  shell: "cloud-localds {{ cloudinit_img }} {{cloudinit_txt}}"
+  when: not stat_result.stat.exists
+
+- name: ensure vm volume dir exists
+  file:
+    path: "{{ cloudlab_volume_dir }}"
+    state: "directory"
+    mode: "0555"
+
 - name: Parepare disk
   shell: "[ ! -f {{ cloudlab_volume_dir }}/{{ item.name }}.qcow2 ] && qemu-img convert -O qcow2 {{ cloudlab_image_dir }}/{{ centos_local_file }} {{ cloudlab_volume_dir }}/{{ item.name }}.qcow2 || echo 0"
   loop: "{{ vms }}"
