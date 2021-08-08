@@ -1,0 +1,14 @@
+---
+
+- name: Parepare disk
+  shell: "[ ! -f {{ cloudlab_volume_dir }}/{{ item.name }}.qcow2 ] && qemu-img convert -O qcow2 {{ cloudlab_image_dir }}/{{ centos_local_file }} {{ cloudlab_volume_dir }}/{{ item.name }}.qcow2 || echo 0"
+  loop: "{{ vms }}"
+
+- name: Create VM cmd
+  debug:
+    msg: "virt-install --name={{ item.name }} --ram={{ item.ram }} --vcpus={{ item.cpu }} --import --disk path={{ cloudlab_volume_dir }}/{{ item.name }}.qcow2,format=qcow2 --disk path={{ cloudlab_image_dir }}/cloudinit.img,device=cdrom --os-variant=centos7.0 --network bridge=virbr0,model=virtio --check path_in_use=off --noautoconsole"
+  loop: "{{ vms }}"
+
+# https://sumit-ghosh.com/articles/create-vm-using-libvirt-cloud-images-cloud-init/
+# - name: Create VM
+#   shell: "virt-install --name={{ item.name }} --ram={{ item.ram }} --vcpus={{ item.cpu }} --import --disk path=/root/cloudlab/volumes/{{ item.name }}.qcow2,format=qcow2 --disk path=/root/cloudlab/images/cloudinit.img,device=cdrom --os-variant=centos7.0 --network default,model=virtio --check path_in_use=off --noautoconsole"
