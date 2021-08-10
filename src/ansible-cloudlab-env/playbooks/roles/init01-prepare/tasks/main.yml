@@ -33,6 +33,12 @@
   with_items:
        - { name: 'root', chpass: '{{ rootpass }}' }
 
+- name: Install common packages
+  yum:
+    name: "{{ item }}"
+  loop:
+    - git
+
 # yum group list hidden ids | grep -i GNOME
 - name: Install the 'GNOME Desktop' group
   yum:

@@ -12,7 +12,7 @@
 #       - {name: node002, cpu: 2, ram: 4096}
 #   become: yes
 
-- hosts: cloudlabs
-  roles:
-    - init03-prek8s
-  become: yes
+# - hosts: cloudlabs
+#   roles:
+#     - init03-prek8s
+#   become: yes
