@@ -32,34 +32,10 @@
   user: name={{ item.name }} password={{ item.chpass | password_hash('sha512', 'mysecretsalt') }}
   with_items:
        - { name: 'root', chpass: '{{ rootpass }}' }
+  when: reset_host_password | bool
 
 - name: Install common packages
   yum:
     name: "{{ item }}"
   loop:
     - git
-
-# yum group list hidden ids | grep -i GNOME
-- name: Install the 'GNOME Desktop' group
-  yum:
-    name: "@^gnome-desktop-environment"
-    state: present
-
-- name: Install xrdp
-  yum:
-    name: xrdp
-    enablerepo: "epel"
-
-- name: Enable service
-  service:
-    name: "{{ item }}"
-    enabled: yes
-  loop:
-    - xrdp
-
-- name: Start service
-  service:
-    name: "{{ item }}"
-    state: started
-  loop:
-    - xrdp

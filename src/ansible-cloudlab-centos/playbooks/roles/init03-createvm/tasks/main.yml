@@ -9,16 +9,10 @@
     - cloud-utils
     - virt-viewer
 
-- name: Enable service
+- name: Enable & start service
   service:
     name: "{{ item }}"
     enabled: yes
-  loop:
-    - libvirtd
-
-- name: Start service
-  service:
-    name: "{{ item }}"
     state: started
   loop:
     - libvirtd

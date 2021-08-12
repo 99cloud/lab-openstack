@@ -1,0 +1,20 @@
+---
+
+# yum group list hidden ids | grep -i GNOME
+- name: Install the 'GNOME Desktop' group
+  yum:
+    name: "@^gnome-desktop-environment"
+    state: present
+
+- name: Install xrdp
+  yum:
+    name: xrdp
+    enablerepo: "epel"
+
+- name: Enable & start service
+  service:
+    name: "{{ item }}"
+    enabled: yes
+    state: started
+  loop:
+    - xrdp
