@@ -6,10 +6,12 @@ rootpass=99cloud
 
 cloudlab_dir=/root/cloudlab
 cloudlab_image_dir=/var/lib/libvirt/qemu/cloudlab/images
-cloudinit_txt=/var/lib/libvirt/qemu/cloudlab/images/cloudinit.txt
-cloudinit_img=/var/lib/libvirt/qemu/cloudlab/images/cloudinit.img
 cloudlab_volume_dir=/var/lib/libvirt/qemu/cloudlab/volumes
 
 [cloudlabs]
 cloudlab001
 cloudlab002
+
+[vms]
+node001 cpu=1 ram=2048 ipaddr=192.168.122.101 netmask=255.255.255.0 gateway=192.168.122.1
+node002 cpu=1 ram=2048 ipaddr=192.168.122.102 netmask=255.255.255.0 gateway=192.168.122.1

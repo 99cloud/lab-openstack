@@ -2,3 +2,14 @@
 password: {{ rootpass }}
 chpasswd: { expire: False }
 ssh_pwauth: True
+hostname: {{ item }}
+local-hostname: {{ item }}
+manage_etc_hosts: True
+# network-interfaces: |
+#   auto lo
+#   iface lo inet loopback
+
+#   iface eth0 inet static
+#     address {{ hostvars[item]['ipaddr'] }}
+#     netmask {{ hostvars[item]['netmask'] }}
+#     gateway {{ hostvars[item]['gateway'] }}
