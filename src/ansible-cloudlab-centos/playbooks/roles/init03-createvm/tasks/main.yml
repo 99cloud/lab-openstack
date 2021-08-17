@@ -1,5 +1,14 @@
 ---
 
+- name: Check cpu acceleration
+  shell: "grep -qE '(vmx|svm)' /proc/cpuinfo;echo $?"
+  register: cpu_acceleration
+
+- name: Fail if acc is not enabled and supported
+  fail:
+    msg: "acc is not enabled and supported"
+  when: cpu_acceleration.stdout != "0"
+
 - name: Install virt-*
   yum:
     name: "{{ item }}"
@@ -8,6 +17,9 @@
     - virt-manager
     - cloud-utils
     - virt-viewer
+    - bridge-utils
+    # - iptables-services
+    # - NetworkManager
 
 - name: Enable & start service
   service:
@@ -16,6 +28,60 @@
     state: started
   loop:
     - libvirtd
+    # - iptables
+
+- name: Enable ip forward function
+  shell: "echo 1 > /proc/sys/net/ipv4/ip_forward"
+
+- name: "cmd: ip link show type bridge"
+  shell: "ip link show type bridge"
+  register: check_result
+
+- name: "Dump check_result.stdout_lines"
+  debug:
+    msg: "{{ check_result.stdout_lines }}"
+
+# - name: Add linux bridge
+#   command: "ip link add {{ item }} type bridge"
+#   when: "item not in check_result.stdout"
+#   loop:
+#     - "br-mgt"
+#     - "br-pod"
+#     - "br-ext"
+#     - "br-str"
+
+# - name: Install bridge configure file
+#   template:
+#     src: "{{ item }}"
+#     dest: /etc/sysconfig/network-scripts/{{ item }}
+#   loop:
+#     - ifcfg-br-ext
+#     - ifcfg-br-mgt
+#     - ifcfg-br-pod
+#     - ifcfg-br-str
+
+# - name: Restart NetworkManager
+#   service:
+#     name: NetworkManager
+#     state: restarted
+
+# - name: Create config file for linux bridge
+#   shell: "ifup {{ item }}"
+#   loop:
+#     - br-ext
+#     - br-mgt
+#     - br-pod
+#     - br-str
+
+# https://www.linuxtechi.com/enable-nested-virtualization-kvm-centos-7-rhel-7/
+- name: Touch /etc/modprobe.d/kvm-nested.conf
+  copy:
+    src: "kvm-nested.conf"
+    dest: "/etc/modprobe.d/kvm-nested.conf"
+
+- name: Enable KVM nested
+  shell: "modprobe -r kvm_intel && modprobe -a kvm_intel"
+  ignore_errors: yes
 
 - name: ensure direcroty exists
   file:
@@ -51,7 +117,7 @@
     mode: "0555"
 
 - name: Parepare disk
-  shell: "[ ! -f {{ cloudlab_volume_dir }}/{{ item }}.qcow2 ] && qemu-img convert -O qcow2 {{ cloudlab_image_dir }}/{{ centos_local_file }} {{ cloudlab_volume_dir }}/{{ item }}.qcow2 || echo 0"
+  shell: "[ ! -f {{ cloudlab_volume_dir }}/{{ item }}.qcow2 ] && qemu-img create -b {{ cloudlab_image_dir }}/{{ centos_local_file }} -f qcow2 {{ cloudlab_volume_dir }}/{{ item }}.qcow2 {{ hostvars[item]['sys_disk_size'] }}G || echo 0"
   loop: "{{ groups['vms'] }}"
 
 - name: Create VM cmd

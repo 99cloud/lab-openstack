@@ -13,5 +13,5 @@ cloudlab001
 cloudlab002
 
 [vms]
-node001 cpu=1 ram=2048 ipaddr=192.168.122.101 netmask=255.255.255.0 gateway=192.168.122.1
-node002 cpu=1 ram=2048 ipaddr=192.168.122.102 netmask=255.255.255.0 gateway=192.168.122.1
+node001 cpu=1 ram=2048 sys_disk_size=20 ipaddr=192.168.122.101 netmask=255.255.255.0 gateway=192.168.122.1
+node002 cpu=1 ram=2048 sys_disk_size=20 ipaddr=192.168.122.102 netmask=255.255.255.0 gateway=192.168.122.1
