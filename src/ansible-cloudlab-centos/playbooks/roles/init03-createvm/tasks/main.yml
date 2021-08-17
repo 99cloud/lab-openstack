@@ -128,6 +128,9 @@
 # https://sumit-ghosh.com/articles/create-vm-using-libvirt-cloud-images-cloud-init/
 # virsh list | grep node | awk '{print $2}' | xargs -I{} virsh shutdown {}
 # virsh list --all | grep node | awk '{print $2}' | xargs -I{} virsh undefine --domain {} --remove-all-storage
+# virsh list | grep running | awk '{print $2}' | xargs -I{} virsh snapshot-list {}
+# virsh list | grep running | awk '{print $2}' | xargs -I{} virsh snapshot-delete {} --snapshotname {}.003-package
+# virsh list | grep running | awk '{print $2}' | xargs -I{} virsh snapshot-create-as {} {}.006-after-install
 - name: Create VM
   shell: "virt-install --name={{ item }} --ram={{ hostvars[item]['ram'] }} --vcpus={{ hostvars[item]['cpu'] }} --import --disk path={{ cloudlab_volume_dir }}/{{ item }}.qcow2,format=qcow2 --disk path={{ cloudlab_image_dir }}/cloudinit-{{ item }}.img,device=cdrom --os-variant=centos7.0 --network bridge=virbr0,model=virtio --check path_in_use=off --noautoconsole"
   loop: "{{ groups['vms'] }}"
