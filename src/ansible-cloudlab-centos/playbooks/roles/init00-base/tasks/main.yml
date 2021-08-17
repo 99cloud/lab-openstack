@@ -1,0 +1,48 @@
+---
+
+- name: Set hostname
+  hostname:
+    name: "{{ inventory_hostname }}"
+
+- name: Add myself to /etc/hosts
+  lineinfile:
+    dest: /etc/hosts
+    regexp: '^127\.0\.0\.1[ \t]+localhost'
+    line: "127.0.0.1 localhost {{ inventory_hostname }}"
+    state: present
+
+- name: Install network interfaces configure file
+  template:
+    src: "{{ item }}"
+    dest: /etc/sysconfig/network-scripts/{{ item }}
+  loop:
+    - ifcfg-eth0
+
+- name: "Restart network"
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: network
+
+- name: ifup network interfaces
+  shell: "ifup {{ item }}"
+  loop:
+    - ifcfg-eth0
+
+- name: "Config sshd"
+  lineinfile:
+    path: "/etc/ssh/sshd_config"
+    state: present
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  loop:
+    - {regexp: '^\s*ClientAliveInterval\s+', line: 'ClientAliveInterval 120'}
+    - {regexp: '^\s*ClientAliveCountMax\s+', line: 'ClientAliveCountMax 720'}
+    - {regexp: '^\s*GSSAPIAuthentication\s+', line: 'GSSAPIAuthentication no'}
+    - {regexp: '^\s*UseDNS\s+', line: 'UseDNS no'}
+
+- name: "Restart sshd"
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: sshd
