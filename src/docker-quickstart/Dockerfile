@@ -8,8 +8,8 @@ WORKDIR /app
 COPY . /app
 
 # Install any needed packages specified in requirements.txt
-RUN pip install --trusted-host pypi.python.org -r requirements.txt
-# RUN pip install -i https://pypi.tuna.tsinghua.edu.cn/simple -r requirements.txt
+# RUN pip install --trusted-host pypi.python.org -r requirements.txt
+RUN pip install -i https://pypi.tuna.tsinghua.edu.cn/simple -r requirements.txt
 
 # Make port 80 available to the world outside this container
 EXPOSE 80
