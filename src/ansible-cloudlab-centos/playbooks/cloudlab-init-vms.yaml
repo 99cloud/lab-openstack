@@ -1,7 +1,7 @@
 - hosts: vms
   roles:
     - init00-base
-    # - init01-prepare
+    - init01-prepare
     # - init02-rdp
     # - init03-createvm
     # - init04-prek8s

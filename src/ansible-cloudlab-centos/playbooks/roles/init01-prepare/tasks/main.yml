@@ -21,12 +21,8 @@
     - {regexp: '^\s*ClientAliveCountMax\s+', line: 'ClientAliveCountMax 720'}
     - {regexp: '^\s*GSSAPIAuthentication\s+', line: 'GSSAPIAuthentication no'}
     - {regexp: '^\s*UseDNS\s+', line: 'UseDNS no'}
-
-- name: "Restart sshd"
-  systemd:
-    state: restarted
-    daemon_reload: yes
-    name: sshd
+  notify:
+    - Restart sshd
 
 - name: change user passwd
   user: name={{ item.name }} password={{ item.chpass | password_hash('sha512', 'mysecretsalt') }}
@@ -45,3 +41,4 @@
     name: firewalld
     state: stopped
     enabled: no
+  ignore_errors: yes
