@@ -144,3 +144,4 @@
 - name: Create VM
   shell: "virt-install --name={{ item }} --ram={{ hostvars[item]['ram'] }} --vcpus={{ hostvars[item]['cpu'] }} --import --disk path={{ cloudlab_volume_dir }}/{{ item }}.qcow2,format=qcow2 --disk path={{ cloudlab_image_dir }}/cloudinit-{{ item }}.img,device=cdrom --os-variant=centos7.0 --network bridge=virbr0,model=virtio --check path_in_use=off --noautoconsole"
   loop: "{{ groups['vms'] }}"
+  ignore_errors: yes

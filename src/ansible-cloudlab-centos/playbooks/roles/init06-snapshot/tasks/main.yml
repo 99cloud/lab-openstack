@@ -1,0 +1,22 @@
+---
+
+# - name: Delete before installtaion snapshot
+#   shell: "virsh list --all | grep -P '^\\s+[\\d\\-]+\\s+' | awk '{print $2}' | xargs -i virsh snapshot-delete {} --snapshotname {}.before"
+#   ignore_errors: yes
+
+# virsh list --all | grep -P '^\s*[\d\-]+\s+' | awk '{print $2}' | xargs -i virsh snapshot-revert {} --snapshotname {}.before
+
+# virsh list --all | grep -P '^\s*[\d\-]+\s+' | awk '{print $2}' | xargs -i virsh destroy {}
+# virsh list --all | grep -P '^\s+[\d\-]+\s+' | awk '{print $2}' | xargs -i virsh snapshot-delete {} --snapshotname {}.init
+# virsh list --all | grep -P '^\s+[\d\-]+\s+' | awk '{print $2}' | xargs -i virsh snapshot-delete {} --snapshotname {}.before
+# virsh list --all | grep -P '^\s*[\d\-]+\s+' | awk '{print $2}' | xargs -i virsh undefine {}
+
+- name: Create snapshot cmd
+  debug:
+    msg: "virsh snapshot-create-as {{ item }} {{ item }}.{{ snapshot_postfix }}"
+  loop: "{{ groups['vms'] }}"
+
+- name: Create snapshot
+  shell: "virsh snapshot-create-as {{ item }} {{ item }}.{{ snapshot_postfix }}"
+  ignore_errors: yes
+  loop: "{{ groups['vms'] }}"

@@ -3,6 +3,5 @@
     - init01-prepare
     - init02-rdp
     - init03-createvm
-    # - init04-prek8s
   become: yes
 
