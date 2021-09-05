@@ -1,8 +1,10 @@
 [all:vars]
 centos_remote_url="https://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-2009.qcow2"
 centos_local_file="CentOS-7-x86_64-GenericCloud-2009.qcow2"
+check_vt=false
 reset_host_password=false
 rootpass=99cloud
+ssh_public_key="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDAy+y0l/P2fWKGhbYn5c4e2gBVsQ23EqjE+MlqYpam9u66UDFaS9mWe6ITYp91RAfjtVZODDE1i2jBfs3AiCieM1v/5rnIUVJ4aAZnlBpj4mb0We0b/VFROoksXNGgtyE/tvTPsYOlRDgGMPGBlT57imHE6FlrNVasy2ivpHJJXoL/8izwjcMuH+X8IgvDE9TJfIBxPZnHwrazBi/q4aFsOqk7Jja+4l5Tn5+X2kmRC/5iBimBVSLcumV3W7rZ168Sw6BvMTmHkFFsv7Mm7u7OLbUSYKRtkcfvEtSdK/Rmq0+5+N3vZHMs9kinHDoXvClCkDuQ37A0TEWr0bKjJE2/ wuwenxiang@wuwenxiangs-MBP"
 
 cloudlab_dir=/root/cloudlab
 cloudlab_image_dir=/var/lib/libvirt/qemu/cloudlab/images
