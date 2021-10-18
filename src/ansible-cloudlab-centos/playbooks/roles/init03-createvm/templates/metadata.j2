@@ -1,0 +1,9 @@
+network-interfaces: |
+  iface eth0 inet static
+  address {{ hostvars[item]['ipaddr'] }}
+  netmask {{ hostvars[item]['netmask'] }}
+  gateway {{ hostvars[item]['gateway'] }}
+  dns-nameservers {{ hostvars[item]['gateway'] }}
+  dns-nameservers 8.8.8.8
+  dns-nameservers 8.8.4.4
+  dns-search local

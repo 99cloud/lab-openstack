@@ -1,0 +1,16 @@
+---
+
+- name: Reboot
+  reboot:
+    reboot_timeout: 300
+
+- name: Restart network
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: network
+
+- name: ifup network interfaces
+  shell: "ifup {{ item }}"
+  loop:
+    - ifcfg-eth0

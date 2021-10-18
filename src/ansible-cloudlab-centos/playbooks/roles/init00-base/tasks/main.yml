@@ -17,32 +17,12 @@
     dest: /etc/sysconfig/network-scripts/{{ item }}
   loop:
     - ifcfg-eth0
+  notify:
+    - Restart network
+    - ifup network interfaces
 
-- name: "Restart network"
-  systemd:
-    state: restarted
-    daemon_reload: yes
-    name: network
-
-- name: ifup network interfaces
-  shell: "ifup {{ item }}"
-  loop:
-    - ifcfg-eth0
-
-- name: "Config sshd"
-  lineinfile:
-    path: "/etc/ssh/sshd_config"
-    state: present
-    regexp: "{{ item.regexp }}"
-    line: "{{ item.line }}"
-  loop:
-    - {regexp: '^\s*ClientAliveInterval\s+', line: 'ClientAliveInterval 120'}
-    - {regexp: '^\s*ClientAliveCountMax\s+', line: 'ClientAliveCountMax 720'}
-    - {regexp: '^\s*GSSAPIAuthentication\s+', line: 'GSSAPIAuthentication no'}
-    - {regexp: '^\s*UseDNS\s+', line: 'UseDNS no'}
-
-- name: "Restart sshd"
-  systemd:
-    state: restarted
-    daemon_reload: yes
-    name: sshd
+- name: disable selinux
+  selinux:
+    state: disabled
+  notify:
+    - Reboot

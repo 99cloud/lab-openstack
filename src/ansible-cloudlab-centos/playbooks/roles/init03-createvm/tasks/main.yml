@@ -3,11 +3,12 @@
 - name: Check cpu acceleration
   shell: "grep -qE '(vmx|svm)' /proc/cpuinfo;echo $?"
   register: cpu_acceleration
+  when: check_vt | bool
 
 - name: Fail if acc is not enabled and supported
   fail:
     msg: "acc is not enabled and supported"
-  when: cpu_acceleration.stdout != "0"
+  when: check_vt | bool and cpu_acceleration.stdout != "0"
 
 - name: Install virt-*
   yum:
@@ -78,10 +79,12 @@
   copy:
     src: "kvm-nested.conf"
     dest: "/etc/modprobe.d/kvm-nested.conf"
+  when: check_vt | bool
 
 - name: Enable KVM nested
   shell: "modprobe -r kvm_intel && modprobe -a kvm_intel"
   ignore_errors: yes
+  when: check_vt | bool
 
 - name: ensure direcroty exists
   file:
@@ -106,8 +109,14 @@
     dest: "{{ cloudlab_image_dir }}/cloudinit-{{ item }}.txt"
   loop: "{{ groups['vms'] }}"
 
+- name: Copy metadata to target
+  template:
+    src: "metadata.j2"
+    dest: "{{ cloudlab_image_dir }}/metadata-{{ item }}.txt"
+  loop: "{{ groups['vms'] }}"
+
 - name: cloud-localds
-  shell: "rm -rf {{ cloudlab_image_dir }}/cloudinit-{{ item }}.img && cloud-localds {{ cloudlab_image_dir }}/cloudinit-{{ item }}.img {{ cloudlab_image_dir }}/cloudinit-{{ item }}.txt"
+  shell: "rm -rf {{ cloudlab_image_dir }}/cloudinit-{{ item }}.img && cloud-localds {{ cloudlab_image_dir }}/cloudinit-{{ item }}.img {{ cloudlab_image_dir }}/cloudinit-{{ item }}.txt {{ cloudlab_image_dir }}/metadata-{{ item }}.txt"
   loop: "{{ groups['vms'] }}"
 
 - name: ensure vm volume dir exists
@@ -135,3 +144,4 @@
 - name: Create VM
   shell: "virt-install --name={{ item }} --ram={{ hostvars[item]['ram'] }} --vcpus={{ hostvars[item]['cpu'] }} --import --disk path={{ cloudlab_volume_dir }}/{{ item }}.qcow2,format=qcow2 --disk path={{ cloudlab_image_dir }}/cloudinit-{{ item }}.img,device=cdrom --os-variant=centos7.0 --network bridge=virbr0,model=virtio --check path_in_use=off --noautoconsole"
   loop: "{{ groups['vms'] }}"
+  ignore_errors: yes
