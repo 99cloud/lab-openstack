@@ -1,8 +1,9 @@
 [all:vars]
 centos_remote_url="https://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-2009.qcow2"
 centos_local_file="CentOS-7-x86_64-GenericCloud-2009.qcow2"
-reset_host_password=false
+reset_root_password=false
 rootpass=99cloud
+reset_hostname=false
 
 cloudlab_dir=/root/cloudlab
 cloudlab_image_dir=/var/lib/libvirt/qemu/cloudlab/images

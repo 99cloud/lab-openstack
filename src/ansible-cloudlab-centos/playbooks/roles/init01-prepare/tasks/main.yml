@@ -28,11 +28,16 @@
     daemon_reload: yes
     name: sshd
 
+- name: Set hostname
+  hostname:
+    name: "{{ inventory_hostname }}"
+  when: reset_hostname | bool
+
 - name: change user passwd
   user: name={{ item.name }} password={{ item.chpass | password_hash('sha512', 'mysecretsalt') }}
   with_items:
        - { name: 'root', chpass: '{{ rootpass }}' }
-  when: reset_host_password | bool
+  when: reset_root_password | bool
 
 - name: Install common packages
   yum:
