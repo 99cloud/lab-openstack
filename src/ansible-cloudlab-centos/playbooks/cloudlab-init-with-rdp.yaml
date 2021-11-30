@@ -2,6 +2,6 @@
   roles:
     - init01-prepare
     - init02-rdp
-    - init03-createvm
+    - init03-01-kvm
   become: yes
 

@@ -2,7 +2,8 @@
   roles:
     - init01-prepare
     - init02-rdp
-    - init03-createvm
+    - init03-01-kvm
+    - init03-02-createvm
   become: yes
 
 - hosts: vms
