@@ -1,7 +1,7 @@
 - hosts: cloudlabs
   roles:
     - init01-prepare
-    - init02-rdp
-    - init03-01-kvm
+    # - init02-rdp
+    # - init03-01-kvm
   become: yes
 

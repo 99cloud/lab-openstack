@@ -1,115 +1,82 @@
-# 部署和运维
+# 部署和运维相关
 
-## 1. Neturon 与 SDN
+## Catalog
 
-- [Neutron 的概念空间中有哪些对象？](https://docs.openstack.org/mitaka/install-guide-ubuntu/neutron-concepts.html)
-    - network：local / flat / vlan / vxlan / gre
-    - subnet
-    - router
-    - port / VIF / tap
-- Neutron 解决什么问题？
-    - 二层交换
-    - 三层路由
-    - 负载均衡 / 防火墙 / VPN 等增值服务
-- Neutron 由哪些模块组成？
+| Date | Time | Title | Content |
+| ---- | ---- | ----- | ------- |
+| 第 1 天 | 上午 | [1. CI/CD]() | [1.1 CI/CD 简述]() |
+| | | 从 IDE 到代码仓库 | [1.2 Redmine：非明确，不开始]() |
+| | | | [1.3 Gitlab：万物皆要版本控制]() |
+| | | | [1.4 Gerrit：Review 是工程也是艺术]() |
+| | 下午 | 持续集成 | [1.5 Drone：大道至简的任务系统]() |
+| | | | [1.6 Kolla：从源码到镜像]() |
+| 第 2 天 | 上午 | 持续部署 | [1.7 OpenStack 容器化部署]() |
+| | | | [1.8 Kolla-Ansible：从镜像到部署]() |
+| | 下午 | [2. 运维相关]() | [2.1 OpenStack 高可用部署]() |
+| | | | [2.2 容器化部署的运维]() |
+| | | | [2.3 容器化部署的调试]() |
+| 第 3 天 | 上午 | [3. 定制开发和部署]() | [3.1 从代码到镜像]() |
+| | | | [3.2 从镜像到部署]() |
+| | 下午 | | [3.3 持续集成环境实验]() |
+| | | | [3.4 容器化部署实验]() |
+| 第 4 天 | 上午 | [4. 监控和告警]() | [4.1 Prometheus 简介]() |
+| | | | [4.2 数据类型]() |
+| | | | [4.3 使用 PromQL 查询监控数据]() |
+| | 下午 | | [4.4 对接 Grafana]() |
+| | | | [4.5 写一个 Python exporter]() |
+| 第 5 天 | 上午 | [5. Skyline]() | [5.1 Skyline 的架构]() |
+| | 下午 | | [5.2 Skyline 的使用]() |
+| | | | [5.3 Skyline 的后续计划]() |
+| 第 6 天 | | 其它 | [Elastic Search](#8-elastic-search) |
+| | | | [neutron-与-sdn](#neutron-与-sdn) |
+| | | | [Manila](#manila) |
+| | | | [虚机注入相关](#虚机注入相关) |
+| | | | [虚机镜像存储相关](#虚机镜像存储相关) |
+| | | | [客户的最佳实践和 FAQ](#客户的最佳实践和-faq) |
 
-    ![](/img/openstack-arch-kilo-logical-v1.png)
+## 1. CI/CD 相关
 
-- 怎么理解 Plugin 和 Agent 的关系？plugin 定义了网络对象的特征，agent 负责具体实现。
-- 有哪些 Agent？L2 / DHCP / L3（ routing / FW / SG ） / LB
-- 有几种类型的 Plugin？Core Plugin / Service Plugin
-- Core Plugin 具体解决什么问题？二层交换问题，network / subnet / port
-- 为什么要提出 ML2 Core Plugin？传统 Core Plugin 无法同时使用多种 network provider & 各类 core plugin 的数据库访问代码雷同
-- 怎么理解 ML2 中的 type driver 和 mechanism driver？
-    - type driver：local / flat / vlan / vxlan / gre
-    - mechanism driver
-        - Agent based：Linux Bridge / OpenVswitch
-        - Controller based：OpenDaylight / VMWare NSX
-        - 物理交换机：Cisco Nexus / Arista / Mellanox
-    - Linux Bridge 支持 local / flat / vlan / vxlan
-    - OpenVswitch 多支持一种 gre
-- 怎么理解 Service Plugin？router / LB / SG
-- 基于 Linux Bridge 的网络模型是怎样的？
-- 基于 OVS 的网络模型是怎样的？
-- 如何查看流表？流表的基本操作（ 增删查改 ）？
-- 安全组在底层的实现是怎样的？
-- FWaaS 在底层的实现是怎样的？
-- VXLAN 模型是什么？在 OpenStack 底层是怎么实现的？适用于哪些场合？
-- GRE 模型是什么？在 OpenStack 底层是怎么实现的？适用于哪些场合？
-- DPDK 怎么支持？
-- SRIOV 怎么支持？
-- IPv6 的支持情况如何？后端怎么启用 IPv6 支持？前端用户怎么使用（ API & 命令行 ）？
+[Catalog](#catalog)
 
-## 2. Manila
+### 1.1 CI/CD 简述
 
-- [Manila 提供什么服务？](https://docs.openstack.org/manila/latest/#what-is-manila) Providing Shared Filesystems as a service，[NAS 存储](https://baike.baidu.com/item/NAS/3465615)。对照的 AWS 服务是什么？[Amazon Elastic File System (EFS)](https://aws.amazon.com/cn/efs/)
-- Manila 支持哪些文件共享协议？主要是 [NFS，CIFS](https://www.dell.com/community/%E5%85%A5%E9%97%A8%E7%BA%A7%E5%92%8C%E4%B8%AD%E7%AB%AF/%E5%88%86%E4%BA%AB-CIFS%E5%92%8CNFS%E7%9A%84%E5%8C%BA%E5%88%AB/td-p/6934849)，通过不同的[后端驱动](https://docs.openstack.org/manila/latest/admin/index.html#supported-share-back-ends)实现。还有[其它协议](https://docs.openstack.org/manila/latest/admin/shared-file-systems-share-management.html)。
-- [Manila 的概念空间里有什么对象？](https://docs.openstack.org/manila/latest/admin/shared-file-systems-key-concepts.html)
-    - **Share**：The fundamental resource unit allocated by the Shared File System service. It represents an allocation of a persistent, readable, and writable filesystems. Compute instances access these filesystems
-    - **Share Instance**：This concept is tied with share and represents created resource on specific back end, when share represents abstraction between end user and back-end storages.
-    - **Snapshot**
-    - **Storage Pools**：The storage may present one or more logical storage resource pools that the Shared File Systems service will select as a storage location when provisioning shares
-    - **Share Type**：An abstract collection of criteria used to characterize share
-    - **Share Access Rules**：Define which users can access a particular share
-    - **Security Services**：Allow granular client access rules for administrators，[参考](https://docs.openstack.org/manila/latest/admin/shared-file-systems-security-services.html)
-    - **Share Server**：A logical entity that hosts the shares created on a specific share network
-- [Manila 由几个模块组成？](https://docs.openstack.org/security-guide/shared-file-systems/intro.html)
+[Catalog](#catalog)
 
-    ![](/img/manila-intro.png)
+### 1.2 Redmine
 
-    - **manila-api**
-    - **manila-data**：类似 nova-conductor，This service is responsible for managing data operations which may take a long time to complete and block other services if not handled separately.
-    - **manila-scheduler**：Responsible for scheduling and routing requests to the appropriate manila-share service. It does that by picking one back-end while filtering all except one back-end.
-    - **manila-share**：类似 nova-compute，Responsible for managing Shared File Service devices, specifically the back-end devices.
-- Manila 的网络架构和实现原理
+[Catalog](#catalog)
 
-    ![](/img/manila-network.png)
+### 1.3 Gitlab
 
-    - [Manila 的配置](https://docs.openstack.org/openstack-ansible-os_manila/latest/configure-manila.html)
+[Catalog](#catalog)
 
-        ```console
-        stack@u1804:~$ sudo systemctl list-unit-files | grep devstack | grep m-
-        devstack@m-api.service                 enabled        
-        devstack@m-dat.service                 enabled        
-        devstack@m-sch.service                 enabled        
-        devstack@m-shr.service                 enabled        
-        stack@u1804:~$ sudo systemctl status devstack@m-shr.service 
-        ● devstack@m-shr.service - Devstack devstack@m-shr.service
-        Loaded: loaded (/etc/systemd/system/devstack@m-shr.service; enabled; vendor preset: enabled)
-        Active: active (running) since Tue 2020-08-18 08:58:16 UTC; 5h 50min ago
-        Main PID: 1219 (manila-share)
-            Tasks: 2 (limit: 19147)
-        CGroup: /system.slice/system-devstack.slice/devstack@m-shr.service
-                ├─1219 /usr/bin/python3.6 /usr/local/bin/manila-share --config-file /etc/manila/manila.conf
-                └─3028 /usr/bin/python3.6 /usr/local/bin/manila-share --config-file /etc/manila/manila.conf
-        ```
+### 1.4 Gerrit
 
-    - Manila 的 Service Network（ Service Instance 关联 ），也就是 Shared Server 所在的网络
+[Catalog](#catalog)
 
-        ```console
-        stack@u1804:~/devstack$ source openrc admin
-        WARNING: setting legacy OS_TENANT_NAME to support cli tools.
-        stack@u1804:~/devstack$ openstack network list
-        +--------------------------------------+------------------------+----------------------------------------------------------------------------+
-        | ID                                   | Name                   | Subnets                                                                    |
-        +--------------------------------------+------------------------+----------------------------------------------------------------------------+
-        | 0705036a-f5a5-41e1-88fa-14bc5fa13aa6 | manila_service_network | 8d4f56cf-c82c-446c-8817-8aed1279d6b6                                       |
-        | 1aa70332-b97d-4f14-80f2-04ec8387ddf5 | public                 | ba63556f-b447-4a9f-9f27-36b7d76c50ed, ddbd2f40-d296-49ee-9504-35f5a7fa470c |
-        | 5f8e24d7-a32b-4971-b4bd-341bc619aa41 | testNetwork            | 687ff53a-601a-4408-a063-34453e210d76                                       |
-        | 740ed6af-0010-4ff3-8301-f46a07f0a792 | admin_net              | 58748bed-5d8d-4bb9-8506-ec0d05ead9d9                                       |
-        | c0277473-3625-486a-a791-153f9c9c178f | heat-net               | 267b253e-c3f5-42da-9d7a-8198d162153d                                       |
-        | c8d68c7a-142a-4653-a4e0-df4682898882 | private                | d7f86a85-2ff3-4fd8-874c-5abb8a8c637d, f99974a0-07ac-4e9d-9f79-f0a22940fe5f |
-        | da6ad9d1-3341-44bb-84db-dcad14fcd305 | shared                 | a5e8bf95-752c-4e59-924e-73eb47af9334                                       |
-        +--------------------------------------+------------------------+----------------------------------------------------------------------------+
-        ```
+### 1.5 Drone
 
-    - Manila 的 Client Network（ Share Network ）
-- [实验] Manila 共享存储的配置和使用具体操作步骤
-    - UI：Admin 中查看
-    - [API](https://docs.openstack.org/api-ref/shared-file-system/)
-    - [命令行](https://docs.openstack.org/manila/latest/cli/index.html)
+[Catalog](#catalog)
 
-## 3. OpenStack 高可用部署
+### 1.6 Kolla
+
+[Catalog](#catalog)
+
+### 1.7 OpenStack 容器化部署
+
+[Catalog](#catalog)
+
+### 1.8 Kolla-Ansible
+
+[Catalog](#catalog)
+
+## 2. 运维相关
+
+[Catalog](#catalog)
+
+### 2.1 OpenStack 高可用部署
+
+[Catalog](#catalog)
 
 - [商用中较为流行的 OpenStack HA 方案有哪些？](https://www.cnblogs.com/sammyliu/p/4741967.html)
     - 红帽：RDO 方案，分散式控制节点，硬件成本大，性能好
@@ -196,46 +163,41 @@
 
     - vlan 网络 & L3 在物理交换机
 
-## 4. 虚机注入的方式
+### 2.2 容器化部署的运维
 
-- Cloudinit 解决什么问题？cloud-init 是一款 linux 工具，当VM 系统启动时，cloud-init 从 nova metadata 服务或者 config drive 中获取 metadata，完成包括但不限于下面的定制化工作：
-    1. 设置 default locale
-    1. 设置 hostname
-    1. 添加 ssh keys 到 .ssh/authorized_keys
-    1. 设置用户密码
-    1. 配置网络
-- 在 DHCP 启动的情况下，如何强制走 config drive 读取 metadata？[config_drive 参数](https://docs.openstack.org/api-ref/compute/?expanded=create-server-detail#create-server)
-- Cloudinit 的 workflow 是怎样的？
+[Catalog](#catalog)
 
-    ![](/img/cloudinit-workflow.png)
+### 2.3 容器化部署的部署
 
-    1. Generator (`cloud-config.target`)：读取配置文件 `cloud.cfg`
-    1. Local (`cloud-init-local.service`)：定位“本地”数据源和配置网络
-    1. Network (`cloud-init.service`)：读取`cloud_init_modules` 模块的指定配置
-    1. Config (`cloud-config.service`)：读取`cloud_config_modules` 模块的指定配置
-    1. Final (`cloud-final.service`)：分别读取`cloud_final_modules` 模块的指定配置
-- [怎么写 user data script？](https://cloudinit.readthedocs.io/en/latest/topics/format.html)
-- [怎么 trouble shooting？](https://cloud.tencent.com/developer/article/1501295)
-- Windows 上使用[cloudbase-init](https://cloudbase.it/cloudbase-init/)
+[Catalog](#catalog)
 
-## 5. 虚机镜像存储方式，需要解决分布式读写延迟对业务的影响
+## 3. 定制开发和部署
 
-- Glance 上传 / 下载 速度慢：看是不是管理网带宽小影响
-- Glance 上传下载时，虚拟机 IO 时候被影响：查看 ceph 的 performance，ceph tuning
+[Catalog](#catalog)
 
-## 6. 客户的最佳实践和遇到的问题
+### 3.1 从代码到镜像
 
-- 安全问题，[Keystone 密码问题](https://docs.openstack.org/keystone/latest/admin/configuration.html#security-compliance-and-pci-dss)
-- 监控方案：[Zabbix vs Prometheus](https://www.metricfire.com/blog/prometheus-vs-zabbix/)
-- 计费方案：[CloudKitty](https://docs.openstack.org/cloudkitty/latest/)
-- 定时任务
-- workflow
-- 消息中心
-- 审计日志：[MiddleWare](https://docs.openstack.org/keystonemiddleware/latest/audit.html)
+[Catalog](#catalog)
 
-## 7. Prometheus
+### 3.2 从镜像到部署
 
-### 7.1 Qick Start
+[Catalog](#catalog)
+
+### 3.3 持续集成环境实验
+
+[Catalog](#catalog)
+
+### 3.4 容器化部署实验
+
+[Catalog](#catalog)
+
+## 4. 监控和告警
+
+[Catalog](#catalog)
+
+### 4.1 Prometheus 简介
+
+[Catalog](#catalog)
 
 - [参考官方安装文档](https://prometheus.io/docs/prometheus/latest/installation/)，[github](https://github.com/prometheus/prometheus/)，[quick-start](https://yunlzheng.gitbook.io/prometheus-book/parti-prometheus-ji-chu/quickstart)
     - [基于 Docker](https://prometheus.io/docs/prometheus/latest/installation/#using-docker)
@@ -257,8 +219,8 @@
         ```
 
         ```console
-        $ cat prometheus-2.22.0.linux-amd64/prometheus.yml 
-        
+        $ cat prometheus-2.22.0.linux-amd64/prometheus.yml
+
         # my global config
 		global:
 		  scrape_interval:     15s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
@@ -321,9 +283,11 @@
 
     - [基于 Ansible](https://github.com/cloudalchemy/ansible-prometheus)，[demo](https://github.com/cloudalchemy/demo-site/#applications)
 
-### 7.2 数据类型
+### 4.2 数据类型
 
-#### 7.2.1 Counter：只增不减的计数器
+[Catalog](#catalog)
+
+#### 4.2.1 Counter：只增不减的计数器
 
 Counter 类型的指标其工作方式和计数器一样，只增不减（除非系统发生重置）。常见的监控指标，如 http_requests_total，node_cpu 都是 Counter 类型的监控指标。一般在定义 Counter 类型指标的名称时推荐使用 _total 作为后缀。
 
@@ -333,7 +297,7 @@ Counter是一个简单但有强大的工具，例如我们可以在应用程序�
 
 查询当前系统中，访问量前10的HTTP地址：`topk(10, http_requests_total)`
 
-#### 7.2.2 Gauge：可增可减的仪表盘
+#### 4.2.2 Gauge：可增可减的仪表盘
 
 与 Counter 不同，Gauge 类型的指标侧重于反应系统的当前状态。因此这类指标的样本数据可增可减。常见指标如：node_memory_MemFree（主机当前空闲的内容大小）、node_memory_MemAvailable（可用内存大小）都是 Gauge 类型的监控指标。
 
@@ -343,7 +307,7 @@ Counter是一个简单但有强大的工具，例如我们可以在应用程序�
 
 还可以使用 deriv() 计算样本的线性回归模型，甚至是直接使用 predict_linear() 对数据的变化趋势进行预测。例如，预测系统磁盘空间在 4 个小时之后的剩余情况：`predict_linear(node_filesystem_free{job="node"}[1h], 4 * 3600)`
 
-#### 7.2.3 使用 Histogram 和 Summary 分析数据分布情况
+#### 4.2.3 使用 Histogram 和 Summary 分析数据分布情况
 
 除了 Counter 和 Gauge 类型的监控指标以外，Prometheus 还定义了 Histogram 和 Summary 的指标类型。Histogram 和 Summary 主用用于统计和分析样本的分布情况。
 
@@ -390,9 +354,11 @@ prometheus_tsdb_compaction_chunk_range_count 780
 与 Summary 类型的指标相似之处在于 Histogram 类型的样本同样会反应当前指标的记录的总数(以 _count 作为后缀)以及其值的总量（以_sum 作为后缀）。不同在于 Histogram 指标直接反应了在不同区间内样本的个数，区间通过标签 len 进行定义。
 同时对于 Histogram 的指标，我们还可以通过 histogram_quantile()函数计算出其值的分位数。不同在于 Histogram 通过 histogram_quantile 函数是在服务器端计算的分位数。 而 Sumamry 的分位数则是直接在客户端计算完成。因此对于分位数的计算而言，Summary 在通过 PromQL 进行查询时有更好的性能表现，而 Histogram 则会消耗更多的资源。反之对于客户端而言 Histogram 消耗的资源更少。在选择这两种方式时用户应该按照自己的实际场景进行选择。
 
-### 7.3 使用 PromQL 查询监控数据
+### 4.3 使用 PromQL 查询监控数据
 
-#### 7.3.1 PromQL Quick Start
+[Catalog](#catalog)
+
+#### 4.3.1 PromQL Quick Start
 
 PromQL 是 Prometheus 自定义的一套强大的数据查询语言，除了使用监控指标作为查询关键字以为，还内置了大量的函数，帮助用户进一步对时序数据进行处理。
 
@@ -402,7 +368,7 @@ PromQL 是 Prometheus 自定义的一套强大的数据查询语言，除了使�
 
 那如果需要计算系统 CPU 的总体使用率，通过排除系统闲置的 CPU 使用率即可获得：`1 - avg without(cpu) (rate(node_cpu{mode="idle"}[2m]))`
 
-##### 7.3.1.1 查询时间序列
+##### 4.3.1.1 查询时间序列
 
 直接使用监控指标名称查询时，可以查询该指标下的所有时间序列。如：`http_requests_total`，等同于：`http_requests_total{}`。该表达式会返回指标名称为 `http_requests_total` 的所有时间序列：
 
@@ -428,7 +394,7 @@ PromQL 支持使用 = 和 != 两种完全匹配模式：
 
 例如，如果想查询多个环节下的时间序列序列可以使用如下表达式：`http_requests_total{environment=~"staging|testing|development",method!="GET"}`
 
-##### 7.3.1.2 范围查询
+##### 4.3.1.2 范围查询
 
 通过表达式 `http_requests_total` 查询时间序列时，返回值中只会包含该时间序列中的最新的一个样本值，这样的返回结果我们称之为瞬时向量。而相应的这样的表达式称之为**瞬时向量表达式**。
 
@@ -464,7 +430,7 @@ http_requests_total{code="200",handler="graph",instance="localhost:9090",job="pr
 - w - 周
 - y - 年
 
-##### 7.3.1.3 时间位移操作
+##### 4.3.1.3 时间位移操作
 
 如果想查询，5分钟前的瞬时样本数据，或昨天一天的区间内的样本数据，可以使用位移操作，位移操作的关键字为offset。
 
@@ -473,7 +439,7 @@ http_request_total{} offset 5m
 http_request_total{}[1d] offset 1d
 ```
 
-##### 7.3.1.4 使用聚合操作
+##### 4.3.1.4 使用聚合操作
 
 一般来说，如果描述样本特征的标签(label)在并非唯一的情况下，通过 PromQL 查询数据，会返回多条满足这些特征维度的时间序列。而 PromQL 提供的聚合操作可以用来对这些时间序列进行处理，形成一条新的时间序列：
 
@@ -488,7 +454,7 @@ avg(node_cpu) by (mode)
 sum(sum(irate(node_cpu{mode!='idle'}[5m]))  / sum(irate(node_cpu[5m]))) by (instance)
 ```
 
-##### 7.3.1.5 标量和字符串
+##### 4.3.1.5 标量和字符串
 
 除了使用瞬时向量表达式和区间向量表达式以外，PromQL 还直接支持用户使用标量(Scalar)和字符串(String)
 
@@ -501,7 +467,7 @@ sum(sum(irate(node_cpu{mode!='idle'}[5m]))  / sum(irate(node_cpu[5m]))) by (inst
     `these are not unescaped: \n ' " \t`
     ```
 
-##### 7.3.1.6 合法的 PromQL 表达式
+##### 4.3.1.6 合法的 PromQL 表达式
 
 所有的 PromQL 表达式都必须至少包含一个指标名称(例如`http_request_total`)，或者一个不会匹配到空字符串的标签过滤器(例如`{code="200"}`)。因此以下两种方式，均为合法的表达式：
 
@@ -520,7 +486,7 @@ http_request_total{} # 合法
 {__name__=~"node_disk_bytes_read|node_disk_bytes_written"} # 合法
 ```
 
-#### 7.3.2 PromQL 聚合操作
+#### 4.3.2 PromQL 聚合操作
 
 Prometheus 还提供了下列内置的聚合操作符，这些操作符作用域瞬时向量。可以将瞬时表达式返回的样本数据进行聚合，形成一个新的时间序列。
 
@@ -547,10 +513,10 @@ topk 和 bottomk 则用于对样本值进行排序，返回当前样本值前 n 
 
 quantile 用于计算当前样本数据值的分布情况 `quantile(φ, express)` 其中`0 ≤ φ ≤ 1`。例如，当 φ 为 0.5 时，即表示找到当前样本数据中的中位数：`quantile(0.5, http_requests_total)`
 
-#### 7.3.3 PromQL 内置函数
+#### 4.3.3 PromQL 内置函数
 
 - 计算 Counter 指标增长率
-    - `increase(node_cpu[2m]) / 120`，这里通过`node_cpu[2m]`获取时间序列最近两分钟的所有样本，increase 计算出最近两分钟的增长量，最后除以时间 120 秒得到node_cpu样本在最近两分钟的平均增长率。并且这个值也近似于主机节点最近两分钟内的平均 CPU 使用率。 
+    - `increase(node_cpu[2m]) / 120`，这里通过`node_cpu[2m]`获取时间序列最近两分钟的所有样本，increase 计算出最近两分钟的增长量，最后除以时间 120 秒得到node_cpu样本在最近两分钟的平均增长率。并且这个值也近似于主机节点最近两分钟内的平均 CPU 使用率。
     - `rate(node_cpu[2m])`，rate 或者 increase 函数去计算样本的平均增长速率，容易陷入“长尾问题”当中，其无法反应在时间窗口内样本数据的突发变化
     - `irate(node_cpu[2m])`，irate 函数是通过区间向量中最后两个样本数据来计算区间向量的增长速率。这种方式可以避免在时间窗口范围内的“长尾问题”，并且体现出更好的灵敏度。irate 函数相比于 rate 函数提供了更高的灵敏度，不过当需要分析长期趋势或者在告警规则中，irate 的这种灵敏度反而容易造成干扰。因此在长期趋势分析或者告警中更推荐使用 rate 函数。
 - 预测 Gauge 指标变化趋势
@@ -558,9 +524,9 @@ quantile 用于计算当前样本数据值的分布情况 `quantile(φ, express)
 - 统计 Histogram 指标的分位数
     - `histogram_quantile(0.5, http_request_duration_seconds_bucket)`。其中 φ（0<φ<1）表示需要计算的分位数，如果需要计算中位数 φ 取值为 0.5。
 
-#### 7.3.4 在 HTTP API 中使用 PromQL
+#### 4.3.4 在 HTTP API 中使用 PromQL
 
-##### 7.3.4.1 瞬时数据查询
+##### 4.3.4.1 瞬时数据查询
 
 使用以下表达式查询表达式 up 在时间点 2015-07-01T20:10:51.781Z 的计算结果。
 
@@ -598,7 +564,7 @@ $ curl 'http://localhost:9090/api/v1/query?query=up&time=2015-07-01T20:10:51.781
 }
 ```
 
-##### 7.3.4.2 区间数据查询
+##### 4.3.4.2 区间数据查询
 
 使用以下表达式查询表达式 up 在 30 秒范围内以 15 秒为间隔计算 PromQL 表达式的结果。
 
@@ -638,7 +604,7 @@ $ curl 'http://localhost:9090/api/v1/query_range?query=up&start=2015-07-01T20:10
 }
 ```
 
-#### 7.3.5 最佳实践：4 个黄金指标和 USE 方法
+#### 4.3.5 最佳实践：4 个黄金指标和 USE 方法
 
 监控纬度
 
@@ -682,11 +648,15 @@ USE 方法主要关注与资源的：使用率(Utilization)、饱和度(Saturati
 - 饱和度：例如CPU的平均运行排队长度，这里主要是针对资源的饱和度(注意，不同于4大黄金信号)。任何资源在某种程度上的饱和都可能导致系统性能的下降。
 - 错误：错误计数。例如：“网卡在数据包传输过程中检测到的以太网网络冲突了14次”。
 
-### 7.4 对接 Grafana
+### 4.4 对接 Grafana
+
+[Catalog](#catalog)
 
 - 参考：[use-grafana-create-dashboard](https://yunlzheng.gitbook.io/prometheus-book/parti-prometheus-ji-chu/quickstart/prometheus-quick-start/use-grafana-create-dashboard)
 
-### 7.5 写一个 Python exporter
+### 4.5 写一个 Python exporter
+
+[Catalog](#catalog)
 
 - 参考：[client_python](https://github.com/prometheus/client_python)
 - 参考：[使用 prometheus_client 和 Flask 实现站点监控 Exporter](https://www.jianshu.com/p/a64ad351ebb2)，这个是 python2，要改一下 python3
@@ -702,7 +672,7 @@ USE 方法主要关注与资源的：使用率(Utilization)、饱和度(Saturati
     from prometheus_client import Gauge, start_http_server
 
     value = 404
-    # Gauge 的监控项，比如这里的 http_code，只能初始化一次，不然会报 “ValueError：Duplicated timeseries in CollectorRegistry” 
+    # Gauge 的监控项，比如这里的 http_code，只能初始化一次，不然会报 “ValueError：Duplicated timeseries in CollectorRegistry”
     http_code = Gauge('http_code', 'HTTP CODE')
     http_code.set(value)
 
@@ -722,7 +692,7 @@ USE 方法主要关注与资源的：使用率(Utilization)、饱和度(Saturati
     $ cat config.yml
     urls:
     - https://www.qq.com
-    - http://api.map.baidu.com/ 
+    - http://api.map.baidu.com/
 
     # 热加载
     curl -X POST http://127.0.0.1:9090/-/reload
@@ -902,7 +872,7 @@ curl http://localhost:9200
     - Elastic 会索引所有字段，经过处理后写入一个反向索引（Inverted Index）。查找数据的时候，直接查找该索引。
     - Elastic 数据管理的顶层单位就叫做 Index（索引）。它是单个数据库的同义词。每个 Index （即数据库）的名字必须是小写。
     - 查看当前节点的所有 Index
-    
+
         ```conosle
         $ curl -X GET 'http://localhost:9200/_cat/indices?v'
         health status index uuid pri rep docs.count docs.deleted store.size pri.store.size
@@ -961,7 +931,7 @@ $ curl -H "Content-Type: application/json" -X PUT 'localhost:9200/accounts/perso
   "user": "张三",
   "title": "工程师",
   "desc": "数据库管理"
-}' 
+}'
 ```
 
 服务器返回的 JSON 对象，会给出 Index、Type、Id、Version 等信息。
@@ -991,7 +961,7 @@ $ curl -H "Content-Type: application/json" -X POST 'localhost:9200/accounts/pers
   "user": "张三",
   "title": "工程师",
   "desc": "数据库管理"
-}' 
+}'
 ```
 
 上面代码中，向/accounts/person发出一个 POST 请求，添加一个记录。这时，服务器返回的 JSON 对象里面，_id字段就是一个随机字符串。
@@ -1091,7 +1061,7 @@ curl -H "Content-Type: application/json" -X PUT 'localhost:9200/accounts/person/
     "user" : "张三",
     "title" : "工程师",
     "desc" : "数据库管理，软件开发"
-}' 
+}'
 ```
 
 ```json
@@ -1337,7 +1307,7 @@ Fluent-Bit 的输出：
 - [Docker Logging with Fluent Bit and Elasticsearch](https://fluentbit.io/articles/docker-logging-elasticsearch/)
 
 ```console
-root@devopslab020:~# cat fluent-bit.config 
+root@devopslab020:~# cat fluent-bit.config
 [SERVICE]
     Flush        5
     Daemon       Off
@@ -1413,3 +1383,162 @@ Fluent Bit v1.5.7
 ```
 
 此时，`echo qquuuuuu>ng.log` 就可以看到 fluent-bit 的输出了。
+
+## Neutron 与 SDN
+
+[Catalog](#catalog)
+
+- [Neutron 的概念空间中有哪些对象？](https://docs.openstack.org/mitaka/install-guide-ubuntu/neutron-concepts.html)
+    - network：local / flat / vlan / vxlan / gre
+    - subnet
+    - router
+    - port / VIF / tap
+- Neutron 解决什么问题？
+    - 二层交换
+    - 三层路由
+    - 负载均衡 / 防火墙 / VPN 等增值服务
+- Neutron 由哪些模块组成？
+
+    ![](/img/openstack-arch-kilo-logical-v1.png)
+
+- 怎么理解 Plugin 和 Agent 的关系？plugin 定义了网络对象的特征，agent 负责具体实现。
+- 有哪些 Agent？L2 / DHCP / L3（ routing / FW / SG ） / LB
+- 有几种类型的 Plugin？Core Plugin / Service Plugin
+- Core Plugin 具体解决什么问题？二层交换问题，network / subnet / port
+- 为什么要提出 ML2 Core Plugin？传统 Core Plugin 无法同时使用多种 network provider & 各类 core plugin 的数据库访问代码雷同
+- 怎么理解 ML2 中的 type driver 和 mechanism driver？
+    - type driver：local / flat / vlan / vxlan / gre
+    - mechanism driver
+        - Agent based：Linux Bridge / OpenVswitch
+        - Controller based：OpenDaylight / VMWare NSX
+        - 物理交换机：Cisco Nexus / Arista / Mellanox
+    - Linux Bridge 支持 local / flat / vlan / vxlan
+    - OpenVswitch 多支持一种 gre
+- 怎么理解 Service Plugin？router / LB / SG
+- 基于 Linux Bridge 的网络模型是怎样的？
+- 基于 OVS 的网络模型是怎样的？
+- 如何查看流表？流表的基本操作（ 增删查改 ）？
+- 安全组在底层的实现是怎样的？
+- FWaaS 在底层的实现是怎样的？
+- VXLAN 模型是什么？在 OpenStack 底层是怎么实现的？适用于哪些场合？
+- GRE 模型是什么？在 OpenStack 底层是怎么实现的？适用于哪些场合？
+- DPDK 怎么支持？
+- SRIOV 怎么支持？
+- IPv6 的支持情况如何？后端怎么启用 IPv6 支持？前端用户怎么使用（ API & 命令行 ）？
+
+## Manila
+
+[Catalog](#catalog)
+
+- [Manila 提供什么服务？](https://docs.openstack.org/manila/latest/#what-is-manila) Providing Shared Filesystems as a service，[NAS 存储](https://baike.baidu.com/item/NAS/3465615)。对照的 AWS 服务是什么？[Amazon Elastic File System (EFS)](https://aws.amazon.com/cn/efs/)
+- Manila 支持哪些文件共享协议？主要是 [NFS，CIFS](https://www.dell.com/community/%E5%85%A5%E9%97%A8%E7%BA%A7%E5%92%8C%E4%B8%AD%E7%AB%AF/%E5%88%86%E4%BA%AB-CIFS%E5%92%8CNFS%E7%9A%84%E5%8C%BA%E5%88%AB/td-p/6934849)，通过不同的[后端驱动](https://docs.openstack.org/manila/latest/admin/index.html#supported-share-back-ends)实现。还有[其它协议](https://docs.openstack.org/manila/latest/admin/shared-file-systems-share-management.html)。
+- [Manila 的概念空间里有什么对象？](https://docs.openstack.org/manila/latest/admin/shared-file-systems-key-concepts.html)
+    - **Share**：The fundamental resource unit allocated by the Shared File System service. It represents an allocation of a persistent, readable, and writable filesystems. Compute instances access these filesystems
+    - **Share Instance**：This concept is tied with share and represents created resource on specific back end, when share represents abstraction between end user and back-end storages.
+    - **Snapshot**
+    - **Storage Pools**：The storage may present one or more logical storage resource pools that the Shared File Systems service will select as a storage location when provisioning shares
+    - **Share Type**：An abstract collection of criteria used to characterize share
+    - **Share Access Rules**：Define which users can access a particular share
+    - **Security Services**：Allow granular client access rules for administrators，[参考](https://docs.openstack.org/manila/latest/admin/shared-file-systems-security-services.html)
+    - **Share Server**：A logical entity that hosts the shares created on a specific share network
+- [Manila 由几个模块组成？](https://docs.openstack.org/security-guide/shared-file-systems/intro.html)
+
+    ![](/img/manila-intro.png)
+
+    - **manila-api**
+    - **manila-data**：类似 nova-conductor，This service is responsible for managing data operations which may take a long time to complete and block other services if not handled separately.
+    - **manila-scheduler**：Responsible for scheduling and routing requests to the appropriate manila-share service. It does that by picking one back-end while filtering all except one back-end.
+    - **manila-share**：类似 nova-compute，Responsible for managing Shared File Service devices, specifically the back-end devices.
+- Manila 的网络架构和实现原理
+
+    ![](/img/manila-network.png)
+
+    - [Manila 的配置](https://docs.openstack.org/openstack-ansible-os_manila/latest/configure-manila.html)
+
+        ```console
+        stack@u1804:~$ sudo systemctl list-unit-files | grep devstack | grep m-
+        devstack@m-api.service                 enabled
+        devstack@m-dat.service                 enabled
+        devstack@m-sch.service                 enabled
+        devstack@m-shr.service                 enabled
+
+        stack@u1804:~$ sudo systemctl status devstack@m-shr.service
+        ● devstack@m-shr.service - Devstack devstack@m-shr.service
+        Loaded: loaded (/etc/systemd/system/devstack@m-shr.service; enabled; vendor preset: enabled)
+        Active: active (running) since Tue 2020-08-18 08:58:16 UTC; 5h 50min ago
+        Main PID: 1219 (manila-share)
+            Tasks: 2 (limit: 19147)
+        CGroup: /system.slice/system-devstack.slice/devstack@m-shr.service
+                ├─1219 /usr/bin/python3.6 /usr/local/bin/manila-share --config-file /etc/manila/manila.conf
+                └─3028 /usr/bin/python3.6 /usr/local/bin/manila-share --config-file /etc/manila/manila.conf
+        ```
+
+    - Manila 的 Service Network（ Service Instance 关联 ），也就是 Shared Server 所在的网络
+
+        ```console
+        stack@u1804:~/devstack$ source openrc admin
+        WARNING: setting legacy OS_TENANT_NAME to support cli tools.
+        stack@u1804:~/devstack$ openstack network list
+        +--------------------------------------+------------------------+----------------------------------------------------------------------------+
+        | ID                                   | Name                   | Subnets                                                                    |
+        +--------------------------------------+------------------------+----------------------------------------------------------------------------+
+        | 0705036a-f5a5-41e1-88fa-14bc5fa13aa6 | manila_service_network | 8d4f56cf-c82c-446c-8817-8aed1279d6b6                                       |
+        | 1aa70332-b97d-4f14-80f2-04ec8387ddf5 | public                 | ba63556f-b447-4a9f-9f27-36b7d76c50ed, ddbd2f40-d296-49ee-9504-35f5a7fa470c |
+        | 5f8e24d7-a32b-4971-b4bd-341bc619aa41 | testNetwork            | 687ff53a-601a-4408-a063-34453e210d76                                       |
+        | 740ed6af-0010-4ff3-8301-f46a07f0a792 | admin_net              | 58748bed-5d8d-4bb9-8506-ec0d05ead9d9                                       |
+        | c0277473-3625-486a-a791-153f9c9c178f | heat-net               | 267b253e-c3f5-42da-9d7a-8198d162153d                                       |
+        | c8d68c7a-142a-4653-a4e0-df4682898882 | private                | d7f86a85-2ff3-4fd8-874c-5abb8a8c637d, f99974a0-07ac-4e9d-9f79-f0a22940fe5f |
+        | da6ad9d1-3341-44bb-84db-dcad14fcd305 | shared                 | a5e8bf95-752c-4e59-924e-73eb47af9334                                       |
+        +--------------------------------------+------------------------+----------------------------------------------------------------------------+
+        ```
+
+    - Manila 的 Client Network（ Share Network ）
+- [实验] Manila 共享存储的配置和使用具体操作步骤
+    - UI：Admin 中查看
+    - [API](https://docs.openstack.org/api-ref/shared-file-system/)
+    - [命令行](https://docs.openstack.org/manila/latest/cli/index.html)
+
+## 虚机注入相关
+
+[Catalog](#catalog)
+
+- Cloudinit 解决什么问题？cloud-init 是一款 linux 工具，当VM 系统启动时，cloud-init 从 nova metadata 服务或者 config drive 中获取 metadata，完成包括但不限于下面的定制化工作：
+    1. 设置 default locale
+    1. 设置 hostname
+    1. 添加 ssh keys 到 .ssh/authorized_keys
+    1. 设置用户密码
+    1. 配置网络
+- 在 DHCP 启动的情况下，如何强制走 config drive 读取 metadata？[config_drive 参数](https://docs.openstack.org/api-ref/compute/?expanded=create-server-detail#create-server)
+- Cloudinit 的 workflow 是怎样的？
+
+    ![](/img/cloudinit-workflow.png)
+
+    1. Generator (`cloud-config.target`)：读取配置文件 `cloud.cfg`
+    1. Local (`cloud-init-local.service`)：定位“本地”数据源和配置网络
+    1. Network (`cloud-init.service`)：读取`cloud_init_modules` 模块的指定配置
+    1. Config (`cloud-config.service`)：读取`cloud_config_modules` 模块的指定配置
+    1. Final (`cloud-final.service`)：分别读取`cloud_final_modules` 模块的指定配置
+- [怎么写 user data script？](https://cloudinit.readthedocs.io/en/latest/topics/format.html)
+- [怎么 trouble shooting？](https://cloud.tencent.com/developer/article/1501295)
+- Windows 上使用[cloudbase-init](https://cloudbase.it/cloudbase-init/)
+
+## 虚机镜像存储相关
+
+[Catalog](#catalog)
+
+虚机镜像存储方式，需要解决分布式读写延迟对业务的影响
+
+- Glance 上传 / 下载 速度慢：看是不是管理网带宽小影响
+- Glance 上传下载时，虚拟机 IO 时候被影响：查看 ceph 的 performance，ceph tuning
+
+## 客户的最佳实践和 FAQ
+
+[Catalog](#catalog)
+
+- 安全问题，[Keystone 密码问题](https://docs.openstack.org/keystone/latest/admin/configuration.html#security-compliance-and-pci-dss)
+- 监控方案：[Zabbix vs Prometheus](https://www.metricfire.com/blog/prometheus-vs-zabbix/)
+- 计费方案：[CloudKitty](https://docs.openstack.org/cloudkitty/latest/)
+- 定时任务
+- workflow
+- 消息中心
+- 审计日志：[MiddleWare](https://docs.openstack.org/keystonemiddleware/latest/audit.html)
