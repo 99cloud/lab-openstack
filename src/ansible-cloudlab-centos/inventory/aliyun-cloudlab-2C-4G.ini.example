@@ -11,6 +11,11 @@ cloudlab_dir=/root/cloudlab
 cloudlab_image_dir=/var/lib/libvirt/qemu/cloudlab/images
 cloudlab_volume_dir=/var/lib/libvirt/qemu/cloudlab/volumes
 
+use_vmdisk_device=false
+vmdisk_path="/home/vmdisk"
+vmdisk_device="/dev/vdb"
+vmdisk_fstype="xfs"
+
 [cloudlabs]
 cloudlab001
 cloudlab002

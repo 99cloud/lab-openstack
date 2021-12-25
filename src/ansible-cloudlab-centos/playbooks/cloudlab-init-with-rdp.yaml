@@ -1,5 +1,6 @@
 - hosts: cloudlabs
   roles:
+    - init00-mount-disk
     - init01-prepare
     # - init02-rdp
     # - init03-01-kvm
