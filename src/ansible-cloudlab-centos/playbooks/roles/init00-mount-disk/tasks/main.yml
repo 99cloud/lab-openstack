@@ -2,6 +2,7 @@
   filesystem:
     fstype: "{{ vmdisk_fstype }}"
     dev: "{{ vmdisk_device }}"
+    force: true
   when: use_vmdisk_device | bool
 
 - name: "Mkdir {{ vmdisk_path }}"
