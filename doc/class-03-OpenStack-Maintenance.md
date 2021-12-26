@@ -522,6 +522,9 @@ Kolla-Kubernetes vs Kolla-Ansible
 
 1. 调试日志
 2. 对非 web 服务，可以先把容器本身启动的命令改成 sleep infinity，然后进入容器，在代码里面加上 pdb，然后在容器里面去调用容器正常启动时改执行的命令，这样可以 pdb 断点
+    - 修改 config.json 文件，command 改为 sleep infinity
+    - 重启容器
+    - 进入容器，使用 pdb 进行调试，执行之前 config.json 中的 command 命令
 
 ### 3.2 从镜像到部署
 
