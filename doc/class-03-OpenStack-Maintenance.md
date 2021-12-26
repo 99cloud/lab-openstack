@@ -4,7 +4,7 @@
 
 | Date | Time | Title | Content |
 | ---- | ---- | ----- | ------- |
-| 第 1 天 | 上午 | [1. CI/CD](#1-cicd-相关) | [1.1 OpenStack 基础和质量保证体系](#11-OpenStack-基础和质量保证体系) |
+| 第 1 天 | 上午 | [1. CI/CD](#1-cicd-相关) | [1.1 OpenStack 基础和质量保证体系](#11-openstack-基础和质量保证体系) |
 | | | 从 IDE 到代码仓库 | [1.2 Redmine：非明确，不开始](#12-redmine) |
 | | | | [1.3 Gitlab：万物皆要版本控制](#13-gitlab) |
 | | | | [1.4 Gerrit：Review 是工程也是艺术](#14-gerrit) |
@@ -42,15 +42,7 @@
 
 [Catalog](#catalog)
 
-#### 1.1.1 Git 为什么比 SVN 和 CVS 更好？
-
-Git作为一个**分布式**的版本控制工具
-
-可以**随意创建新分支**，进行修改、测试、提交，这些在本地的提交完全不会影响到其他人，可以等到工作完成后再提交给公共的仓库。
-
-这样就可以支持**离线工作**，本地提交可以稍后提交到服务器上。
-
-#### 1.1.2 OpenStack 的代码地图是怎样设计的？
+#### 1.1.1 OpenStack 的代码地图是怎样设计的？
 
 setup.py 和 **setup.cfg**：代码地图（需要了解 Distutils、Distutils2、Setuptools、Distribute 等 Python 代码分发的工具）
 
@@ -148,7 +140,7 @@ console_scripts =
     nova-xvpvncproxy = nova.cmd.xvpvncproxy:main
 ```
 
-#### 1.1.3 OpenStack 如何保证代码质量？
+#### 1.1.2 OpenStack 如何保证代码质量？
 
 只有一个标准：**可读性**！
 
@@ -216,8 +208,6 @@ console_scripts =
       stestr run {posargs}
     ```
 
-
-
     ```bash
     tox -e pep8
     tox -e py38
@@ -237,31 +227,156 @@ console_scripts =
 
     我们必须有一个 Gerrit 账号去访问 <https://review.opendev.org/>，这个账号使用的是我们 Launchpad 账号。也就是说，我们首先需要访问 Launchpad 的登录页面，使用自己的电子邮件地址注册 Launchpad 账号，并为自己选择一个 LaunchpadID，之后 <https://launchpad.net/~LaunchpadID> 即是我们自己的 Luanchpad 主页。使用 Launchpad 账号登录之后，我们还需要上传自己的 SSH 公钥（SSH public key），公钥设置的页面有相应的 HowTo 告诉我们如何生成公钥并上传。
 
-    Gerrit 实现原理是**基于 SSH 协议实现了一套自己的 Git 服务器**，这样就可以基于自己的需求对 Git 数据传递进行更为精确的控制，为上述工作流程的实现建立了基础。访问<https://review.opendev.org/ssh_info> 可以查看到这个 Git 服务器的域名和端口 `review.opendev.org:29418`，我们可以发现它使用了端口 29418，并非是标准的 22 端口。Gerrit 的 Git 服务器，只允许用户向特殊的引用 `refs/for/<branchname>` 下执行推送（push），其中 `<branchname>` 即为开发者的工作分支。
-
-    Gerrit 会为新的提交分配一个 taskid，并为该 taskid 的访问建立引用 `<refs/changes/nn/<taskid>/m`，比如 `refs/changes/37/367737/2`，其中：
-
-    - taskid 为 Gerrit 顺序分配给该评审任务的全局唯一的号码。
-    - nn 为 taskid 的后两位数，位数不足用零补齐，即 nn 为 taskid除以 100 的余数
-    - m 为修订号，该 taskid 的首次提交修订号为 1；如果该修订被拒绝，需要更新代码后重新提交，修订号会依次增加。
-
-    为了保证在代码修改后重新提交时，不会产生新的重复的评审任务，Gerrit 要求每个提交包含唯一的 ChangeId，Gerrit 一旦发现新的提交包含了已经处理过的ChangeId，就不再为该修订创建新的评审任务和 taskid，而是仅仅把它作为已有 taskid 一次修订。比如：`ChangeId:Icb21eeed0e004450556176d01520784acd98002e`，在它被 merge 到正式的 OpenStack 源码树前共有两次修订 `Patch Set 2/2`。对于开发者来说，为了实现针对同一份代码的前后修订中包含唯一的相同的 ChangeId，需要在执行提交命令时使用 amend 选项，来避免 Gerrit 创建新的评审任务。
-
 ### 1.2 Redmine
 
 [Catalog](#catalog)
+
+社区比较简单，分为两类：Bug 和 Feature
+
+#### 1.2.1 Bug
+
+社区 Bug 列表：<https://bugs.launchpad.net/>
+
+- Nova: <https://bugs.launchpad.net/nova>
+- Skyline: <https://bugs.launchpad.net/skyline-apiserver>
+
+提交 Patch：
+
+```bash
+cd nova
+git checkout -b bug/123456
+git commit -a
+git review -t bug/123456
+```
+
+这里的 `123456` 是每个 bug 专属的 id，可以在 bug 的详细描述页面上看到。需要注意的是，当我们使用 `gitcommit` 提交代码的时候，不要忘记在描述信息里加上 `ClosesBug:#123456`。
+
+#### 1.2.2 Feature
+
+社区的 Blue Print 列表：<https://blueprints.launchpad.net/>
+
+- Nova: <https://blueprints.launchpad.net/nova>
+- Skyline: <https://blueprints.launchpad.net/skyline-apiserver>
+
+创建 bp 的过程同样并不复杂，主要就是填写一个合适的标题并对 feature 进行表述，困难的是创建之后能够被接受。项目的 core 团队会对所有创建的 bp 进行讨论，决定是否接受以及它的优先级。在 bp 被接受后，开发过程中我们还需要适时更新开发的状态。
+
+各个项目有一个 `<project>-specs` 这样伴生项目，比如 Ceilometer 对应的 ceilometer-specs，我们需要在里面创建一个 spec，然后像提交代码一样提交给 Gerrit 供项目的 Core 成员以及其他开发者 review，在经过若干次的 update 和有可能比较漫长的等待之后这个 spec 可能会被接受。
+
+每个 specs 项目都会包含一个模板文件，新创建的每个 spec 必须按照这个模板逐项填写，包括：
+
+- 相应的 bp 链接
+- 问题的描述
+- 对 RestAPI 等可能的影响
+- 实现的设计细节以及参考资料等内容
+
+基本上填完内容，实现的各种细节已经了然于胸，只剩代码了。而原本的 bp 不需要考虑这么复杂，我们可以看到很多被接受的 bp 也仅仅寥寥几句，只是描述了一下想法而已。
+
+提交 Patch：
+
+```bash
+cd nova
+git checkout -b xenapi-support
+git commit -a
+git review -t xenapi-support
+```
+
+这里的 `xenapi-support` 是我们创建 bp 时指定的标题。当我们使用 `git commit` 提交代码的时候，不要忘记在描述信息里加上 `Implements: blueprint xenapi-support`。通过 `git review` 命令将我们的 patch 成功提交到 Gerrit 之后，就可以在 <https://review.opendev.org> 上打开该 bp 相应 patch 的页面查看当前 review 的过程，并与其他开发者针对我们的实现进行互动。
+
+#### 1.2.3 Redmine 在 Scrum 中的使用约定
+
+![](/img/rd-workflow.jpg)
+
+![](/img/issue-state.drawio.png)
 
 ### 1.3 Gitlab
 
 [Catalog](#catalog)
 
+#### 1.3.1 Git 为什么比 SVN 和 CVS 更好？
+
+Git作为一个**分布式**的版本控制工具
+
+可以**随意创建新分支**，进行修改、测试、提交，这些在本地的提交完全不会影响到其他人，可以等到工作完成后再提交给公共的仓库。
+
+这样就可以支持**离线工作**，本地提交可以稍后提交到服务器上。
+
+#### 1.3.2 文档的版本控制
+
+**Markdown** 参考：<https://www.markdownguide.org/basic-syntax/>
+
+1. 尽量用 basic 语法，不要混杂 html（除非 gitbook 或者 mdbook），如非必要，不使用扩展语法
+2. 需要掌握的扩展语法有：
+    - 表格语法：<https://www.markdownguide.org/extended-syntax/#tables>
+    - 代码语法：<https://www.markdownguide.org/extended-syntax/#syntax-highlighting>
+3. 中英文之间，中文和数字之间，要有一个空格
+4. 中文文档保持统一用全角符号，英文文档保持统一用半角。
+5. 标题和段落前后要空行
+6. 列表之间没有段落的话，不用空行
+7. *【了解】当使用 `[跳转到 1.2 节](#12-某个标题)` 来跳转到当前文档的 `## 1.2 某个标题` 时，跳转链接需要注意进行以下转换*
+    - *大写字母转换为小写字母*
+    - *去除下划线（`_`） 或连字符（`-`）之外所有的特殊的字符符号，例如：点（`.`）、逗号（`,`）、冒号（`:`）等*
+    - *空格转换为连字符（`-`）*
+    - *如果在转换后存在重复情况时，链接还需要加上重复出现的序号，例如：`标题`、`标题-1`、`标题-2` 等*
+
+**rst** 参考 <https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html>
+
+#### 1.3.3 搭建步骤
+
+官方文档：<https://docs.gitlab.com/ee/install/docker.html#installation>
+
+#### 1.3.4 FAQ
+
+1. Merge 和 rebase 什么区别？
+    - Rebase 的本质：<https://www.liaoxuefeng.com/wiki/896043488029600/1216289527823648>
+1. 如何 clone 一个项目到 gitlab？
+    - 参考 gitee 复制和同步 github
+    - `--bare` 和 `--mirror`
+
+      ```bash
+      git clone --bare <repo-origin>
+      cd <repo-origin>
+      git push --mirror <repo-clone>
+      ```
+
+    - 如何持续同步？force push
+
+      ```bash
+      git co <repo-origin>/master
+      git push -f <repo-clone>
+      ```
+
+      或者，在 `repo-clone` Add upstream & rebase
+
+      ```bash
+      cd <repo-clone>
+      git remote add <repo-origin>
+      git co <repo-clone>/master
+      git rebase <repo-origin>/master
+      git pull --allow-unrelated-historie
+      git push <repo-clone> <local-branch>:<remote-branch>
+      ```
+
 ### 1.4 Gerrit
 
 [Catalog](#catalog)
 
+Gerrit 实现原理是**基于 SSH 协议实现了一套自己的 Git 服务器**，这样就可以基于自己的需求对 Git 数据传递进行更为精确的控制，为上述工作流程的实现建立了基础。访问<https://review.opendev.org/ssh_info> 可以查看到这个 Git 服务器的域名和端口 `review.opendev.org 29418`，我们可以发现它使用了端口 29418，并非是标准的 22 端口。Gerrit 的 Git 服务器，只允许用户向特殊的引用 `refs/for/<branchname>` 下执行推送（push），其中 `<branchname>` 即为开发者的工作分支。
+
+Gerrit 会为新的提交分配一个 taskid，并为该 taskid 的访问建立引用 `<refs/changes/nn/<taskid>/m`，比如 `refs/changes/37/367737/2`，其中：
+
+- taskid 为 Gerrit 顺序分配给该评审任务的全局唯一的号码。
+- nn 为 taskid 的后两位数，位数不足用零补齐，即 nn 为 taskid除以 100 的余数
+- m 为修订号，该 taskid 的首次提交修订号为 1；如果该修订被拒绝，需要更新代码后重新提交，修订号会依次增加。
+
+为了保证在代码修改后重新提交时，不会产生新的重复的评审任务，Gerrit 要求每个提交包含唯一的 ChangeId，Gerrit 一旦发现新的提交包含了已经处理过的ChangeId，就不再为该修订创建新的评审任务和 taskid，而是仅仅把它作为已有 taskid 一次修订。比如：`ChangeId:Icb21eeed0e004450556176d01520784acd98002e`，在它被 merge 到正式的 OpenStack 源码树前共有两次修订 `Patch Set 2/2`。对于开发者来说，为了实现针对同一份代码的前后修订中包含唯一的相同的 ChangeId，需要在执行提交命令时使用 amend 选项，来避免 Gerrit 创建新的评审任务。
+
 ### 1.5 Drone
 
 [Catalog](#catalog)
+
+Jenkins & Zuul
+
+Drone
 
 ### 1.6 Kolla
 
