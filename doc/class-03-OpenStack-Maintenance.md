@@ -529,6 +529,32 @@ Kolla-Kubernetes vs Kolla-Ansible
 
 参考：<https://docs.openstack.org/kolla-ansible/latest/user/operating-kolla.html#kolla-ansible-cli>
 
+如何更新镜像？
+
+1. 将新镜像 push 到 CI/CD 镜像仓库
+
+    ```bash
+    docker pull 172.20.154.10:4000/99cloud/skyline:prod
+    docker tag 172.20.154.10:4000/99cloud/skyline:prod 172.20.154.10:4000/kolla/skyline:iaas-8.0
+
+    # wget http://tarballs.99cloud.com.cn/animbus8/skyline/x86_64/skyline-master-prod.tar
+    # docker load -i skyline-master-prod.tar 
+    # docker tag skyline:prod 172.20.154.10:4000/kolla/skyline:iaas-8.0
+
+    docker push 172.20.154.10:4000/kolla/skyline:iaas-8.0
+    ```
+
+2. 更新 OpenStack 环境中的镜像，登陆到 deploy 节点操作
+
+    ```bash
+    ansible -i /etc/ansible/hosts/ control -m ping
+    kolla-ansible -i /etc/ansible/hosts/ -t skyline pull
+    ansible -i /etc/ansible/hosts/ control -m shell -a "docker images | grep skyline" 
+
+    ansible -i /etc/ansible/hosts/ control -m shell -a 'mv /etc/kolla/skyline/skyline.yml /etc/kolla/skyline/skyline.yml.org'
+    kolla-ansible -i /etc/ansible/hosts/ -t skyline deploy
+    ansible -i /etc/ansible/hosts/ control -m shell -a "docker ps | grep skyline" 
+
 ### 3.3 持续集成环境实验
 
 [Catalog](#catalog)
