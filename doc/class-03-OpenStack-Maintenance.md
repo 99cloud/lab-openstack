@@ -4,7 +4,7 @@
 
 | Date | Time | Title | Content |
 | ---- | ---- | ----- | ------- |
-| 第 1 天 | 上午 | [1. CI/CD](#1-cicd-相关) | [1.1 CI/CD 简述](#11-cicd-简述) |
+| 第 1 天 | 上午 | [1. CI/CD](#1-cicd-相关) | [1.1 OpenStack 基础和质量保证体系](#11-OpenStack-基础和质量保证体系) |
 | | | 从 IDE 到代码仓库 | [1.2 Redmine：非明确，不开始](#12-redmine) |
 | | | | [1.3 Gitlab：万物皆要版本控制](#13-gitlab) |
 | | | | [1.4 Gerrit：Review 是工程也是艺术](#14-gerrit) |
@@ -38,9 +38,214 @@
 
 [Catalog](#catalog)
 
-### 1.1 CI/CD 简述
+### 1.1 OpenStack 基础和质量保证体系
 
 [Catalog](#catalog)
+
+#### 1.1.1 Git 为什么比 SVN 和 CVS 更好？
+
+Git作为一个**分布式**的版本控制工具
+
+可以**随意创建新分支**，进行修改、测试、提交，这些在本地的提交完全不会影响到其他人，可以等到工作完成后再提交给公共的仓库。
+
+这样就可以支持**离线工作**，本地提交可以稍后提交到服务器上。
+
+#### 1.1.2 OpenStack 的代码地图是怎样设计的？
+
+setup.py 和 **setup.cfg**：代码地图（需要了解 Distutils、Distutils2、Setuptools、Distribute 等 Python 代码分发的工具）
+
+setup.cfg 文件的内容由很多个 section 组成，比如 global、metadata、file 等，提供了这个软件包的名称、作者等有用的信息，但能够帮助及指引我们去更好理解代码的 section 唯有 **`entry_points`**。
+
+```ini
+[entry_points]
+oslo.config.opts =
+    nova.conf = nova.conf.opts:list_opts
+
+oslo.config.opts.defaults =
+    nova.conf = nova.middleware:set_defaults
+
+oslo.policy.enforcer =
+    nova = nova.policy:get_enforcer
+
+oslo.policy.policies =
+    # The sample policies will be ordered by entry point and then by list
+    # returned from that entry point. If more control is desired split out each
+    # list_rules method into a separate entry point rather than using the
+    # aggregate method.
+    nova = nova.policies:list_rules
+
+nova.compute.monitors.cpu =
+    virt_driver = nova.compute.monitors.cpu.virt_driver:Monitor
+```
+
+`entrypoints` 可以简单地理解为它通过 setuptools 注册的，外部可以直接调用的接口。某个模块安装后，其他程序可以利用下面几种方式调用这些 entrypoints。
+
+  - 使用 `pkg_resources`
+
+    ```python
+    import pkg_resources
+
+    def run_entrypoint(data):
+      group = 'ceilometer.compute.virt'
+      for i in pkg_resources.iter_entry_points(group=group):
+        plugin = i.load()
+        plugin(data)
+    ```
+
+    ```python
+    from pkg_resources import load_entry_point
+
+    load_entry_point('ceilometer', 'ceilometer.compute.virt', 'libvirt')()
+    ```
+
+  - 使用 stevedore，本质上 stevedore 也只是对 `pkg_resources` 的封装
+
+    ```python
+    # Netron
+    def get_provider_driver_class(driver, namespace=SERVICE_PROVIDERS):
+      """Return path to provider driver class
+      """
+      try:
+          driver_manager = stevedore.driver.DriverManager(
+              namespace, driver).driver
+      except ImportError:
+          return driver
+      except RuntimeError:
+          return driver
+      new_driver = "%s.%s" % (driver_manager.__module__,
+                              driver_manager.__name__)
+      LOG.warning(
+          "The configured driver %(driver)s has been moved, automatically "
+          "using %(new_driver)s instead. Please update your config files, "
+          "as this automatic fixup will be removed in a future release.",
+          {'driver': driver, 'new_driver': new_driver})
+      return new_driver
+    ```
+
+entrypoints 都是在运行时动态导入的，有点类似一些可扩展的插件，`_import_` 或 importlib 也可以实现同样的功能。但 stevedore 实现了更好的工程化和接耦合。
+
+`console_scripts` 是一个比较特殊的 entrypoint，其中的每一个 entrypoints 都表示有一个可执行脚本会被生成并被安装，我们可以在控制台上直接执行它，比如 ceilometerapi，因此将这些 entrypoints 理解为该模块子项目所提供各个服务的入口点更为准确。
+
+```ini
+console_scripts =
+    nova-api = nova.cmd.api:main
+    nova-api-metadata = nova.cmd.api_metadata:main
+    nova-api-os-compute = nova.cmd.api_os_compute:main
+    nova-compute = nova.cmd.compute:main
+    nova-conductor = nova.cmd.conductor:main
+    nova-console = nova.cmd.console:main
+    nova-dhcpbridge = nova.cmd.dhcpbridge:main
+    nova-manage = nova.cmd.manage:main
+    nova-network = nova.cmd.network:main
+    nova-novncproxy = nova.cmd.novncproxy:main
+    nova-policy = nova.cmd.policy:main
+    nova-rootwrap = oslo_rootwrap.cmd:main
+    nova-rootwrap-daemon = oslo_rootwrap.cmd:daemon
+    nova-scheduler = nova.cmd.scheduler:main
+    nova-serialproxy = nova.cmd.serialproxy:main
+    nova-spicehtml5proxy = nova.cmd.spicehtml5proxy:main
+    nova-status = nova.cmd.status:main
+    nova-xvpvncproxy = nova.cmd.xvpvncproxy:main
+```
+
+#### 1.1.3 OpenStack 如何保证代码质量？
+
+只有一个标准：**可读性**！
+
+可读性是一切代码质量指标，包括可维护性、可靠性、可扩展性、性能等的基石，一般来说，干净整洁的代码，往往运行起来更快。而且即使它们运转速度不快，也可以很容易地让它们变快。正如人们所说的，优化正确的代码比改正优化过的代码容易多了。
+
+代码质量保证的步骤
+
+![](/img/openstack-qa-system.png)
+
+- **统一编码规范**：可读性与可维护性的前提就是一个统一的编码规范。工程思维，可以持续演进，但演进之前拒绝不一样。
+  - <https://governance.openstack.org/tc/reference/new-projects-requirements.html>
+  - <https://governance.openstack.org/tc/reference/project-testing-interface.html>
+  - <https://governance.openstack.org/tc/reference/pti/python.html>
+  - <https://governance.openstack.org/tc/reference/pti/golang.html>
+  - <https://github.com/Masterminds/glide>
+  - <https://travis-ci.org/github/Masterminds/glide>
+
+  对于 OpenStack 息息相关的 Python 代码静态检查来说，目前的工具主要有有 Pylint、Pep8、Pyflakes、Flake8。
+
+  - Pylint 违背了 Python 开发者 HappyCoding 的倡导，因此未被 OpenStack 社区接纳。
+  - Pep8 则备受 Python 社区所推崇，负责 Python 代码风格的检查。<https://www.python.org/dev/peps/pep-0008/>
+  - Pyflakes 可以检查 Python 代码的逻辑错误
+  - 最后是 Flake8，它是 Pyflakes、Pep8 以及 Ned Batchelder's McCabe script（关注 Python 代码复杂度的静态分析）3 个工具的集大成者，综合封装了三者的功能，在简化操作的同时，还提供了扩展开发接口，详情参见 <https://pypi.python.org/pypi/flake8/2.0>。
+
+  OpenStack 使用的代码静态检查工具就是 Flake8，并实现了一组扩展的 Flake8 插件来满足 OpenStack 的特殊需要。这组插件被单独作为一个子项目而存在，就是 Hacking。
+
+  ```ini
+  flake8.extension =
+    H000 = hacking.core:ProxyChecks
+    H101 = hacking.checks.comments:hacking_todo_format
+    H102 = hacking.checks.comments:hacking_has_license
+    ...
+    H904 = ...
+  ```
+
+  从上面 Hacking 源码中的 setup.cfg 文件内容可以看出，到目前为止，Hacking 主要在注释、异常、文档、兼容性等编码规范方面实现了将近 30 个 Flake8 插件，详情参见 <http://docs.openstack.org/developer/hacking>。
+
+  - **静态代码检查**：代码的静态检查（PCLint、Klocwork、Coverity、SonarQube）主要是指利用静态分析工具对代码进行特性分析，以便检查程序逻辑的各种缺陷和可疑的程序构造，比如不符合编码规范、潜在的死循环等编译器发现不了的错误。之所以称之为静态代码检查，是因为只是分析源代码或者生成的目标文件，并不实际运行源代码生成的文件。它的目的是帮助我们尽可能早地发现代码中存在的问题并及时修复，将其消灭在萌芽状态，就能为后续工作节省大量的花在测试与调试上面的时间。
+  - **单元测试**，OpenStack 采用 tox 来管理单元测试。
+
+    **单元测试需要做多细**？stackflow 上 KentBeck（敏捷开发XP与测试驱动开发TDD的奠基者）给出了压倒性投票的回答：老板为我的代码付报酬，而不是测试，所以，我对此的价值观是——**测试越少越好，少到你对你的代码质量达到了某种自信**（我觉得这种的自信标准应该要高于业内的标准，当然，这种自信也可能是种自大）。如果我的编码生涯中不会犯这种典型的错误（如：在构造函数中设了一个错误的值），那我就不会测试它。我倾向于去对那些有意义的错误做测试，所以，我对一些比较复杂的条件逻辑会异常小心。当在一个团队中，我会非常小心地测试那些会让团队容易出错的代码。
+
+    OpenStack 的单元测试追求的是**速度、隔离以及可移植**。对于速度，需要测试代码不和数据库、文件系统交互，也不能进行网络通信。另外，单元测试的粒度要足够小，确保一旦测试失败，能够很容易迅速地找到问题的根源。可移植是指测试代码不依赖于特定的硬件资源，能够让任何开发者去运行。单元测试的代码位于每个项目源码树的 `<project>/tests/` 目录，遵循 `oslo.test` 库提供的基础框架。通常单元测试的代码需要专注在对核心实现逻辑的测试上，如果需要测试的代码引入了其他的依赖，比如依赖于某个特定的环境，我们在编写单元测试代码的过程中，花费时间最多的可能就是如何隔离这些依赖，否则，即使测试失败，也很难定位出问题所在。
+
+    Tox 是一个标准的 virtualenv（Virtual Python Environment Builder）管理器和命令行测试工具。它可以用于检查软件包能否在不同的 Python 版本或解释器下正常安装；在不同的环境中运行运行测试代码；作为持续集成服务器的前端，大大减少测试工作所需时间。每个项目源码树的根目录下都有一个 tox 配置文件 tox.ini。
+
+    ```ini
+    [tox]
+    envlist = py36,py38,pep8
+    minversion = 3.1.1
+    skipsdist = True
+
+    [testenv]
+    setenv = VIRTUAL_ENV={envdir}
+            OS_LOG_CAPTURE={env:OS_LOG_CAPTURE:true}
+            OS_STDOUT_CAPTURE={env:OS_STDOUT_CAPTURE:true}
+            OS_STDERR_CAPTURE={env:OS_STDERR_CAPTURE:true}
+            PYTHONWARNINGS=default::DeprecationWarning
+    usedevelop = True
+    deps = -c{env:UPPER_CONSTRAINTS_FILE:https://opendev.org/openstack/requirements/raw/branch/master/upper-constraints.txt}
+          -r{toxinidir}/requirements.txt
+          -r{toxinidir}/test-requirements.txt
+    whitelist_externals = sh
+    commands =
+      stestr run {posargs}
+    ```
+
+
+
+    ```bash
+    tox -e pep8
+    tox -e py38
+    tox -e py38 -- test_inspector
+    ```
+
+  - **持续集成**，持续集成（CI，ContinuousIntegration）是利用一系列的工具、方法和规则，通过自动化的构建（包括编译、发布、自动化测试等）尽快发现问题和错误，来提高开发代码的效率和质量。Jenkins & Zuul & Tempest。
+  - **代码评审和重构**，以 CodeReview 过程中每分钟出现“脏话”的个数来衡量代码的质量
+
+    ![](/img/openstack-codereview.png)
+
+    - 小黄鸭调试法：一旦一个问题被充分地描述了他的细节，那么解决方法也是显而易见的。
+    - **除非彻底读懂了代码，过掉了 check list，否则不要 +1**
+    - **除非能明确提出作者的错误，或者提出明显更好的方案，否则不要 -1**
+
+    ![](/img/openstack-gerrit-workflow.png)
+
+    我们必须有一个 Gerrit 账号去访问 <https://review.opendev.org/>，这个账号使用的是我们 Launchpad 账号。也就是说，我们首先需要访问 Launchpad 的登录页面，使用自己的电子邮件地址注册 Launchpad 账号，并为自己选择一个 LaunchpadID，之后 <https://launchpad.net/~LaunchpadID> 即是我们自己的 Luanchpad 主页。使用 Launchpad 账号登录之后，我们还需要上传自己的 SSH 公钥（SSH public key），公钥设置的页面有相应的 HowTo 告诉我们如何生成公钥并上传。
+
+    Gerrit 实现原理是**基于 SSH 协议实现了一套自己的 Git 服务器**，这样就可以基于自己的需求对 Git 数据传递进行更为精确的控制，为上述工作流程的实现建立了基础。访问<https://review.opendev.org/ssh_info> 可以查看到这个 Git 服务器的域名和端口 `review.opendev.org:29418`，我们可以发现它使用了端口 29418，并非是标准的 22 端口。Gerrit 的 Git 服务器，只允许用户向特殊的引用 `refs/for/<branchname>` 下执行推送（push），其中 `<branchname>` 即为开发者的工作分支。
+
+    Gerrit 会为新的提交分配一个 taskid，并为该 taskid 的访问建立引用 `<refs/changes/nn/<taskid>/m`，比如 `refs/changes/37/367737/2`，其中：
+
+    - taskid 为 Gerrit 顺序分配给该评审任务的全局唯一的号码。
+    - nn 为 taskid 的后两位数，位数不足用零补齐，即 nn 为 taskid除以 100 的余数
+    - m 为修订号，该 taskid 的首次提交修订号为 1；如果该修订被拒绝，需要更新代码后重新提交，修订号会依次增加。
+
+    为了保证在代码修改后重新提交时，不会产生新的重复的评审任务，Gerrit 要求每个提交包含唯一的 ChangeId，Gerrit 一旦发现新的提交包含了已经处理过的ChangeId，就不再为该修订创建新的评审任务和 taskid，而是仅仅把它作为已有 taskid 一次修订。比如：`ChangeId:Icb21eeed0e004450556176d01520784acd98002e`，在它被 merge 到正式的 OpenStack 源码树前共有两次修订 `Patch Set 2/2`。对于开发者来说，为了实现针对同一份代码的前后修订中包含唯一的相同的 ChangeId，需要在执行提交命令时使用 amend 选项，来避免 Gerrit 创建新的评审任务。
 
 ### 1.2 Redmine
 
