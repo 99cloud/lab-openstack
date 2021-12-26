@@ -516,9 +516,18 @@ Kolla-Kubernetes vs Kolla-Ansible
 
 [Catalog](#catalog)
 
+[实验参考](kolla/how-to-package-kolla.md)
+
+如何调试 Kolla 容器形式的服务？
+
+1. 调试日志
+2. 对非 web 服务，可以先把容器本身启动的命令改成 sleep infinity，然后进入容器，在代码里面加上 pdb，然后在容器里面去调用容器正常启动时改执行的命令，这样可以 pdb 断点
+
 ### 3.2 从镜像到部署
 
 [Catalog](#catalog)
+
+参考：<https://docs.openstack.org/kolla-ansible/latest/user/operating-kolla.html#kolla-ansible-cli>
 
 ### 3.3 持续集成环境实验
 
@@ -1175,6 +1184,8 @@ USE 方法主要关注与资源的：使用率(Utilization)、饱和度(Saturati
 ### 5.2 Skyline 的使用
 
 [Catalog](#catalog)
+
+如何调试 Skyline？<https://bugs.launchpad.net/skyline-apiserver/+bug/1942087>
 
 ### 5.3 Skyline 的后续计划
 
