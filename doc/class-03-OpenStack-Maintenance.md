@@ -565,6 +565,11 @@ Kolla-Kubernetes vs Kolla-Ansible
 
 [Catalog](#catalog)
 
+- [在线+部署 Wallaby](kolla/kolla-ansible-no-ceph.md)
+- [在线+Ceph+部署 Wallaby](kolla/kolla-ansible-wallaby.md)
+- [在线+Ceph+部署 Wallaby+更多插件](kolla/kolla-ansible-wallaby-advance.md)
+- [离线+Ceph+部署 Wallaby+更多插件](kolla/kolla-ansible-offline-deployment.md)
+
 ## 4. 监控和告警
 
 [Catalog](#catalog)
@@ -1207,15 +1212,44 @@ USE 方法主要关注与资源的：使用率(Utilization)、饱和度(Saturati
 
 [Catalog](#catalog)
 
+参考：<https://opendev.org/skyline/skyline-apiserver/src/branch/master>
+
+[Skyline 简介](skyline/README.md)
+
 ### 5.2 Skyline 的使用
 
 [Catalog](#catalog)
 
-如何调试 Skyline？<https://bugs.launchpad.net/skyline-apiserver/+bug/1942087>
+- 如何调试 Skyline？<https://bugs.launchpad.net/skyline-apiserver/+bug/1942087>
+- [如何对 Skyline 增加非社区功能？](skyline/build-skyline-patch-image.md)
+- [如何用 F12 调试 skyline？](skyline/get_api_usage_from_chrome_f12.md)
+- [Skyline 排错指南](troubleshooting_guide.md)
 
 ### 5.3 Skyline 的后续计划
 
 [Catalog](#catalog)
+
+1. 工程实现上需要更 OpenStack 化，符合 PTI，测试 / 打包等
+2. 以松耦合的方式来支持扩展模块，甚至考虑无 Cinder 场景
+3. Kolla 支持，等 rename namespaces 后
+
+Jeremy Stanley 的意见：
+
+1. Skyline implements its own routines for things like configuration and logging rather than using Oslo libraries. Should all OpenStack projects "move forward" to this model, choose their own configuration and logging formats, implement their own solutions for documenting these, and so on? Does inconsistency here benefit operators in some way?
+    - Jean-Philippe Evrard 反驳：Oslo 并非必备，比如 swift。
+    - Jean-Philippe Evrard 反驳：不意味着不使用 oslo 就无法从用户角度保持日志/配置的一致性。旁注：从用户的角度来看，将 oslo 项目用于配置和日志记录不足以带来一致性。
+    - Skyline 团队：emmmmm，技术上确实可以改成他们期望的 oslo，但优先级肯定不高
+1. Skyline defines the interdependencies between its components with a mix of "monorepo" (multiple packages from a single repository) and Git submodule references (pinning specific commit ids as virtual subtrees of another repository), rather than establishing a loose coupling with explicit version numbers and package relationships. This choice prevents them from taking advantage of features in Zuul like cross-project change dependencies. Is this a pattern the other OpenStack projects should follow?
+    - Jean-Philippe Evrard 反驳：一个 repo 多个 package 并非绝对，一些官方的 openstack 项目还没有。那么，一些发行版决定不打包它们？这对我们来说是个问题吗？我不这么认为。项目/团队需要明白，如果他们不遵循发行版的要求“x”，他们将不会有“y”。这对我来说听起来很公平。
+    - Skyline 团队：emmmmm，技术上确实可以拆成一个 package 一个 repo，但优先级不高
+1. Skyline performs its release versioning by committing the version strings to files in its repositories rather than assigning them at build time from Git tag metadata. This leads to ambiguity as to what exact state of the repository represents that version, as well as opening up the possibility of forgetting to merge the version update before tagging (a very common problem which drove OpenStack to rely on its current model). Wholly different tools are also needed in order to track versions for these projects as a result. Should the rest of OpenStack's projects follow suit there? Has something changed to make the idea of using Git to signal releases a bad one?
+    - Skyline 团队：sub module 可以拆开，做成基于版本控制的松耦合
+1. Skyline uses makefiles to script its build and test workflows rather than tox, adding a tox wrapper around the make targets in order to nominally comply with the OpenStack PTI. As a result, it's unable to rely on most of tox's features for environment isolation, package management, path overrides, et cetera. OpenStack projects have solved a lot of cross-project development workflow challenges through applying consistent changes across the tox.ini files of repositories, should those solutions be abandoned and recreated for make instead?
+a. Jean-Philippe Evrard 反驳：I would prefer if python projects using tox for testing interface indeed. Should that be the standard? I don't know. Does it make sense to rely on tox features for isolations/package management/other? I don't know.
+    - Skyline 团队：技术上可以 tox 化，优先级不高
+5. Skyline does not put its external Python package dependencies in central lists nor use tools which would allow it to rely on OpenStack's global constraints implementation, making it very hard for them to guarantee that their software can run with the same versions of shared dependencies as the rest of OpenStack. Is this unnecessary? Have we given up on the idea that two pieces of OpenStack software can be coinstalled into one environment, or that Linux distributions won't be stuck having to package many different versions of the same software because OpenStack projects don't agree on which versions work for them any longer?
+    - Jean-Philippe Evrard 反驳：If we intend to please the distros, did we ask about RedHat/Canonical committments on skyline? Are they even remotely interested? If they want to use it, wouldn't it make sense they do the work to make sure skyline is packageable for them, by improving upstream? If they don't, why do we care?
+    - Skyline 团队：需要研究下怎么样可以适配发行依赖，应该可以做，优先级中等
 
 ## 8. Elastic Search
 

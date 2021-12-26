@@ -1,0 +1,171 @@
+From 1d48c7ede7c0c0e1a150b185b5f7a3663edb8f2c Mon Sep 17 00:00:00 2001
+From: zhuyue <zhu.yue@99cloud.net>
+Date: Fri, 17 Dec 2021 17:16:53 +0800
+Subject: [PATCH] [Animbus]feature: add instance top5 monitor
+
+add instance top5 monitor
+
+Change-Id: I1e9d37ab1ce8f02cb40ef521af479dddd62f5336
+---
+ src/components/PrometheusChart/metricDict.js  | 25 +++++++
+ src/locales/en.json                           |  4 ++
+ src/locales/zh.json                           |  4 ++
+ .../Overview/components/Tops/TopCard.jsx      | 70 +++++++++++++++++++
+ 4 files changed, 103 insertions(+)
+
+diff --git a/src/components/PrometheusChart/metricDict.js b/src/components/PrometheusChart/metricDict.js
+index 9892cd9b..545f4e9d 100644
+--- a/src/components/PrometheusChart/metricDict.js
++++ b/src/components/PrometheusChart/metricDict.js
+@@ -88,6 +88,31 @@ const metricDict = {
+         (url) => `topk(5, avg(irate(${url}[5m])) by (instance))`,
+       ],
+     },
++    topKVMCPUUsage: {
++      url: ['virtual:kvm:cpu:usage'],
++      finalFormatFunc: [(url) => `topk(5, ${url} * 100)`],
++    },
++    topKVMDiskIOPS: {
++      url: ['virtual:kvm:disk:read:iops', 'virtual:kvm:disk:write:iops'],
++      finalFormatFunc: [
++        (url) => `topk(5, avg(${url}) by (instance_name))`,
++        (url) => `topk(5, avg(${url}) by (instance_name))`,
++      ],
++    },
++    topKVMMemoryUsage: {
++      url: ['virtual:kvm:memory:used / virtual:kvm:memory:total'],
++      finalFormatFunc: [(url) => `topk(5, (${url}) * 100)`],
++    },
++    topKVMInterface: {
++      url: [
++        'virtual:kvm:network:receive:rate',
++        'virtual:kvm:network:transmit:rate',
++      ],
++      finalFormatFunc: [
++        (url) => `topk(5, avg(${url}) by (instance_name))`,
++        (url) => `topk(5, avg(${url}) by (instance_name))`,
++      ],
++    },
+     cephHealthStatus: {
+       url: ['ceph_health_status'],
+     },
+diff --git a/src/locales/en.json b/src/locales/en.json
+index e6478e61..479e1e30 100644
+--- a/src/locales/en.json
++++ b/src/locales/en.json
+@@ -983,9 +983,13 @@
+   "Instance \"{ name }\" status is not shutoff, can not start it.": "Instance \"{ name }\" status is not shutoff, can not start it.",
+   "Instance Addr": "Instance Addr",
+   "Instance Architecture": "Instance Architecture",
++  "Instance Average Network IO": "Instance Average Network IO",
++  "Instance CPU Usage": "Instance CPU Usage",
+   "Instance Detail": "Instance Detail",
++  "Instance Disk Average IOPS": "Instance Disk Average IOPS",
+   "Instance IP": "Instance IP",
+   "Instance Info": "Instance Info",
++  "Instance Memory Usage": "Instance Memory Usage",
+   "Instance Status": "Instance Status",
+   "Instances": "Instances",
+   "Instances \"{ name }\" are locked, can not delete them.": "Instances \"{ name }\" are locked, can not delete them.",
+diff --git a/src/locales/zh.json b/src/locales/zh.json
+index f83e01ab..df69e2c5 100644
+--- a/src/locales/zh.json
++++ b/src/locales/zh.json
+@@ -983,9 +983,13 @@
+   "Instance \"{ name }\" status is not shutoff, can not start it.": "云主机\"{ name }\"状态不是关闭，无法启动。",
+   "Instance Addr": "所在主机",
+   "Instance Architecture": "云主机架构图",
++  "Instance Average Network IO": "云主机平均网络进出宽带",
++  "Instance CPU Usage": "云主机CPU使用率",
+   "Instance Detail": "云主机详情",
++  "Instance Disk Average IOPS": "云主机平均硬盘IOPS",
+   "Instance IP": "云主机IP",
+   "Instance Info": "云主机信息",
++  "Instance Memory Usage": "云主机内存使用率",
+   "Instance Status": "云主机状态",
+   "Instances": "云主机",
+   "Instances \"{ name }\" are locked, can not delete them.": "云主机\"{ name }\"被锁定，无法删除。",
+diff --git a/src/pages/monitor/containers/Overview/components/Tops/TopCard.jsx b/src/pages/monitor/containers/Overview/components/Tops/TopCard.jsx
+index c0fca1e3..b6993fa9 100644
+--- a/src/pages/monitor/containers/Overview/components/Tops/TopCard.jsx
++++ b/src/pages/monitor/containers/Overview/components/Tops/TopCard.jsx
+@@ -163,6 +163,76 @@ const TopCard = (props) => {
+           },
+         }),
+     },
++
++    {
++      title: t('Instance CPU Usage'),
++      span: 12,
++      constructorParams: {
++        metricKey: 'monitorOverview.topKVMCPUUsage',
++        typeKey: 'instance_name',
++      },
++      renderContent: renderTopProgress,
++    },
++    {
++      title: t('Instance Disk Average IOPS'),
++      span: 12,
++      constructorParams: {
++        metricKey: 'monitorOverview.topKVMDiskIOPS',
++        formatDataFn: (reps, tk, dk, mk) => {
++          const data = [];
++          reps.forEach((ret, resIdx) => {
++            (ret.data.result || []).forEach((d) => {
++              data.push({
++                x: d.metric.instance_name,
++                y: parseFloat(get(d, 'value[1]', 0)),
++                type: mk[resIdx],
++              });
++            });
++          });
++          return data;
++        },
++        modifyKeys: [t('read'), t('write')],
++      },
++      extra: renderTopColumnExtra,
++      renderContent: renderTopColumnChart,
++    },
++    {
++      title: t('Instance Memory Usage'),
++      span: 12,
++      constructorParams: {
++        metricKey: 'monitorOverview.topKVMMemoryUsage',
++        typeKey: 'instance_name',
++      },
++      renderContent: renderTopProgress,
++    },
++    {
++      title: t('Instance Average Network IO'),
++      span: 12,
++      constructorParams: {
++        metricKey: 'monitorOverview.topKVMInterface',
++        formatDataFn: (reps, tk, dk, mk) => {
++          const data = [];
++          reps.forEach((ret, resIdx) => {
++            (ret.data.result || []).forEach((d) => {
++              data.push({
++                x: d.metric.instance_name,
++                y: parseFloat(get(d, 'value[1]', 0)),
++                type: mk[resIdx],
++              });
++            });
++          });
++          return data;
++        },
++        modifyKeys: [t('receive'), t('transmit')],
++      },
++      extra: renderTopColumnExtra,
++      renderContent: (store) =>
++        renderTopColumnChart(store, {
++          y: {
++            formatter: (d) => getSuitableValue(d * 1000, 'traffic', 0),
++          },
++        }),
++    },
+   ];
+   return (
+     <Row gutter={[16, 16]}>
+-- 
+2.23.0
+
