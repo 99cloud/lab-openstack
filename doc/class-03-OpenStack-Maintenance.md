@@ -214,7 +214,9 @@ console_scripts =
     tox -e py38 -- test_inspector
     ```
 
-  - **持续集成**，持续集成（CI，ContinuousIntegration）是利用一系列的工具、方法和规则，通过自动化的构建（包括编译、发布、自动化测试等）尽快发现问题和错误，来提高开发代码的效率和质量。Jenkins & Zuul & Tempest。
+  - **持续集成**，持续集成（CI，ContinuousIntegration）是利用一系列的工具、方法和规则，通过自动化的构建（包括编译、发布、自动化测试等）尽快发现问题和错误，来提高开发代码的效率和质量。Jenkins & Zuul & Tempest
+    - tempest 官方文档：<https://docs.openstack.org/tempest/latest/overview.html>
+    - tempest 工具：创建测试账号 <https://docs.openstack.org/tempest/latest/account_generator.html>
   - **代码评审和重构**，以 CodeReview 过程中每分钟出现“脏话”的个数来衡量代码的质量
 
     ![](/img/openstack-codereview.png)
@@ -382,13 +384,28 @@ Drone
 
 [Catalog](#catalog)
 
+Kolla 基于容器，容器基本知识：
+
+- [容器基础介绍](https://gitee.com/dev-99cloud/training-kubernetes/blob/master/doc/class-01-Kubernetes-Administration.md#lesson-01lxc--docker)
+- [容器实验](https://gitee.com/dev-99cloud/training-kubernetes/blob/master/doc/class-01-Kubernetes-Administration.md#29-%E5%90%AF%E5%8A%A8%E4%B8%80%E4%B8%AA-pod)
+
+Kolla 官方文档：<https://docs.openstack.org/kolla/latest/admin/image-building.html>
+
+[实验参考](kolla/how-to-package-kolla.md)
+
 ### 1.7 OpenStack 容器化部署
 
 [Catalog](#catalog)
 
+参考：<https://opendev.org/openstack/?tab=&sort=recentupdate&q=kolla>
+
+Kolla-Kubernetes vs Kolla-Ansible
+
 ### 1.8 Kolla-Ansible
 
 [Catalog](#catalog)
+
+[实验环境参考](/src/ansible-build-openstack-env/README.md)
 
 ## 2. 运维相关
 
@@ -506,6 +523,8 @@ Drone
 ### 3.3 持续集成环境实验
 
 [Catalog](#catalog)
+
+[CICD 实验参考步骤](cicd/cicd-install-guide.md)
 
 ### 3.4 容器化部署实验
 
