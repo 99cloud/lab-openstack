@@ -1,1 +1,6 @@
 ---
+
+network_prefix_mgt: 172.25.0
+network_prefix_pod: 10.0.2
+network_prefix_str: 192.168.100
+network_prefix_ext: 200.0.0

@@ -16,6 +16,8 @@ vmdisk_path="/home/vmdisk"
 vmdisk_device="/dev/vdb"
 vmdisk_fstype="xfs"
 
+bastion_if1_name="enp1s0f0"
+
 [cloudlabs]
 cloudlab001
 cloudlab002

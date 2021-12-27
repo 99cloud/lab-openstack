@@ -42,37 +42,137 @@
   debug:
     msg: "{{ check_result.stdout_lines }}"
 
-# - name: Add linux bridge
-#   command: "ip link add {{ item }} type bridge"
-#   when: "item not in check_result.stdout"
-#   loop:
-#     - "br-mgt"
-#     - "br-pod"
-#     - "br-ext"
-#     - "br-str"
+- name: Add linux bridge
+  command: "ip link add {{ item }} type bridge"
+  when: "item not in check_result.stdout"
+  loop:
+    - "br-mgt"
+    - "br-pod"
+    - "br-ext"
+    - "br-str"
 
-# - name: Install bridge configure file
-#   template:
-#     src: "{{ item }}"
-#     dest: /etc/sysconfig/network-scripts/{{ item }}
-#   loop:
-#     - ifcfg-br-ext
-#     - ifcfg-br-mgt
-#     - ifcfg-br-pod
-#     - ifcfg-br-str
+- name: Install bridge configure file
+  template:
+    src: "{{ item }}"
+    dest: /etc/sysconfig/network-scripts/{{ item }}
+  loop:
+    - ifcfg-br-ext
+    - ifcfg-br-mgt
+    - ifcfg-br-pod
+    - ifcfg-br-str
 
-# - name: Restart NetworkManager
-#   service:
-#     name: NetworkManager
-#     state: restarted
+- name: Restart NetworkManager
+  service:
+    name: NetworkManager
+    state: restarted
 
-# - name: Create config file for linux bridge
-#   shell: "ifup {{ item }}"
+- name: Create config file for linux bridge
+  shell: "ifup {{ item }}"
+  loop:
+    - br-ext
+    - br-mgt
+    - br-pod
+    - br-str
+
+- name: iptables flush filter
+  iptables:
+    chain: "{{ item }}"
+    flush: yes
+  loop:  [ 'INPUT', 'FORWARD', 'OUTPUT' ]
+
+- name: iptables flush nat
+  iptables:
+    table: nat
+    chain: '{{ item }}'
+    flush: yes
+  loop: [ 'INPUT', 'OUTPUT', 'PREROUTING', 'POSTROUTING' ]
+
+- name: Add nat rule for iptables
+  iptables:
+    table: nat
+    chain: POSTROUTING
+    source: "{{ item }}"
+    jump: MASQUERADE
+    out_interface: "{{ bastion_if1_name }}"
+  loop:
+    - "{{ network_prefix_mgt }}.0/24"
+    - "{{ network_prefix_pod }}.0/24"
+
+# - name: "Forward management port to openstack-host - DNAT"
+#   iptables:
+#     table: nat
+#     chain: PREROUTING
+#     destination: "{{ public_ip }}"
+#     protocol: tcp
+#     destination_port: "{{ item.export }}"
+#     jump: DNAT
+#     to_destination: "{{ internal_ssh_ip }}:{{ item.origin }}"
 #   loop:
-#     - br-ext
-#     - br-mgt
-#     - br-pod
-#     - br-str
+#     - {'origin': "22", 'export': "{{ internal_ssh_port }}"}
+#     - {'origin': "5901", 'export': "8901"}
+#     - {'origin': "5902", 'export': "8902"}
+#     - {'origin': "5903", 'export': "8903"}
+
+# - name: "Forward management port to openstack-host - SNAT"
+#   iptables:
+#     table: nat
+#     chain: POSTROUTING
+#     destination: "{{ internal_ssh_ip }}"
+#     protocol: tcp
+#     destination_port: "{{ item }}"
+#     jump: SNAT
+#     to_source: "{{ network_prefix_ext }}.1"
+#   loop:
+#     - "22"
+#     - "5901"
+#     - "5902"
+#     - "5903"
+
+# - name: "Forward web port to openstack-host - DNAT"
+#   iptables:
+#     table: nat
+#     chain: PREROUTING
+#     destination: "{{ public_ip }}"
+#     protocol: tcp
+#     destination_port: "{{ item }}"
+#     jump: DNAT
+#     to_destination: "{{ openstack_internal_vip_address }}:{{ item }}"
+#   loop:
+#     - "80"
+#     - "443"
+#     - "5000"
+#     - "6080"
+#     - "8000"
+#     - "8004"
+#     - "8774"
+#     - "8776"
+#     - "8780"
+#     - "9292"
+#     - "9696"
+#     - "35357"
+
+# - name: "Forward web port to openstack-host - SNAT"
+#   iptables:
+#     table: nat
+#     chain: POSTROUTING
+#     destination: "{{ openstack_internal_vip_address }}"
+#     protocol: tcp
+#     destination_port: "{{ item }}"
+#     jump: SNAT
+#     to_source: "{{ network_prefix_mgt }}.1"
+#   loop:
+#     - "80"
+#     - "443"
+#     - "5000"
+#     - "6080"
+#     - "8000"
+#     - "8004"
+#     - "8774"
+#     - "8776"
+#     - "8780"
+#     - "9292"
+#     - "9696"
+#     - "35357"
 
 # https://www.linuxtechi.com/enable-nested-virtualization-kvm-centos-7-rhel-7/
 - name: Touch /etc/modprobe.d/kvm-nested.conf
