@@ -437,7 +437,7 @@
 
 3. gerrit 配置
 
-> **注:** AIO scenaio 模式下，网页为 http://<gerrit_ip>:8002
+> **注:** AIO scenaio 模式下，网页为 `http://<gerrit_ip>:8002`
 
 - 打开 `http://<gerrit_ip>` 网页，如图显示页面
 
@@ -490,7 +490,7 @@
 
 6. 验证
 
-    > **注:** AIO scenaio 模式下，网页为 http://<gerrit_ip>:8002
+    > **注:** AIO scenaio 模式下，网页为 `http://<gerrit_ip>:8002`
 
     打开 `http://<gerrit_ip>` 网页，如下图成功显示，并且可以验证 [openID 登录流程](#3.1.2)，即为 openID 对接成功
 
@@ -552,7 +552,7 @@
 
 3. 验证
 
-    > **注:** AIO scenaio 模式下，网页为 http://<redmine_ip>:3001
+    > **注:** AIO scenaio 模式下，网页为 `http://<redmine_ip>:3001`
 
     打开 `http://<redmine_ip>:3000` 网页
 
@@ -614,7 +614,7 @@
 
 3. 验证
 
-    > **注:** AIO scenaio 模式下，网页为 http://<redmine_ip>:3001
+    > **注:** AIO scenaio 模式下，网页为 `http://<redmine_ip>:3001`
 
     打开 `http://<redmine_ip>:3000` 网页，如下图成功显示，并且可以验证 [openID 登录流程](#3.1.2)，即为 openID 对接成功
 
@@ -667,7 +667,7 @@ docker run -d --name redmine -e REDMINE_DB_USERNAME=redmine -e REDMINE_DB_PASSWO
 
     ![](images/drone-gitlab-1.jpg)
 
-    > **注:** 在 AIO scenaio 的情况下，设置 http://<drone_ip>:8003/login
+    > **注:** 在 AIO scenaio 的情况下，设置 `http://<drone_ip>:8003/login`
 
     ![](images/drone-gitlab-2.jpg)
 
@@ -718,7 +718,7 @@ docker run -d --name redmine -e REDMINE_DB_USERNAME=redmine -e REDMINE_DB_PASSWO
 
 3. 验证
 
-> **注:** 在 AIO scenaio 的情况下，网页为 http://<drone_ip>:8003
+> **注:** 在 AIO scenaio 的情况下，网页为 `http://<drone_ip>:8003`
 
 - 登录 gitlab，打开 `http://<drone_server_ip>` 网页，跳转 drone 验证页面
 
@@ -728,7 +728,7 @@ docker run -d --name redmine -e REDMINE_DB_USERNAME=redmine -e REDMINE_DB_PASSWO
 
     ![](images/drone-2.png)
 
-    > **注**：drone 注册页面 Name 值若填写为 docker run 启动服务 中的 <drone_admin_username> 值，即为 admin 用户注册
+    > **注**：drone 注册页面 Name 值若填写为 docker run 启动服务 中的 `<drone_admin_username>` 值，即为 admin 用户注册
 
 4. drone CLI 安装与配置
 
@@ -971,15 +971,21 @@ git fetch origin refs/meta/config:refs/remotes/origin/meta/config && git checkou
   event = patchset-created
 ```
 
+```bash
+git add webhooks.config
+git commit -am "Add webhooks config file"
+git push origin meta/config:meta/config
+```
+
 #### 3.7.2 drone配置
 
 > **注**：  
-> git version 需 2.2 以上  
+> git version 需 2.2 以上且已安装 git-review
 > gerrit 上有 Repository : `99cloud` 和 `99cloud/skyline` ，且 `99cloud/skyline` 权限继承自 `99cloud`  
 > gitlab 上有 Group，名称为 `99cloud`；创建项目，名称为 `skyline`  
 > gerrit 自动同步 gitlab
 
-本地拉取 skyline 项目
+本地拉取 gerrit skyline 项目
 
 ```bash
 cd skyline/
@@ -1001,6 +1007,8 @@ defaultbranch=<default_branch_name>
 skyline 项目中编辑 `.drone.yml`
 
 ```yaml
+# .drone.yml 示例文件
+# 更多请参考 https://docs.drone.io/
 kind: pipeline
 type: docker
 name: drone-custom-review
@@ -1030,71 +1038,82 @@ steps:
       SSHKEY:
         from_secret: sshkey
 
--name
-
 trigger:
   event:
     - custom
 ```
 
+```bash
+git add .
+git commit -am "Add review config file"
+git push
+```
+
 > **注**:  
-> <drone_admin_user>: gerrit review 用户可直接使用 admin 权限用户，或者设置仅 review 权限用户  
-> <id_rsa>: 该私钥需要进行格式化处理  
+> `<drone_admin_user>`: gerrit review 用户可直接使用 admin 权限用户，或者另外设置 drone review 权限用户  
+> 如，`cat <is_rsa.pub> | ssh -p 29418 <admin_username>@<gerrit_ip> gerrit create-account --ssh-key - <drone_admin_user>` 创建 drone review 用户  
+> `<id_rsa>`: 该私钥需要进行格式化处理  
+> 如，格式化处理为：`-----BEGIN RSA PRIVATE KEY-----\nxxx\n-----END RSA PRIVATE KEY-----`
 
 登录 drone admin 账号，在 `drone->99cloud/skyline->settings->secrets` 界面配置 `Secrets`
 
-- `username`:<drone_admin_user> # gerrit review 用户名
-- `gerritip`:<gerrit_ip>
-- `gerritport`:<gerrit_port>
-- `sshkey`:<id_rsa> # gerrit review 用户私钥
+- `username`:`<drone_admin_user>` # gerrit review 用户名
+- `gerritip`:`<gerrit_ip>`
+- `gerritport`:`<gerrit_port>`
+- `sshkey`:`<id_rsa>` # gerrit review 用户私钥
 
-在 gerrit 的 review 用户中配置 <id_rsa> 对应公钥
+在 gerrit 的 review 用户中配置 `<id_rsa>` 对应公钥 `<is_rsa.pub>`
 
 #### 3.7.3 验证
 
-- 启动 test server
+```bash
+yum install python3 -y
+pip3 install request
+```
 
-    ```bash
-    yum install ruby -y
-    ```
+新建并编辑 `test_webhooks.py` 文件
 
-    新建并编辑 `test_webhooks.rb` 文件
+```python
+from http.server import HTTPServer, BaseHTTPRequestHandler
+import json
+import requests
 
-    ```ruby
-    require 'webrick'
-    require 'json'
-    require 'net/http'
+host = ('0.0.0.0', 8899)
 
-    server = WEBrick::HTTPServer.new(:Port => ARGV.first)
-    server.mount_proc '/' do |req, res|
-      string  = req.body
-      parsed = JSON.parse(string)
-      puts string
-      branch = parsed["change"]["branch"]
-      project = parsed["change"]["project"]
-      ref = parsed["patchSet"]["ref"]
-      commit = parsed["patchSet"]["revision"]
-      uri = URI("http://<drone_ip>/api/repos/#{project}/builds?branch=#{branch}&PROJECT_NAME=#{project}&REF=#{ref}&COMMIT=#{commit}")
-      # AIO scenaio
-      # uri = URI("http://<drone_ip>:8003/api/repos/#{project}/builds?branch=#{branch}&PROJECT_NAME=#{project}&REF=#{ref}&COMMIT=#{commit}")
-      req = Net::HTTP::Post.new(uri.path, initheader = {'Authorization' =>'<drone admin authorization>'})
-      # <drone admin authorization> 值可查看 drone界面 -> Account Settings -> Example API Usage
-      http = Net::HTTP.start(uri.hostname,uri.port)
-      puts uri
-      puts http.request(req).body
-    end
+class Resquest(BaseHTTPRequestHandler):
+    def do_POST(self):
+        req_datas = self.rfile.read(int(self.headers['content-length']))
+        parsed = json.loads(req_datas.decode())
+        print(parsed)
+        data = {'result_code': 'Success'}
+        self.send_response(200)
+        self.send_header('Content-type', 'application/json')
+        self.end_headers()
+        self.wfile.write(json.dumps(data).encode())
+        branch = parsed["change"]["branch"]
+        project = parsed["change"]["project"]
+        ref = parsed["patchSet"]["ref"]
+        commit = parsed["patchSet"]["revision"]
+        url = 'http://<drone_ip>/api/repos/'+ project +'/builds'
+        # AIO scenaio
+        # url = 'http://<drone_ip>:8003/api/repos/'+ project +'/builds'
+        headers = {'Authorization':'<drone admin authorization>'}
+        # <drone admin authorization> 值可查看 drone界面 -> Account Settings -> Example API Usage
+        params = {'branch': branch, 'PROJECT_NAME': project, 'REF': ref, 'COMMIT': commit}
+        res = requests.post(url, params=params, headers=headers)
+        print(res)
 
-    trap 'INT' do
-      server.shutdown
-    end
-    server.start
-    ```
+if __name__ == '__main__':
+    server = HTTPServer(host, Resquest)
+    print("Starting server, listen at: %s:%s" % host)
+    server.serve_forever()
+```
 
-    启动测试环境，测试环境 ip 为 <testserver_ip>
+启动测试环境，测试环境 ip 为 `<testserver_ip>`
 
-    ```bash
-    ruby test_webhooks.rb 8899
-    ```
+```bash
+python3 test_webhooks.py
+```
 
 - 测试
     - 对 99cloud/skyline 进行 `git review` 操作
