@@ -48,7 +48,7 @@ source /path/to/venv/bin/activate
 # 更新或安装最新版本的pip
 pip install -U pip
 # 安装 ansible
-pip install matplotlib -i https://pypi.douban.com/simple/ 'ansible<3.0'
+pip install -i https://pypi.douban.com/simple/ 'ansible<3.0'
 ```
 
 ### 2.3 (可选)多节点
@@ -72,8 +72,8 @@ pip install matplotlib -i https://pypi.douban.com/simple/ 'ansible<3.0'
 2. 安装项目所需要的 `python` 包
 
    ```bash
-   pip install matplotlib -i https://pypi.douban.com/simple/ /opt/kolla
-   pip install matplotlib -i https://pypi.douban.com/simple/ /opt/kolla-ansible
+   pip install -i https://pypi.douban.com/simple/ /opt/kolla
+   pip install -i https://pypi.douban.com/simple/ /opt/kolla-ansible
    ```
 
 3. 创建 `/etc/kolla` 目录，并修改目录权限
@@ -256,7 +256,7 @@ cd /opt/kolla-ansible/tools
 
 ```shell
 # 安装客户端
-pip install matplotlib -i https://pypi.douban.com/simple/ python-openstackclient
+pip install -i https://pypi.douban.com/simple/ python-openstackclient
 # 把admin用户信息添加到环境变量中
 . /etc/kolla/admin-openrc.sh
 # 创建示范网络和下载所需要的测试镜像

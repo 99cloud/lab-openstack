@@ -219,7 +219,7 @@ root@kolla-ansible-w:~# source /path/to/venv/bin/activate
 # 更新或安装最新版本的pip
 root@kolla-ansible-w:~# pip install -U pip
 # 安装 ansible
-root@kolla-ansible-w:~# pip install matplotlib -i https://pypi.douban.com/simple/ 'ansible<3.0'
+root@kolla-ansible-w:~# pip install -i https://pypi.douban.com/simple/ 'ansible<3.0'
 ```
 
 ### 安装 `kolla` 和 `kolla-ansible`
@@ -235,8 +235,8 @@ root@kolla-ansible-w:~# git clone -b stable/wallaby https://github.com/openstack
 2. 安装项目所需要的 `python` 包
 
 ```console
-root@kolla-ansible-w:~# pip install matplotlib -i https://pypi.douban.com/simple/ /opt/kolla
-root@kolla-ansible-w:~# pip install matplotlib -i https://pypi.douban.com/simple/ /opt/kolla-ansible
+root@kolla-ansible-w:~# pip install -i https://pypi.douban.com/simple/ /opt/kolla
+root@kolla-ansible-w:~# pip install -i https://pypi.douban.com/simple/ /opt/kolla-ansible
 ```
 
 3. 创建 `/etc/kolla` 目录，并修改目录权限
@@ -409,7 +409,7 @@ root@kolla-ansible-w:~# ./kolla-ansible post-deploy
 
 ```console
 # 安装客户端
-root@kolla-ansible-w:~# pip install matplotlib -i https://pypi.douban.com/simple/ python-openstackclient
+root@kolla-ansible-w:~# pip install -i https://pypi.douban.com/simple/ python-openstackclient
 # 把admin用户信息添加到环境变量中
 root@kolla-ansible-w:~# . /etc/kolla/admin-openrc.sh
 # 创建示范网络和下载所需要的测试镜像
