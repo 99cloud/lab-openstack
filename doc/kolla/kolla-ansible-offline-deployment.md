@@ -9,34 +9,34 @@
 
 ## 获取离线包
 
-离线包位于：<http://172.16.150.96/ftp/project-support/guofangkeda/20211220/guofangkeda.tar.gz>
+离线包位于：<http://172.16.150.96/ftp/project-support/gfkd/20211220/gfkd.tar.gz>
 
-将 guofangkeda.tar.gz 包上传至服务器 `/opt` 目录下并解压开 `tar -zxvf guofangkeda.tar.gz`。
+将 gfkd.tar.gz 包上传至服务器 `/opt` 目录下并解压开 `tar -zxvf gfkd.tar.gz`。
 
 ### `pip` 离线配置
 
 ```console
-# 进入目录 guofangkeda
-root@allinone:/opt# cd /opt/guofangkeda
+# 进入目录 gfkd
+root@allinone:/opt# cd /opt/gfkd
 
 # 移动 pip.conf
-root@allinone:/opt/guofangkeda# mkdir -p /root/.pip
-root@allinone:/opt/guofangkeda# mv pip.conf /root/.pip/pip.conf
+root@allinone:/opt/gfkd# mkdir -p /root/.pip
+root@allinone:/opt/gfkd# mv pip.conf /root/.pip/pip.conf
 
 # 移动 pip 源文件夹
-root@allinone:/opt/guofangkeda# mv pip /opt
+root@allinone:/opt/gfkd# mv pip /opt
 ```
 
 ### `apt` 离线配置
 
 ```console
 # 移动 sources.list
-root@allinone:/opt/guofangkeda# cp /etc/apt/sources.list /etc/apt/sources.list.bak
-root@allinone:/opt/guofangkeda# mv sources.list /etc/apt/sources.list
+root@allinone:/opt/gfkd# cp /etc/apt/sources.list /etc/apt/sources.list.bak
+root@allinone:/opt/gfkd# mv sources.list /etc/apt/sources.list
 
 # 解压 archives.tar.gz
-root@allinone:/opt/guofangkeda# mv archives /opt
-root@allinone:/opt/guofangkeda# apt-get update
+root@allinone:/opt/gfkd# mv archives /opt
+root@allinone:/opt/gfkd# apt-get update
 ```
 
 ## 部署 `OpenStack`
@@ -57,7 +57,7 @@ root@allinone:/opt/guofangkeda# apt-get update
 - 安装 ceph-deploy
 
 ```console
-root@allinone:/opt/guofangkeda# cd /opt
+root@allinone:/opt/gfkd# cd /opt
 root@allinone:/opt# sudo apt install ceph-deploy
 ```
 
@@ -381,8 +381,8 @@ prechecks_enable_host_ntp_checks: false
 ```console
 # ironic kernel and initramfs
 root@allinone:~# mkdir -p /etc/kolla/config/ironic
-root@allinone:~# cp /opt/guofangkeda/ironic-agent.kernel /etc/kolla/config/ironic/
-root@allinone:~# cp /opt/guofangkeda/ironic-agent.initramfs /etc/kolla/config/ironic/
+root@allinone:~# cp /opt/gfkd/ironic-agent.kernel /etc/kolla/config/ironic/
+root@allinone:~# cp /opt/gfkd/ironic-agent.initramfs /etc/kolla/config/ironic/
 # 配置 glance 的 ceph 信息
 root@allinone:~# mkdir -p /etc/kolla/config/glance
 root@allinone:~# ssh root@10.0.0.141 sudo tee /etc/kolla/config/glance/ceph.conf </etc/ceph/ceph.conf
@@ -417,10 +417,10 @@ root@allinone:~# source .venv/bin/activate
 - 启用 `registry`
 
 ```console
-root@allinone:~# cd /opt/guofangkeda/
-root@allinone:/opt/guofangkeda# cd images/
-root@allinone:/opt/guofangkeda/images# docker load -i registry.tar
-root@allinone:/opt/guofangkeda/images# docker run -d --net=host --restart=always -v /opt/guofangkeda/config.yml:/etc/docker/registry/config.yml --name registry registry:2
+root@allinone:~# cd /opt/gfkd/
+root@allinone:/opt/gfkd# cd images/
+root@allinone:/opt/gfkd/images# docker load -i registry.tar
+root@allinone:/opt/gfkd/images# docker run -d --net=host --restart=always -v /opt/gfkd/config.yml:/etc/docker/registry/config.yml --name registry registry:2
 ```
 
 - 修改 `/etc/docker/daemon.json` 文件，新增如下信息
@@ -432,20 +432,20 @@ root@allinone:/opt/guofangkeda/images# docker run -d --net=host --restart=always
 - 重启 docker
 
 ```console
-root@allinone:/opt/guofangkeda/images# systemctl restart docker
+root@allinone:/opt/gfkd/images# systemctl restart docker
 ```
 
 - 导入所有镜像，并且上传至 registry 中
 
 ```console
-root@allinone:/opt/guofangkeda/images# for i in `ll | grep tar | awk '{print $9}'`;do docker load -i $i;done
-root@allinone:/opt/guofangkeda/images# for i in `docker images | grep wallaby | awk '{print $1}'`;do docker tag $i:wallaby 10.0.0.141:4000/$i:wallaby;docker rmi $i:wallaby;docker push 10.0.0.141:4000/$i:wallaby;done
+root@allinone:/opt/gfkd/images# for i in `ll | grep tar | awk '{print $9}'`;do docker load -i $i;done
+root@allinone:/opt/gfkd/images# for i in `docker images | grep wallaby | awk '{print $1}'`;do docker tag $i:wallaby 10.0.0.141:4000/$i:wallaby;docker rmi $i:wallaby;docker push 10.0.0.141:4000/$i:wallaby;done
 ```
 
 - 开始部署
 
 ```console
-root@allinone:/opt/guofangkeda/images# cd ~
+root@allinone:/opt/gfkd/images# cd ~
 root@allinone:~# source .venv/bin/activate
 (.venv) root@allinone:~# kolla-ansible -i all-in-one deploy
 (.venv) root@allinone:~# kolla-ansible post-deploy
@@ -460,7 +460,7 @@ root@allinone:~# pip install python-openstackclient
 # 把admin用户信息添加到环境变量中
 root@allinone:~# . /etc/kolla/admin-openrc.sh
 root@allinone:~# mkdir -p /opt/cache/files/
-root@allinone:~# cp /opt/guofangkeda/cirros-0.5.1-x86_64-disk.img /opt/cache/files/
+root@allinone:~# cp /opt/gfkd/cirros-0.5.1-x86_64-disk.img /opt/cache/files/
 # 创建示范网络和下载所需要的测试镜像
 root@allinone:~# /root/.venv/share/kolla-ansible/init-runonce
 ```
@@ -468,9 +468,9 @@ root@allinone:~# /root/.venv/share/kolla-ansible/init-runonce
 - 上传 octavia amphora 镜像
 
 ```console
-root@allinone:~# cd /opt/guofangkeda
-root@allinone:/opt/guofangkeda# source /etc/kolla/octavia-openrc.sh
-root@allinone:/opt/guofangkeda# openstack image create amphora-x64-haproxy.qcow2 --container-format bare --disk-format qcow2 --private --tag amphora --file amphora-x64-haproxy.qcow2 --property hw_architecture='x86_64' --property hw_rng_model=virtio
+root@allinone:~# cd /opt/gfkd
+root@allinone:/opt/gfkd# source /etc/kolla/octavia-openrc.sh
+root@allinone:/opt/gfkd# openstack image create amphora-x64-haproxy.qcow2 --container-format bare --disk-format qcow2 --private --tag amphora --file amphora-x64-haproxy.qcow2 --property hw_architecture='x86_64' --property hw_rng_model=virtio
 ```
 
 - 修改 `octavia` 使用的 `net`

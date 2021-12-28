@@ -1,18 +1,34 @@
 # 使用社区代码制作 kolla 包
 
-参考 Kolla 官方文档：<https://docs.openstack.org/kolla/latest/admin/image-building.html>
+## 官方文档
+
+> **注：** 此处为 openstack 最新版官方文档，其他版本文档请在目录中选择更换
+
+[kolla build 官方文档](https://docs.openstack.org/kolla/latest/admin/image-building.html)
 
 ## 机器要求
 
-- centos 8（CentOS 7.9 或者 Ubuntu 20.04 也行）
+- centos 8（ubuntu 20.04 / CentOS 7.9）
 - 安装 kolla
 - 安装 git
 - 安装并启用 docker
 
+## 环境准备
+
+```bash
+# 安装并启用 docker
+yum install -y docker
+systemctl start docker & systemctl enable docker
+# 安装 kolla
+python3 -m pip install kolla
+# 验证
+kolla-build --version
+```
+
 ## 启动 docker registry
 
 ```console
-$ docker run -d -p 4000:5000 --restart=always -v /opt/registry/:/var/lib/registry --name registry registry:2
+docker run -d -p 4000:5000 --restart=always -v /opt/registry/:/var/lib/registry --name registry registry:2
 ```
 
 ## docker 设置
@@ -53,13 +69,20 @@ openstack = cinder, glance, heat, horizon, ironic, neutron, nova, octavia, place
 ```
 
 - registry：registry 仓库地址
+- install_type：，构建镜像方式，可选择 `binary/source`
 - tag：镜像 tag
+- push：build images 之后是否向 registry 推送镜像
 - tarballs_base：源码包地址，默认为`http://tarballs.opendev.org/`
 - openstack：需要 build 的组件列表
 
-可以从源码 build 镜像
+当 install_type 为 source 时，kolla-build.conf 可以自定义镜像的 source 源
 
-```ini
+- url：location 为 tarball 地址
+- git：location 为 git 地址
+- local：location 为本地 tarball 地址或者本地源码地址
+
+```
+# kolla-build.conf
 [glance-base]
 type = url
 location = https://tarballs.openstack.org/glance/glance-master.tar.gz
@@ -81,11 +104,32 @@ location = /tmp/ironic.tar.gz
 ## build 镜像
 
 ```console
-$ kolla-build --profile openstack --config-file kolla-build.conf
+kolla-build --profile openstack --config-file kolla-build.conf
 ```
 
 ## 手动打包
 
 ```console
-$ tar -cvf registry.tar /opt/registry/
+# registry.tar.gz
+cd /opt/registry/
+tar -czvf /root/registry.tar.gz docker/
+
+# 为防止 registry.tar.gz 移动过程中出错，可以记录校验值
+sha256sum registry.tar.gz
 ```
+
+## 部署环境中更新 kolla 包
+
+> **注：** registry 挂载路径建议配置一致，如 `/opt/registry/` ，如果路径不一致可能导致 registry 无法找到正确的数据目录
+
+```console
+# tar -xzvf /root/registry.tar.gz -C /opt/registry/
+
+# 启动 registry
+docker run -d -p 4000:5000 --restart=always -v /opt/registry/:/var/lib/registry --name registry registry:2
+
+# 验证
+curl -X GET <docker_registry_ip>:4000/v2/_catalog
+```
+
+
