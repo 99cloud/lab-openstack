@@ -8,19 +8,25 @@
 
 ## 机器要求
 
-- centos 8（ubuntu 20.04 / CentOS 7.9）
-- 安装 kolla
-- 安装 git
+- centos 7.9 / 8 / ubuntu 20.04 都可以，以 7.9 为例：
+- 安装 kolla：
+
+    ```bash
+    yum install python3
+    python3 -m pip install kolla
+    ```
+
+- 安装 git：`yum install -y git`
 - 安装并启用 docker
+
+    ```bash
+    yum install -y docker
+    systemctl enable docker --now
+    ```
 
 ## 环境准备
 
 ```bash
-# 安装并启用 docker
-yum install -y docker
-systemctl start docker & systemctl enable docker
-# 安装 kolla
-python3 -m pip install kolla
 # 验证
 kolla-build --version
 ```
