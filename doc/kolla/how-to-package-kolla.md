@@ -2,7 +2,7 @@
 
 ## 官方文档
 
-> **注：** 此处为 openstack 最新版官方文档，其他版本文档请在目录中选择更换
+> **注：** 此处为 openstack 最新版官方文档，其他版本文档请在目录中选择更换，参考：<https://releases.openstack.org/wallaby/index.html>
 
 [kolla build 官方文档](https://docs.openstack.org/kolla/latest/admin/image-building.html)
 
@@ -13,7 +13,8 @@
 
     ```bash
     yum install python3
-    python3 -m pip install kolla
+    # wallaby 是 12.0.1
+    python3 -m pip install kolla=12.0.1
     ```
 
 - 安装 git：`yum install -y git`
@@ -26,9 +27,9 @@
 
 ## 环境准备
 
-```bash
-# 验证
-kolla-build --version
+```console
+# kolla-build --version
+12.0.1
 ```
 
 ## 启动 docker registry
