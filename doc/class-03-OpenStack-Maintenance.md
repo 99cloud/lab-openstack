@@ -526,6 +526,92 @@ Kolla-Kubernetes vs Kolla-Ansible
     - 重启容器
     - 进入容器，使用 pdb 进行调试，执行之前 config.json 中的 command 命令
 
+举例，Delete Image Hang 住
+
+1. 先检查服务状态
+
+    ```console
+    (.venv) root@control01:~# ansible -i multinode control -m shell -a 'docker ps | grep glance'
+    [WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
+    control01 | CHANGED | rc=0 >>
+    0e72b995ae2c   172.16.11.1:4000/kolla/ubuntu-source-glance-api:wallaby                      "dumb-init --single-…"   2 days ago     Up 3 hours (healthy)              glance_api
+    control02 | CHANGED | rc=0 >>
+    9f283bd8cbe3   172.16.11.1:4000/kolla/ubuntu-source-glance-api:wallaby                      "dumb-init --single-…"   2 days ago     Up 33 seconds (healthy)             glance_api
+    control03 | CHANGED | rc=0 >>
+    2546db95897c   172.16.11.1:4000/kolla/ubuntu-source-glance-api:wallaby                      "dumb-init --single-…"   2 days ago     Up 6 hours (healthy)              glance_api
+    ```
+
+1. 改 endpoint，vip 改成节点地址，这样能保证请求会绕过 HAProxy 干扰直接落到某个节点上
+
+    ```console
+    (.venv) root@control01:~# openstack endpoint list | grep glance
+    | c7ff5a6abe4a438c8a4f1d6eab43a306 | RegionOne | glance           | image                   | True    | admin     | http://172.16.11.250:9292                  |
+    | eb0351b20ff34a4aa8b91751db081275 | RegionOne | glance           | image                   | True    | public    | http://172.16.11.250:9292                  |
+    | f4e4376597d146c19bc7b0b237b22530 | RegionOne | glance           | image                   | True    | internal  | http://172.16.11.250:9292                  |
+
+    (.venv) root@control01:~# openstack endpoint list | grep glance | awk '{print $2}' | xargs -I{} openstack endpoint set --url http://172.16.11.1:9292 {}
+    ```
+
+1. `/etc/kolla/glance-api/glance-api.conf` 设置 `debug=True`，重启服务。
+1. 重现问题 `openstack image delete xxxx --debug`，从节点的 glance 日志，在 /var/log/kolla/glance/glance-api.log 中 grep DELETE 和 image ID，然后再根据 request ID 找到问题前后的日志。
+
+    ```console
+    (.venv) root@control01:~# cat /var/log/kolla/glance/glance-api.log | grep DELETE | grep 94c10207-32c1-4a48-ba40-bcbdedec61d4 
+    2021-12-30 14:57:03.908 48 DEBUG glance.api.middleware.version_negotiation [req-5fb61e48-fb9e-4bd2-b2a9-6699af25eaec 68f670897b18466ba595723cd03aa1ca 2623d473314e45dfb4b3553a2fa72ae9 - default default] Determining version of request: DELETE /v2/images/94c10207-32c1-4a48-ba40-bcbdedec61d4 Accept: */* process_request /var/lib/kolla/venv/lib/python3.8/site-packages/glance/api/middleware/version_negotiation.py:44
+    2021-12-30 14:57:23.070 51 DEBUG glance.api.middleware.version_negotiation [req-c1cd0752-a75b-429f-a695-673c21c9387e 68f670897b18466ba595723cd03aa1ca 2623d473314e45dfb4b3553a2fa72ae9 - default default] Determining version of request: DELETE /v2/images/94c10207-32c1-4a48-ba40-bcbdedec61d4 Accept: */* process_request /var/lib/kolla/venv/lib/python3.8/site-packages/glance/api/middleware/version_negotiation.py:44
+
+    (.venv) root@control01:~# cat /var/log/kolla/glance/glance-api.log | grep req-c1cd0752-a75b-429f-a695-673c21c9387e
+    2021-12-30 14:57:23.009 51 DEBUG oslo_db.sqlalchemy.engines [req-c1cd0752-a75b-429f-a695-673c21c9387e 68f670897b18466ba595723cd03aa1ca 2623d473314e45dfb4b3553a2fa72ae9 - default default] MySQL server mode set to STRICT_TRANS_TABLES,STRICT_ALL_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,TRADITIONAL,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION _check_effective_sql_mode /var/lib/kolla/venv/lib/python3.8/site-packages/oslo_db/sqlalchemy/engines.py:304
+    2021-12-30 14:57:23.058 51 INFO eventlet.wsgi.server [req-c1cd0752-a75b-429f-a695-673c21c9387e 68f670897b18466ba595723cd03aa1ca 2623d473314e45dfb4b3553a2fa72ae9 - default default] 172.16.11.1 - - [30/Dec/2021 14:57:23] "GET /v2/images/94c10207-32c1-4a48-ba40-bcbdedec61d4 HTTP/1.1" 200 1280 0.595624
+    2021-12-30 14:57:23.070 51 DEBUG glance.api.middleware.version_negotiation [req-c1cd0752-a75b-429f-a695-673c21c9387e 68f670897b18466ba595723cd03aa1ca 2623d473314e45dfb4b3553a2fa72ae9 - default default] Determining version of request: DELETE /v2/images/94c10207-32c1-4a48-ba40-bcbdedec61d4 Accept: */* process_request /var/lib/kolla/venv/lib/python3.8/site-packages/glance/api/middleware/version_negotiation.py:44
+    2021-12-30 14:57:23.071 51 DEBUG glance.api.middleware.version_negotiation [req-c1cd0752-a75b-429f-a695-673c21c9387e 68f670897b18466ba595723cd03aa1ca 2623d473314e45dfb4b3553a2fa72ae9 - default default] Using url versioning process_request /var/lib/kolla/venv/lib/python3.8/site-packages/glance/api/middleware/version_negotiation.py:57
+    2021-12-30 14:57:23.071 51 DEBUG glance.api.middleware.version_negotiation [req-c1cd0752-a75b-429f-a695-673c21c9387e 68f670897b18466ba595723cd03aa1ca 2623d473314e45dfb4b3553a2fa72ae9 - default default] Matched version: v2 process_request /var/lib/kolla/venv/lib/python3.8/site-packages/glance/api/middleware/version_negotiation.py:69
+    2021-12-30 14:57:23.071 51 DEBUG glance.api.middleware.version_negotiation [req-c1cd0752-a75b-429f-a695-673c21c9387e 68f670897b18466ba595723cd03aa1ca 2623d473314e45dfb4b3553a2fa72ae9 - default default] new path /v2/images/94c10207-32c1-4a48-ba40-bcbdedec61d4 process_request /var/lib/kolla/venv/lib/python3.8/site-packages/glance/api/middleware/version_negotiation.py:70
+    ```
+
+1. 从日志中已经能看到代码的位置，改 glance 的 /etc/kolla/glance/config.json，`glance-api` 改成 `sleep infinity`，`docker restart glance_api`，进入容器 `docker exec -it glance_api /bin/bash`
+1. 容器内的文件目录：/var/lib/kolla/venv/lib/python3.8/site-packages/glance，对应主机目录：`docker inspect glance_api | grep -i merge` --> 找到在宿主机上对应的文件目录：`ls /var/lib/docker/overlay2/b50661eb28a6f0ea3dbf3dc670e1c230b979f7cd49e7fcb4e55010a137a836e6/merged/var/lib/kolla/venv/lib/python3.8/site-packages/glance/`
+1. 在容器中运行 `glance-api`，发 image delete 请求重现问题。找到对应的代码，加入
+
+    ```python
+    import pdb
+    pdb.set_trace()
+    ```
+
+1. 通过 l / n / s / p / c 调试问题
+1. 确认问题后，记得去掉 pdb，恢复代码，改回 config.json 和 glance-api.conf，重启 glance_api 容器，改回 endpoint
+1. 这个问题是 rbd 有问题导致 hang 住
+
+    ```
+    (.venv) root@control01:~# ceph health detail
+    HEALTH_WARN Reduced data availability: 3 pgs stale; 4 pool(s) have no replicas configured; 1 daemons have recently crashed
+    [WRN] PG_AVAILABILITY: Reduced data availability: 3 pgs stale
+        pg 3.1 is stuck stale for 3h, current state stale+active+clean, last acting [43,30,46]
+        pg 4.5 is stuck stale for 3h, current state stale+active+clean, last acting [43,33,45]
+        pg 4.1a is stuck stale for 3h, current state stale+active+clean, last acting [43,20,45]
+    [WRN] POOL_NO_REDUNDANCY: 4 pool(s) have no replicas configured
+        pool '.rgw.root' has no replicas configured
+        pool 'default.rgw.log' has no replicas configured
+        pool 'default.rgw.control' has no replicas configured
+        pool 'default.rgw.meta' has no replicas configured
+    [WRN] RECENT_CRASH: 1 daemons have recently crashed
+        osd.43 crashed on host compute01 at 2021-12-30T07:03:17.939949Z
+
+    (.venv) root@control01:~# ceph osd pool ls detail
+    pool 1 'device_health_metrics' replicated size 3 min_size 2 crush_rule 0 object_hash rjenkins pg_num 1 pgp_num 1 autoscale_mode on last_change 9 flags hashpspool stripe_width 0 pg_num_min 1 application mgr_devicehealth
+    pool 2 '.rgw.root' replicated size 1 min_size 1 crush_rule 2 object_hash rjenkins pg_num 32 pgp_num 32 autoscale_mode on last_change 8738 flags hashpspool stripe_width 0 application rgw
+    pool 3 'default.rgw.log' replicated size 1 min_size 1 crush_rule 2 object_hash rjenkins pg_num 32 pgp_num 32 autoscale_mode on last_change 8840 flags hashpspool,creating stripe_width 0 application rgw
+    pool 4 'default.rgw.control' replicated size 1 min_size 1 crush_rule 2 object_hash rjenkins pg_num 32 pgp_num 32 autoscale_mode on last_change 8773 flags hashpspool,creating stripe_width 0 application rgw
+    pool 5 'default.rgw.meta' replicated size 1 min_size 1 crush_rule 2 object_hash rjenkins pg_num 8 pgp_num 8 autoscale_mode on last_change 8744 lfor 0/447/445 flags hashpspool stripe_width 0 pg_autoscale_bias 4 pg_num_min 8 application rgw
+    pool 6 'volumes' replicated size 3 min_size 2 crush_rule 0 object_hash rjenkins pg_num 64 pgp_num 64 autoscale_mode on last_change 8650 lfor 0/8389/8520 flags hashpspool,selfmanaged_snaps stripe_width 0 application rbd
+    pool 8 'vms' replicated size 3 min_size 2 crush_rule 0 object_hash rjenkins pg_num 64 pgp_num 64 autoscale_mode on last_change 8565 lfor 0/2560/8558 flags hashpspool stripe_width 0 application rbd
+    pool 9 'images' replicated size 3 min_size 2 crush_rule 0 object_hash rjenkins pg_num 64 pgp_num 64 autoscale_mode on last_change 8701 lfor 0/2564/8560 flags hashpspool,selfmanaged_snaps stripe_width 0 application rbd
+    pool 10 'backups' replicated size 3 min_size 2 crush_rule 0 object_hash rjenkins pg_num 64 pgp_num 64 autoscale_mode on last_change 8562 flags hashpspool stripe_width 0 application rbd
+    pool 11 'volumes-cache' replicated size 3 min_size 2 crush_rule 0 object_hash rjenkins pg_num 208 pgp_num 201 pg_num_target 32 pgp_num_target 32 autoscale_mode on last_change 8971 lfor 0/8971/8969 flags hashpspool stripe_width 0
+    ```
+
+1. 根本原因和解决方案：权限问题，创建 rule 时曾经由 root 改为 host，以避免 pool 无法 mapping 到 OSD。此时创建 VM 拉取 Image 时也会 hang 住（已验证）
+
 ### 3.2 从镜像到部署
 
 [Catalog](#catalog)

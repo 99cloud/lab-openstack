@@ -14,7 +14,7 @@
     ```bash
     yum install python3
     # wallaby 是 12.0.1
-    python3 -m pip install kolla=12.0.1
+    python3 -m pip install kolla==12.0.1
     ```
 
 - 安装 git：`yum install -y git`

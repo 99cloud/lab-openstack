@@ -527,6 +527,7 @@
 ### 3.4 redmine
 
 > 参考文档：<https://github.com/sameersbn/docker-redmine#installation>
+> 参考文档：<https://www.cnblogs.com/qianxunman/p/12787219.html>
 
 #### 3.4.1 安装 redmine
 
