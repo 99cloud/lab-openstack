@@ -5,7 +5,7 @@
 - 多节点部署
 
     推荐使用 5 台 CentOS 7.9 虚拟机（ISO 镜像可以用 Minimal，安装时选择用 Minimal 安装），分别部署 OIDC、gitlab、gerrit、redmine、drone，每台虚拟机具体配置如下：
-   
+
     || CPU/核 | 内存/G | 根磁盘/G | 数据盘/G | 数据盘挂载目录 | 网卡/张 |
     | --- | --- | --- | --- | --- | --- | --- |
     | OIDC | 4 | 8 | 100 | 无 | 无 | 1 |
@@ -127,7 +127,7 @@
     ```bash
     cd dex/
     ./bin/dex serve examples/config-dev.yaml
-   
+
     # 后台运行命令
     # nohup ./bin/dex serve examples/config-dev.yaml &
     ```
@@ -539,7 +539,7 @@
     > 更多可用的配置参数可参考：<https://github.com/sameersbn/docker-redmine#available-configuration-parameters>
 
     ```bash
-    docker run -d --name redmine-postgresql -e POSTGRES_PASSWORD=password -e POSTGRES_USER=redmine --volume=/srv/docker/redmine/postgresql:/var/lib/postgresql postgres:9.6.24                                                                                                                                                                         
+    docker run -d --name redmine-postgresql -e POSTGRES_PASSWORD=password -e POSTGRES_USER=redmine --volume=/srv/docker/redmine/postgresql:/var/lib/postgresql postgres:9.6.24
 
     docker run -d --name redmine -e REDMINE_DB_USERNAME=redmine -e REDMINE_DB_PASSWORD=password -p 3000:3000 -v /srv/docker/redmine/redmine/plugins:/usr/src/redmine/plugins -v /srv/docker/redmine/redmine/files:/usr/src/redmine/files --link redmine-postgresql:postgres redmine:4.2.3
     # AIO scenaio
@@ -652,7 +652,7 @@ docker stop redmine && docker rm redmine
 docker load -i ~/redmine-backup-xxxxxxxx.tar
 docker run -d --name redmine -e REDMINE_DB_USERNAME=redmine -e REDMINE_DB_PASSWORD=password -p 3000:3000 -v /srv/docker/redmine/redmine/plugins:/usr/src/redmine/plugins -v /srv/docker/redmine/redmine/files:/usr/src/redmine/files --link redmine-postgresql:postgres redmine-backup-xxxxxxxx
 # AIO scenaio
-docker run -d --name redmine -e REDMINE_DB_USERNAME=redmine -e REDMINE_DB_PASSWORD=password -p 3001:3000 -v /srv/docker/redmine/redmine/plugins:/usr/src/redmine/plugins -v /srv/docker/redmine/redmine/files:/usr/src/redmine/files --link redmine-postgresql:postgres redmine-backup-xxxxxxxx  
+docker run -d --name redmine -e REDMINE_DB_USERNAME=redmine -e REDMINE_DB_PASSWORD=password -p 3001:3000 -v /srv/docker/redmine/redmine/plugins:/usr/src/redmine/plugins -v /srv/docker/redmine/redmine/files:/usr/src/redmine/files --link redmine-postgresql:postgres redmine-backup-xxxxxxxx
 ```
 
 ### 3.5 drone
@@ -675,11 +675,14 @@ docker run -d --name redmine -e REDMINE_DB_USERNAME=redmine -e REDMINE_DB_PASSWO
 
 2. 拉取 drone 镜像并启动服务
 
-    > **注：**  
-    > $GITLAB_CLIENT_ID 为步骤1中获取的 Application ID  
-    > $GITLAB_CLIENT_SECRET 为步骤1中获取的 Secret  
-    > DRONE_RPC_SECRET=$(openssl rand -hex 16)  
-    > ADMIN_USER_TOKEN=$(openssl rand -hex 16)
+    > **注：**
+
+    ```bash
+    # $GITLAB_CLIENT_ID 为步骤 1 中获取的 Application ID
+    # $GITLAB_CLIENT_SECRET 为步骤1中获取的 Secret
+    DRONE_RPC_SECRET=$(openssl rand -hex 16)
+    ADMIN_USER_TOKEN=$(openssl rand -hex 16)
+    ```
 
     ```bash
     docker pull drone/drone:2.4.0
@@ -977,10 +980,10 @@ git push origin meta/config:meta/config
 
 #### 3.7.2 drone配置
 
-> **注**：  
+> **注**：
 > git version 需 2.2 以上且已安装 git-review
-> gerrit 上有 Repository : `99cloud` 和 `99cloud/skyline` ，且 `99cloud/skyline` 权限继承自 `99cloud`  
-> gitlab 上有 Group，名称为 `99cloud`；创建项目，名称为 `skyline`  
+> gerrit 上有 Repository : `99cloud` 和 `99cloud/skyline` ，且 `99cloud/skyline` 权限继承自 `99cloud`
+> gitlab 上有 Group，名称为 `99cloud`；创建项目，名称为 `skyline`
 > gerrit 自动同步 gitlab
 
 本地拉取 gerrit skyline 项目
@@ -1047,10 +1050,10 @@ git commit -am "Add review config file"
 git push
 ```
 
-> **注**:  
-> `<drone_admin_user>`: gerrit review 用户可直接使用 admin 权限用户，或者另外设置 drone review 权限用户  
-> 如，`cat <is_rsa.pub> | ssh -p 29418 <admin_username>@<gerrit_ip> gerrit create-account --ssh-key - <drone_admin_user>` 创建 drone review 用户  
-> `<id_rsa>`: 该私钥需要进行格式化处理  
+> **注**:
+> `<drone_admin_user>`: gerrit review 用户可直接使用 admin 权限用户，或者另外设置 drone review 权限用户
+> 如，`cat <is_rsa.pub> | ssh -p 29418 <admin_username>@<gerrit_ip> gerrit create-account --ssh-key - <drone_admin_user>` 创建 drone review 用户
+> `<id_rsa>`: 该私钥需要进行格式化处理
 > 如，格式化处理为：`-----BEGIN RSA PRIVATE KEY-----\nxxx\n-----END RSA PRIVATE KEY-----`
 
 登录 drone admin 账号，在 `drone->99cloud/skyline->settings->secrets` 界面配置 `Secrets`
