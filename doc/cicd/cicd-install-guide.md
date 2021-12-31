@@ -42,25 +42,22 @@
 
 各节点安装 docker (官方文档：https://docs.docker.com/engine/install/centos/)
 
-1. 安装 yum-utils 包（提供 yum-config-manager 实用程序）并设置稳定存储库
+1. 更新依赖仓库
 
     ```bash
-    yum update -y
-    yum install -y yum-utils
-    yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+    apt-get update -y || yum update -y
     ```
 
-2. 安装最新版本 docker engine
+2. 安装 docker engine
 
     ```bash
-    yum install docker-ce docker-ce-cli containerd.io
+    apt-get install docker.io -y || yum install docker -y
     ```
 
 3. 启用 docker
 
     ```bash
-    systemctl start docker
-    systemctl enable docker
+    systemctl enable docker --now
     ```
 
 4. 安装所需依赖包
