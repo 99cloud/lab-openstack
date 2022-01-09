@@ -53,13 +53,13 @@ iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 ----------------------------------------------------
  1     openstack-devstack             running
 
+
 [root@coa-student-batchc-3 ~]# virsh snapshot-list openstack-devstack  
  Name                 Creation Time             State
 ------------------------------------------------------------
  openstack-ready      2021-07-21 17:24:57 +0800 running
  ready-to-devstack    2021-07-21 14:51:34 +0800 shutoff
 
-[root@coa-student-batchc-3 ~]# virsh snapshot-revert openstack-devstack --snapshotname openstack-ready
 
-[root@coa-student-batchc-3 ~]# 
+[root@coa-student-batchc-3 ~]# virsh snapshot-revert openstack-devstack --snapshotname openstack-ready
 ```

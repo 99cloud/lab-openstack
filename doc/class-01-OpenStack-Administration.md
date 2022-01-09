@@ -72,6 +72,11 @@
 | | 下午 | [Lesson 10：模拟管理员练习题]() | [模拟题讲解](#) |
 | | | | [模拟题练习]() |
 
+## 实验环境
+
+- [实验环境访问方式](/src/ansible-cloudlab-centos/README.md)
+- [可选] [自己动手搭建 DevStack](devstack-aio.md)
+
 ## Lesson 01：OpenStack Introduction
 
 [Catalog](#catalog)
