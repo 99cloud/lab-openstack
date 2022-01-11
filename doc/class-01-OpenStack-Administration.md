@@ -491,7 +491,7 @@ $ vi /etc/nova/nova.conf
 
 ### 理解 OpenStack 中使⽤的镜像
 
-1. glance 是为 nova 提供镜像服务，以便成功的启动实例，这些镜像是预建的，一般都会预装 cloud-init 的组件，你可以访问 http://docs.openstack.org/zh_CN/image-guide/content/ch_obtaining_images.html 来获得更多镜像，默认 glance 会把镜像都放在本地文件系统/var/lib/glance/images/，默认 glance 会把镜像存放在本地文件夹中，当然这样就没有高可用性了，所以 glance 支持对存储后端的配置，我们可以将存储的后台改为 ceph、swift 甚至 aws 的 s3
+1. glance 是为 nova 提供镜像服务，以便成功的启动实例，这些镜像是预建的，一般都会预装 cloud-init 的组件，你可以访问 <https://docs.openstack.org/image-guide/obtain-images.html> 来获得更多镜像，默认 glance 会把镜像都放在本地文件系统/var/lib/glance/images/，默认 glance 会把镜像存放在本地文件夹中，当然这样就没有高可用性了，所以 glance 支持对存储后端的配置，我们可以将存储的后台改为 ceph、swift 甚至 aws 的 s3
 
 ### glance Concepts
 
@@ -520,27 +520,33 @@ $ vi /etc/nova/nova.conf
 
 ### glance Capablities
 
+1. 从 OpenStack 下载镜像
+
+    ```bash
+    openstack image save --file cirros—disk_x86_64.img cirros-0.5.1-x86_64-disk
+    ```
+
 1. 从本地上传镜像
 
-    ```console
-    $ openstack image create --file cirros—disk_x86_64.img  --container-format bare --disk-format qcow2 myimage
+    ```bash
+    openstack image create --file cirros—disk_x86_64.img  --container-format bare --disk-format qcow2 myimage
     ```
 
 1. 更新镜像
 
-    ```console
-    $ openstack image set --min-ram 8 myimage
+    ```bash
+    openstack image set --min-ram 8 myimage
     ```
 
 1. 删除镜像
 
-    ```console
-    $ openstack image delete myimage
+    ```bash
+    openstack image delete myimage
     ```
 1. 创建快照
 
-    ```console
-    $ openstack server image create --name [instance_snapshot] [instance1]
+    ```bash
+    openstack server image create --name [instance_snapshot] [instance1]
     ```
 
 ## Lesson 06 Cinder
