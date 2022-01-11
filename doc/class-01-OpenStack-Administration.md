@@ -164,9 +164,9 @@ OpenStack 是由很多个核心组件组合而成，每个组件都负责他们�
 #### Message queue
 
 ![](/img/rabbitmqex.png)
-    
+
 ![](/img/rabbitmqex2.png)
-    
+
 ![](/img/rabbitmqex3.png)
 
 #### message for openstack oslo.messageing
@@ -182,11 +182,11 @@ OpenStack 是由很多个核心组件组合而成，每个组件都负责他们�
 
 #### database and sqlachemy
 
-Openstack 以 Python 语法实现 IaaS 架构, 在各组件调度资源的过程, 需要一数据库记录所有平台管理资料底层后台数据库琳琅满目 MySQL Mariadb PostgreSQL Sqlite3 等上层开发需要使用 Python 语法实现, 基于这样环境 Openstack 使用 SQLAchemy 来管理数据库, SQLAchemy 是一个以 Python 语法写成向下对数据库键值进行修改的工具 
+Openstack 以 Python 语法实现 IaaS 架构, 在各组件调度资源的过程, 需要一数据库记录所有平台管理资料底层后台数据库琳琅满目 MySQL Mariadb PostgreSQL Sqlite3 等上层开发需要使用 Python 语法实现, 基于这样环境 Openstack 使用 SQLAchemy 来管理数据库, SQLAchemy 是一个以 Python 语法写成向下对数据库键值进行修改的工具
 
 ![](/img/sqlachemy.png)
 
-## Lesson 02 Keystone 
+## Lesson 02 Keystone
 
 [Catalog](#catalog)
 
@@ -204,14 +204,14 @@ Openstack 以 Python 语法实现 IaaS 架构, 在各组件调度资源的过程
     - group: 组顾名思义就是一个用户的集合, 一般我们会把一个用户关联到一个项目中, 每次关联的时候都要设置一个角色比较麻烦, 有了组以后我们可以把组加到租户当中去并关联一个角色, 以后所以加入到这个组当中的用户就继承了这个组在这个租户当中的角色
     - project/tenant: project 顾名思义是项目的意思或者用我们熟知的话就是租户, 在本书中我们都会称之为项目而不是租户, 租户是 OpenStack 中一个核心的概念, 基本上所有的资源都是按照租户隔离, 比如网络、实例、路由等资源, 所以我们可以想象一个用户必须要先关联到一个项目中去才能正确使用 OpenStack 资源
     - domain: 在 OpenStack 当中域是用来实现真正的多项目/租户模式的一种方法, 在没有域出现之前 OpenStack 有着一个权限的场景, 当你把一个用户任何一个项目/租户当中去的时候，你如果关联的是  admin 的角色的话, 这个时候这个用户突然就成为了 OpenStack 超级管理员, 这并非我们所希望的场景, 使用了域以后我们就可以实现真正意义上的多项目/租户模式了, 把一个用户加到 default 以外的域中的项目并关联到 admin 的时候, 这个用户就不再是整个 OpenStack 的管理员了, 他只能管理这个域下面的所有的项目/租户, 当然你要开启多项目/租户模式你得替换掉 /etc/keystone/policy.json 文件来开启
-    
+
         ![](/img/DomainUserProjectRole.png)
 
 1. 什么是服务终端 service endpoint？
     - 服务终点即一个服务提供的地址比如 http://192.168.100.20:5000/v3, 这就是一个服务终点, 服务终点是用来提供基于 http 请求的 API 方法的一个地址
 1. 什么是目录服务？
     - 之前提到 OpenStack 有很多个核心组件组合而成的, 每个组件都有一个或多个管理接口, 每个管理接口提供服务都是以 web 服务的形式出现的, 那么他们都有一个服务的终点地址比如 keystone 的(http://ip:5000/v3), 我们怎么才能找到每个组件的终端呢？因为这些服务可以很方便的迁移到任何网络可达的物理服务器上, 所有这里我们要一个机制来集中管理服务的终点, 就像服务终点的路由器一样
-1. 什么是 tokenid ? 
+1. 什么是 tokenid ?
     - 令牌, 由 keystone 认证后发放, 可以透过此令牌在其他 opesntack service 发出请求提供服务
     - 发放与使用流程
         - Client obtains token from the Keystone (by user password)
@@ -219,12 +219,12 @@ Openstack 以 Python 语法实现 IaaS 架构, 在各组件调度资源的过程
         - Nova API verifies token in Keystone
         - Nova requests Keystone to get all available quotas for project/user. Nova calculates amount of used resources and allows or permits operation
         - Nova API calls nova-compute via RPC to launch VM instance.
-    
+
         ![](/img/token.png)
 
 1. 什么是 Role / Policy？
     - keystone 遇到不同的使用者做出不同请求的问题 ( 例如: 创建虚拟机 删除云盘 ) 要透过 role 跟 policy 协作来满足需求, 每一个调度请求都会有一个对应的 policy 里面存有多向属性, 其中一个就是 role。 再来, 每个被创建的使用者都会被绑定一个 role (admin / member), 当使用者发出请求调度服务的时后, keystone 收到后会确认这个服务的policy role 是不是这个使用者可以有权利访问的, 如果有才可以继续, 反之拒绝
-    
+
     ![](/img/api3flow.png)
 
 ### Keystone Capablities
@@ -257,7 +257,7 @@ Openstack 以 Python 语法实现 IaaS 架构, 在各组件调度资源的过程
     $ openstack user show john
 
     # 将用户关联到项目/租户
-    $ openstack role add --user john --project demo admin 
+    $ openstack role add --user john --project demo admin
     ```
 
 1. Keystone 怎么处理认证、鉴权和授权？角色、RBAC、Cloud Admin / Domain Admin
@@ -339,7 +339,7 @@ $ vi /etc/nova/nova.conf
 
 1. 对物理资源进行池化，允许单个物理硬件创建多个模拟环境或专用资源
 1. 是什么实现了虚拟化? Hypervisor
-1. Hypervisor 是什么? a piece of software or driver which run on the physical device 
+1. Hypervisor 是什么? a piece of software or driver which run on the physical device
 1. Hypervisor function
     - 将物理资源池化
     - 分配资源给虚拟机
@@ -349,8 +349,8 @@ $ vi /etc/nova/nova.conf
     - Type2: installed on Host OS which sits between physical serer and hypervisor, named as hosted hypervisors(VMware Workstation, VirtualBox)
 
     ![](/img/virtual1.png)
-	
-### 介绍硬件加速虚拟化 KVM 
+
+### 介绍硬件加速虚拟化 KVM
 
 - kvm: kernel virtual machine 他属于硬件加速的虚拟化，他依赖于 cpu 的虚拟化功能 intel—vt 或者 amd—v 等技术, 可以对 NUMA 的框架的 CPU 做定制的调优
 - qemu-kvm: 帮助 kvm 进行 io 模拟的虚拟机监控器，主要负责模拟 io(input/output)
@@ -360,11 +360,11 @@ $ vi /etc/nova/nova.conf
     ![](/img/virtual3.png)
 
     ![](/img/virtual4.png)
-	
+
 ### nova Concepts
 
 1. 我们回到 nova，之前提到 openstack 使用的 hypervisor 是用 kvm , 除此之外还可以支持其他的 hypervisor 比如 virtual box、vmware、xen、qemu 当我们的计算的节点的 cpu 不支持硬件加速的时候我们可以使用 qemu 来代替
-    
+
     ![](/img/virtual5.png)
 
 1. 虚拟机属性？
@@ -383,13 +383,13 @@ $ vi /etc/nova/nova.conf
 1. nova 核心组件
     - nova-api: 和其他核心项目组件一样都一个管理接口
     - nova-scheduler: 将虚拟机分配到具体的计算节点的服务
-	- nova-conductor: 负责虚拟机的监控与分配整逻辑实现
+    - nova-conductor: 负责虚拟机的监控与分配整逻辑实现
     - nova-compute: 运行在计算节点上的服务，负责调度libvirt启动虚拟机的服务
     - RabbitMQ: 是世界上比较主流的消息队列被广泛使用比
 
     ![](/img/virtual7.png)
 
-    ![](/img/virtual8.png)	
+    ![](/img/virtual8.png)
 
 ### Nova Capablities
 
@@ -398,14 +398,14 @@ $ vi /etc/nova/nova.conf
     ```console
     # 首先创建一个 host aggregation 叫 vip_host_aggr 做并创建一个 available zone 叫做 demo
     $ nova aggregate-create [vip_host_aggr] [vip_zone]
-	
+
     # 创建一个 host aggregation 叫 regular_host_aggr 并将它加入到 available zone vip_zone 和 regular_zone 中, 程序会自动判断是新建 az 还是关联现有 az
     $ nova aggregate-create [regular_host_aggr] [regular_zone]
-	
+
     # 将计算节点加入到各自的 host aggregation 中去
     $ nova aggregate-add-host [vip_host_aggr] [I7_compute_node]
     $ nova aggregate-add-host [regular_host_aggr] [I5_compute_node]
-	
+
     # 为 vip_host_aggr 设置特殊的属性来和 flavor 产生关联
     $ nova aggregate-set-metadata [vip_host_aggr] [ForVip=true]
     $ nova aggregate-set-metadata [regular_host_aggr] [ForRegular=true]
@@ -418,15 +418,15 @@ $ vi /etc/nova/nova.conf
     # 到此, 完成 vip i7 调度的关联创建, 接下来说明如何使用
     $ source project_vip_userrc
     $ openstack server create --flavor m1.flavor_vip ……
-	```
+    ```
 
 1. nova cloud-init 服务
     - 当虚拟机在 OpenStack 启动过的时候，一些信息比如 SSH key、语言设置、主机名都是放在 nova 的 metadata 服务中的，这样可以方便虚拟机的迁移
     - linux 安装 cloud-init daemon: 我们使用的镜像中预装的软件，为了执行预启动的脚本
-	
+
     ```console
-	# 举例: 创建使用者
-	$ cat > create_user.yaml << EOF
+    # 举例: 创建使用者
+    $ cat > create_user.yaml << EOF
 
         #cloud-config
         groups:
@@ -465,19 +465,19 @@ $ vi /etc/nova/nova.conf
           - name: nosshlogins
             ssh_redirect_user: true
         EOF
-	```
+    ```
 
     - ![](/img/cloudinit.png)
 
 1. nova 创建虚拟机
 
     ```console
-	$ openstack server create --image [cirros] --flavor [m1.mysmall] --security-group [default] --key-name [mykey] --nic net-id=[network_id] [instance1]
+    $ openstack server create --image [cirros] --flavor [m1.mysmall] --security-group [default] --key-name [mykey] --nic net-id=[network_id] [instance1]
     # 为虚拟机绑定 floating ip
-	$ openstack ip floating create [public]
-    $ openstack ip floating add [192.168.100.231] [instance1]
-	$ opesntack server stop [instance1]
-	```
+    $ openstack floating ip create [public]
+    $ openstack server add floating ip [instance1] [172.25.0.232]
+    $ opesntack server stop [instance1]
+    ```
 
 ### Nova Summary
 
@@ -510,7 +510,7 @@ $ vi /etc/nova/nova.conf
 
 1. glance 核心组件
     - glance-api: 和其他核心项目组件一样都一个管理接口
-    - glance-registry: 在 v2 版本, 提供存储镜像 metadata 与查找的服务, 在 v3 版本被 glance-api 取代 
+    - glance-registry: 在 v2 版本, 提供存储镜像 metadata 与查找的服务, 在 v3 版本被 glance-api 取代
 
     - ![](/img/glance1.png)
 
@@ -523,20 +523,20 @@ $ vi /etc/nova/nova.conf
 1. 从本地上传镜像
 
     ```console
-	$ openstack image create --file cirros—disk_x86_64.img  --container-format bare --disk-format qcow2 myimage
-	```
-	
+    $ openstack image create --file cirros—disk_x86_64.img  --container-format bare --disk-format qcow2 myimage
+    ```
+
 1. 更新镜像
 
     ```console
-	$ openstack image set --min-ram 8 myimage
-	```
+    $ openstack image set --min-ram 8 myimage
+    ```
 
 1. 删除镜像
 
     ```console
-	$ openstack image delete myimage
-	```
+    $ openstack image delete myimage
+    ```
 1. 创建快照
 
     ```console
@@ -573,9 +573,9 @@ $ vi /etc/nova/nova.conf
 ### 统⼀的存储解决⽅案 Ceph 的简介
 
 1. Ceph 作为 SDS 的解决方案已经是大家公认的做法了，当成本有限的时候 SDS 可以带来很好性能和成本之间的平衡, 一般我们的做法是将 glance、cinder 都集成到 ceph 当中
-    
+
     ![](/img/ceph1.png)
-    
+
     ![](/img/ceph2.png)
 
 ### 管理卷
@@ -594,24 +594,24 @@ $ vi /etc/nova/nova.conf
 1. 创建一个附加卷
 
     ```console
-	$ openstack volume create ——size 2 myvol
-	```
+    $ openstack volume create ——size 2 myvol
+    ```
 
 1. 创建一个启动卷, 这样一来虚拟机的root disk就在云盘上了，就不用担心因为计算节点的硬盘损坏带来的数据丢失的风险
 
     ```console
-	$ openstack volume create --size 2 --image [cirros] [myvol]
-	```
-	
+    $ openstack volume create --size 2 --image [cirros] [myvol]
+    ```
+
 1. 为虚拟机添加一附加卷
 
     ```console
     $ openstack server add volume [instance1] [vol1]
-	#注意! 虚拟机添加一新的磁盘并不会主动 mount
+    #注意! 虚拟机添加一新的磁盘并不会主动 mount
     $ mkfs.ext3 /dev/vdb
     $ mount /dev/vdb /mnt
     ```
-	
+
 1. 从虚拟机删除一附加卷
 
     ```console
@@ -621,24 +621,24 @@ $ vi /etc/nova/nova.conf
 1. 创建一个卷的备份
 
     ```console
-	$ openstack backup create --container [cinder-backup] --name [myvol_backup] [myvol]
-	```
+    $ openstack backup create --container [cinder-backup] --name [myvol_backup] [myvol]
+    ```
 1. 从备份中恢复
 
     ```console
-	$ openstack volume backup restore [myvol_backup] [myvol1]
-	```
+    $ openstack volume backup restore [myvol_backup] [myvol1]
+    ```
 1. 创建一卷的快照
 
     ```console
-	$ openstack volume snapshot create --volume [myvol] [myvol_snapshot]
-	```
-	
+    $ openstack volume snapshot create --volume [myvol] [myvol_snapshot]
+    ```
+
 1. 从快照中创建新卷
 
     ```console
-	$ openstack volume create --snapshot [myvol_ss] --size 2 [myvol2]
-	```
+    $ openstack volume create --snapshot [myvol_ss] --size 2 [myvol2]
+    ```
 ### cinder summary
 
 ![](/img/cinder2.png)
@@ -652,10 +652,10 @@ $ vi /etc/nova/nova.conf
 1. 透过 snapshot 做 rollback 和 rebuild
 
     ```console
-	$ openstack server image create --name my-snapshot --wait my-vm
+    $ openstack server image create --name my-snapshot --wait my-vm
     $ openstack image show --fit-width my-snapshot
-	$ openstack server rebuild --image my-snapshot my-vm
-	```
+    $ openstack server rebuild --image my-snapshot my-vm
+    ```
 
 ## Lesson 07 Neutron
 
@@ -672,9 +672,9 @@ $ vi /etc/nova/nova.conf
 1. OSI 架构介绍
 
     ![](/img/neutron1.png)
-	
+
     - 封包由上到下依序包装  由下到上依序解包
-	- 先解包最外层的封包
+    - 先解包最外层的封包
 1. 网络中的术语
     - tap: 虚拟的网络设备, 处理二层数据帧
     - tun: 虚拟的网络设备, 处理三层数据包
@@ -691,7 +691,7 @@ $ vi /etc/nova/nova.conf
     ![](/img/neutron2.png)
 
     ```console
-	# add the namespaces
+    # add the namespaces
     $ ip netns add ns1
     $ ip netns add ns2
     # create the veth pair
@@ -703,16 +703,16 @@ $ vi /etc/nova/nova.conf
     $ ip netns exec ns1 ip link set dev tap1 up
     $ ip netns exec ns2 ip link set dev tap2 up
     # now assign the ip addresses
-	$ ip netns exec ns1 ip addr add 192.168.0.2/24 dev tap1
-	$ ip netns exec ns2 ip addr add 192.168.0.3/24 dev tap2
-	# ping to each other
-	$ ip netns exec ns1 ping 192.168.0.3
-	```
+    $ ip netns exec ns1 ip addr add 192.168.0.2/24 dev tap1
+    $ ip netns exec ns2 ip addr add 192.168.0.3/24 dev tap2
+    # ping to each other
+    $ ip netns exec ns1 ping 192.168.0.3
+    ```
 
 1. 透过 linux bridge 创建两台虚机能互通的网络
 
     ![](/img/neutron3.png)
-	
+
     ```console
     $ ip netns add ns1
     $ ip netns add ns2
@@ -725,7 +725,7 @@ $ vi /etc/nova/nova.conf
     # create a port pair
     $ ip link add tap1 type veth peer name br-tap1
     # attach one side to linuxbridge
-    $ brctl addif br-test br-tap1 
+    $ brctl addif br-test br-tap1
     # attach the other side to namespace
     $ ip link set tap1 netns ns1
     # set the ports to up
@@ -742,16 +742,16 @@ $ vi /etc/nova/nova.conf
     $ ip netns exec ns2 ip link set dev tap2 up
     $ ip link set dev br-tap2 up
     # now assign the ip addresses
-	$ ip netns exec ns1 ip addr add 192.168.0.2/24 dev tap1
-	$ ip netns exec ns2 ip addr add 192.168.0.3/24 dev tap2
-	# ping to each other
-	$ ip netns exec ns1 ping 192.168.0.3
-	```
+    $ ip netns exec ns1 ip addr add 192.168.0.2/24 dev tap1
+    $ ip netns exec ns2 ip addr add 192.168.0.3/24 dev tap2
+    # ping to each other
+    $ ip netns exec ns1 ping 192.168.0.3
+    ```
 
 1. 透过 OVS Bridge 创建两台虚机能互通的网络
 
     ![](/img/neutron4.png)
-	
+
     ```console
     # add the namespaces
     $ ip netns add ns1
@@ -763,7 +763,7 @@ $ vi /etc/nova/nova.conf
     # create a port pair
     $ ip link add tap1 type veth peer name ovs-tap1
     # attach one side to ovs
-    $ ovs-vsctl add-port $BRIDGE ovs-tap1 
+    $ ovs-vsctl add-port $BRIDGE ovs-tap1
     # attach the other side to namespace
     $ ip link set tap1 netns ns1
     # set the ports to up
@@ -773,18 +773,18 @@ $ vi /etc/nova/nova.conf
     # create a port pair
     $ ip link add tap2 type veth peer name ovs-tap2
     # attach one side to ovs
-    $ ovs-vsctl add-port $BRIDGE ovs-tap2 
+    $ ovs-vsctl add-port $BRIDGE ovs-tap2
     # attach the other side to namespace
     $ ip link set tap2 netns ns2
     # set the ports to up
     $ ip netns exec ns2 ip link set dev tap2 up
     $ ip link set dev ovs-tap2 up
     # now assign the ip addresses
-	$ ip netns exec ns1 ip addr add 192.168.0.2/24 dev tap1
-	$ ip netns exec ns2 ip addr add 192.168.0.3/24 dev tap2
-	# ping to each other
-	$ ip netns exec ns1 ping 192.168.0.3
-	```
+    $ ip netns exec ns1 ip addr add 192.168.0.2/24 dev tap1
+    $ ip netns exec ns2 ip addr add 192.168.0.3/24 dev tap2
+    # ping to each other
+    $ ip netns exec ns1 ping 192.168.0.3
+    ```
 
 1. 透过 neutron 创建两台虚机能互通的网络
     - Neutron ML2.OVS_agent, L3_agent, dhcp_agent 疯了...
@@ -802,26 +802,26 @@ $ vi /etc/nova/nova.conf
     - neutron-l3-agent: 负责项目(租户)网络和 floating ip 之间的地址转换的服务，它通过 Linux iptables 的 SNAT、DNAT 来完成地址的双向转换
 
     - ![](/img/neutron6.png)
-	
+
 1. Plugin 和 Agents
     - Q: plugin 和 agents 是否是一对? 是的
     - A:  plugin 有分core plugin 和 service plugin, service_plugins = router, core_plugin = ml2
-	
-	- Q: 一个plugin 可管理多个agents? 看neutron.conf
-	- A:  dhcp_agents_per_network = 1 max_l3_agents_per_router = 3
-	
-	- Q: 一个plugin 可以支援多种不同的agents吗? 可以
+
+    - Q: 一个plugin 可管理多个agents? 看neutron.conf
+    - A:  dhcp_agents_per_network = 1 max_l3_agents_per_router = 3
+
+    - Q: 一个plugin 可以支援多种不同的agents吗? 可以
     - A: ml2
-	
+
 1. ml2 plugin 介绍
     - ML2 提供 neutron 异构部署的可能性, 可以在不同的节点部署不同的网络架构
-	- Type Driver: 决定逻辑网络类型
+    - Type Driver: 决定逻辑网络类型
     - Techanism Driver: 决定如何在 provider 实现网络类型的办法
-	
+
     - ![](/img/neutron7.png)
-	
-	```console
-	$ cat plugins/ml2/ml2_conf.init
+
+    ```console
+    $ cat plugins/ml2/ml2_conf.init
     [ml2]
     tenant_network_types = vxlan
     extension_drivers = port_security
@@ -844,7 +844,7 @@ $ vi /etc/nova/nova.conf
     bridge_mappings = public:br-ex
     tunnel_bridge = br-tun
     local_ip = 172.16.60.17
-	```
+    ```
 
 ### ⽣产环境中的实施⽅案
 
@@ -864,9 +864,9 @@ $ vi /etc/nova/nova.conf
     - namespace: 用来实现隔离的一套机制，不同 namespace 中的资源之间彼此不可见
 
     ![](/img/neutron10.png)
-	
+
     ![](/img/neutron11.png)
-	
+
     ![](/img/neutron12.png)
 
 ### Distributed Virtual Router
@@ -880,13 +880,13 @@ $ vi /etc/nova/nova.conf
 1. After
     - 把原本 Network node 的工作分散到了 Compute Node 上
     - 南北流量 Floating IP 可选择在计算节点上处理
-	- 东西流量不用可选择不用经过网路节点上
+    - 东西流量不用可选择不用经过网路节点上
     - 大幅降低网络节点工作量,提升性能,带宽与高容错率
 
     ![](/img/neutron9.png)
 
-    ```console 
-	cat /etc/neutron.conf
+    ```console
+    cat /etc/neutron.conf
         # System-wide flag to determine the type of router that tenants can create.
         # Only admin can override. (boolean value)
         router_distributed = true
@@ -901,22 +901,22 @@ $ vi /etc/nova/nova.conf
         agent_mode = dvr_snat
 
         cat L2_agent.ini
-        enable_distributed_routing = True 
-	```
+        enable_distributed_routing = True
+    ```
 
 ### ⽹络加速的技术 dpdk、sr-iov、TSN 的介绍
 
-1. DPDK 是什么? 
+1. DPDK 是什么?
 1. 为什么要整 DPDK? OVS had kernel overhead and kernel bottleneck
 
     ![](/img/neutron13.png)
-	
+
 1. 实现 DPDK 需满足以下
     - 需要特别网卡, 包含的驱动如: e1000, ixgbe i40e
     - 需要特别分配cpu，大页内存(Huge memory)，和 DPDK NIC 给 DPDK 使用
 
     ![](/img/neutron14.png)
-	
+
 1. sr-iov 是什么?
 1. 为什么要搞 sr-iov? Network controller is transparent to physical device
 
@@ -924,15 +924,15 @@ $ vi /etc/nova/nova.conf
 
 1. 实现 DPDK 需满足以下
     - 需要特别网卡, 包含的驱动如: e1000, ixgbe i40e
-	- 底层创建 PF 跟 VF
+    - 底层创建 PF 跟 VF
 1. TSN 是什么?
 1. 怎么又来了一个, 他能做什么? Time synchronization
 1. TSN标准 (IEEE 802.1 IEEE 1588)
     - 提高同步性能
-	- 数据帧抢占优先
-	- 提升规划的通信!!
-	- 无缝冗余(HSR)
-	- 高速通道带宽预留
+    - 数据帧抢占优先
+    - 提升规划的通信!!
+    - 无缝冗余(HSR)
+    - 高速通道带宽预留
 1. 示例
     - 边缘云跟边缘传感设备
     - p2p4l, phc2sys: LinuxPTP项目提供的时间同步工具
@@ -946,22 +946,22 @@ $ vi /etc/nova/nova.conf
 1. 创建外部网络
 
     ```console
-	$ openstack network create --enable --provider-network-type [flat]  --provider-physical-network [br-ex name] --project admin --external  [network-name]
-	```
-	
+    $ openstack network create --enable --provider-network-type [flat]  --provider-physical-network [br-ex name] --project admin --external  [network-name]
+    ```
+
 1. 创建外部网络的子网
 
     ```console
     $ openstack subnet create --subnet-range [192.168.100.0/24] --gateway [192.168.100.1] --dhcp --network [public] [pubsub]
-	```
+    ```
 
 1. 将租户网络和外部链接
 
-    ```console 
-	$ openstack router create [虚拟路由器名字]
-	$ neutron router-gateway-set [虚拟路由器名字] [外部网络的名称]
+    ```console
+    $ openstack router create [虚拟路由器名字]
+    $ neutron router-gateway-set [虚拟路由器名字] [外部网络的名称]
     $ neutron router-interface-add [虚拟路由器名字] [租户网络的名称]
-	```
+    ```
 
 ### 在虚拟环境中管理⽹络服务
 
@@ -1006,13 +1006,13 @@ $ vi /etc/nova/nova.conf
 
     ```console
     # 检查服务
-	$ systemctl list-units | grep -rn "devstack@*"
+    $ systemctl list-units | grep -rn "devstack@*"
 
-	# 重启 glance api 服务
-	$ systemctl restart "devstack@g-api"
+    # 重启 glance api 服务
+    $ systemctl restart "devstack@g-api"
 
     # 查看 glance api 状态
-	$ systemctl status "devstack@g-api"
+    $ systemctl status "devstack@g-api"
       devstack@g-api.service - Devstack devstack@g-api.service
        Loaded: loaded (/etc/systemd/system/devstack@g-api.service; enabled; vendor preset:
        Active: active (running) since Sat 2021-05-29 08:25:20 UTC; 2h 56min ago
@@ -1027,11 +1027,11 @@ $ vi /etc/nova/nova.conf
 1. 添加 plugin, 提供 swift 服务
 
     ```console
-	vi local.conf
+    vi local.conf
 
-	    ...
-	    [[local|localrc]]
-	    ...
+        ...
+        [[local|localrc]]
+        ...
         # Swift
         # -----
         SWIFT_HASH=66a3d6b56c1f479c8b4e70ab5c2000f5
@@ -1039,8 +1039,8 @@ $ vi /etc/nova/nova.conf
         SWIFT_DATA_DIR=$DEST/data
         enable_service s-proxy s-object s-container s-account
 
-	# 部署
-	$ ./stack.sh
+    # 部署
+    $ ./stack.sh
     ```
 
 ## Lesson 09 Swift
@@ -1090,20 +1090,20 @@ $ vi /etc/nova/nova.conf
 1. swift 创建 container
 
     ```console
-	$ openstack container create my_container
+    $ openstack container create my_container
     ```
 
 1. 上传下载一对象
 
     ```console
     $ openstack object create coa.txt
-	$ openstack object save coa.txt
+    $ openstack object save coa.txt
     ```
 
     ```console
-	$ swift -V 3  upload demo-container1 hello_swift.txt
+    $ swift -V 3  upload demo-container1 hello_swift.txt
     $ swift -V 3 list
-	$ swift -V 3 download demo-container1 Imback_swift.txt
+    $ swift -V 3 download demo-container1 Imback_swift.txt
     ```
 
 ### 管理到期的对象
@@ -1130,9 +1130,9 @@ $ vi /etc/nova/nova.conf
 1. heat 模版默认以 yaml 格式编辑
 
     - heat_template_version: 重要! 不仅告诉 Heat 模板的格式，还告诉 Heat 将被验证和支持的功能
-	- description: 可选, 功能描述
-	- parameters: 宣告变量, 可在 resources 模块使用
-	- resources: 宣告需要使用的资源
+    - description: 可选, 功能描述
+    - parameters: 宣告变量, 可在 resources 模块使用
+    - resources: 宣告需要使用的资源
 
 1. https://docs.openstack.org/heat/latest/template_guide/hot_spec.html
 
@@ -1144,7 +1144,7 @@ $ vi /etc/nova/nova.conf
 1. 使用 heat 模版创建 OpenStack 的资源
 
     ```console
-	$ vi cirros_heat_template.yaml
+    $ vi cirros_heat_template.yaml
 
       heat_template_version: 2018-08-31
 
@@ -1182,9 +1182,9 @@ $ vi /etc/nova/nova.conf
             networks:
               - port: { get_resource: instance_port }
 
-	# 透过 heat template 创建虚拟机
+    # 透过 heat template 创建虚拟机
 
-	$ openstack stack create -f yaml -t cirros_heat_template.yaml  teststack
+    $ openstack stack create -f yaml -t cirros_heat_template.yaml  teststack
       id: a5a78571-5f47-4d09-ac9a-5a547c8d0927
       stack_name: teststack
       description: create a cirros vm through heat template
