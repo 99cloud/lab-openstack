@@ -628,7 +628,7 @@ $ vi /etc/nova/nova.conf
 1. 从虚拟机删除一附加卷
 
     ```bash
-    openstack server remove volume [vol1] [instance1]
+    openstack server remove volume [instance1] [vol1]
     ```
 
 1. 创建一个卷的备份
