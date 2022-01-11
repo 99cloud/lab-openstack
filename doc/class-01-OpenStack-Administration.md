@@ -212,7 +212,7 @@ Openstack 以 Python 语法实现 IaaS 架构, 在各组件调度资源的过程
 1. 什么是目录服务？
     - 之前提到 OpenStack 有很多个核心组件组合而成的, 每个组件都有一个或多个管理接口, 每个管理接口提供服务都是以 web 服务的形式出现的, 那么他们都有一个服务的终点地址比如 keystone 的(http://ip:5000/v3), 我们怎么才能找到每个组件的终端呢？因为这些服务可以很方便的迁移到任何网络可达的物理服务器上, 所有这里我们要一个机制来集中管理服务的终点, 就像服务终点的路由器一样
 1. 什么是 tokenid ?
-    - 令牌, 由 keystone 认证后发放, 可以透过此令牌在其他 opesntack service 发出请求提供服务
+    - 令牌, 由 keystone 认证后发放, 可以透过此令牌在其他 openstack service 发出请求提供服务
     - 发放与使用流程
         - Client obtains token from the Keystone (by user password)
         - Client sends request to Nova API to launch VM instance
@@ -476,7 +476,7 @@ $ vi /etc/nova/nova.conf
     # 为虚拟机绑定 floating ip
     $ openstack floating ip create [public]
     $ openstack server add floating ip [instance1] [172.25.0.232]
-    $ opesntack server stop [instance1]
+    $ openstack server stop [instance1]
     ```
 
 ### Nova Summary
