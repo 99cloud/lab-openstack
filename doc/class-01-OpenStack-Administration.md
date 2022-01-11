@@ -378,7 +378,7 @@ $ vi /etc/nova/nova.conf
     - AggregateCoreFilter: 针对HostAggregate设置一个metadata(Key，Value)，比如设置cpu_allocation_ratio=10, 超过则该宿主机被过滤
     - SameHostFilter: 在指定虚拟机所在主机上分配虚拟机
 
-    ![](/img/virtual6.png)
+        ![](/img/virtual6.png)
 
 1. nova 核心组件
     - nova-api: 和其他核心项目组件一样都一个管理接口
