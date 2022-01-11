@@ -634,7 +634,7 @@ $ vi /etc/nova/nova.conf
 1. 创建一个卷的备份
 
     ```bash
-    openstack volume backup create --container [cinder-backup] --name [myvol_backup] [myvol]
+    openstack volume backup create --name [myvol_backup] [myvol]
     ```
 1. 从备份中恢复
 
