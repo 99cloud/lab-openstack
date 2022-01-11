@@ -599,51 +599,58 @@ $ vi /etc/nova/nova.conf
 
 1. 创建一个附加卷
 
-    ```console
-    $ openstack volume create ——size 2 myvol
+    ```bash
+    openstack volume create ——size 2 myvol
     ```
 
 1. 创建一个启动卷, 这样一来虚拟机的root disk就在云盘上了，就不用担心因为计算节点的硬盘损坏带来的数据丢失的风险
 
-    ```console
-    $ openstack volume create --size 2 --image [cirros] [myvol]
+    ```bash
+    openstack volume create --size 2 --image [cirros] [myvol]
     ```
 
 1. 为虚拟机添加一附加卷
 
-    ```console
-    $ openstack server add volume [instance1] [vol1]
-    #注意! 虚拟机添加一新的磁盘并不会主动 mount
-    $ mkfs.ext3 /dev/vdb
-    $ mount /dev/vdb /mnt
+    ```bash
+    openstack server add volume [instance1] [vol1]
+    ```
+
+    **注意! 虚拟机添加一新的磁盘并不会主动 mount**
+
+    **进入虚拟机操作**
+
+
+    ```bash
+    mkfs.ext3 /dev/vdb
+    mount /dev/vdb /mnt
     ```
 
 1. 从虚拟机删除一附加卷
 
-    ```console
-    $ openstack server remove  volume [vol1] [instance1]
+    ```bash
+    openstack server remove volume [vol1] [instance1]
     ```
 
 1. 创建一个卷的备份
 
-    ```console
-    $ openstack backup create --container [cinder-backup] --name [myvol_backup] [myvol]
+    ```bash
+    openstack volume backup create --container [cinder-backup] --name [myvol_backup] [myvol]
     ```
 1. 从备份中恢复
 
-    ```console
-    $ openstack volume backup restore [myvol_backup] [myvol1]
+    ```bash
+    openstack volume backup restore [myvol_backup] [myvol1]
     ```
 1. 创建一卷的快照
 
-    ```console
-    $ openstack volume snapshot create --volume [myvol] [myvol_snapshot]
+    ```bash
+    openstack volume snapshot create --volume [myvol] [myvol_snapshot]
     ```
 
 1. 从快照中创建新卷
 
-    ```console
-    $ openstack volume create --snapshot [myvol_ss] --size 2 [myvol2]
+    ```bash
+    openstack volume create --snapshot [myvol_ss] --size 2 [myvol2]
     ```
 ### cinder summary
 
