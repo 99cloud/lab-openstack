@@ -621,8 +621,8 @@ $ vi /etc/nova/nova.conf
 
 
     ```bash
-    mkfs.ext3 /dev/vdb
-    mount /dev/vdb /mnt
+    sudo mkfs.ext3 /dev/vdb
+    sudo mount /dev/vdb /mnt
     ```
 
 1. 从虚拟机删除一附加卷
