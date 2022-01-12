@@ -1159,41 +1159,41 @@ $ vi /etc/nova/nova.conf
     ```console
     $ vi cirros_heat_template.yaml
 
-      heat_template_version: 2018-08-31
+    heat_template_version: 2018-08-31
 
-      description: create a cirros vm through heat template
+    description: create a cirros vm through heat template
 
-      parameters:
-        key_name:
-          type: string
-          description: Enable SSH access to instance
-          default: heat_key
-        instance_type:
-          type: string
-          description: Instance type for WordPress server
-          default: m1.tiny
-        image_id:
-          type: string
-          description: cirros cloud image
-          default: cirros-0.5.1-x86_64-disk
+    parameters:
+      key_name:
+        type: string
+        description: Enable SSH access to instance
+        default: heat_key
+      instance_type:
+        type: string
+        description: Instance type for WordPress server
+        default: m1.tiny
+      image_id:
+        type: string
+        description: cirros cloud image
+        default: cirros-0.5.1-x86_64-disk
 
-      resources:
-        instance_port:
-          type: OS::Neutron::Port
-          properties:
-            network: public
-            security_groups:
-              - default
-            fixed_ips:
-              - subnet_id: subnet_heat
-        cirros_instance:
-          type: OS::Nova::Server
-          properties:
-            image: { get_param: image_id }
-            flavor: { get_param: instance_type }
-            key_name: { get_param: key_name }
-            networks:
-              - port: { get_resource: instance_port }
+    resources:
+      instance_port:
+        type: OS::Neutron::Port
+        properties:
+          network: public
+          security_groups:
+            - default
+          fixed_ips:
+            - subnet_id: public-subnet
+      cirros_instance:
+        type: OS::Nova::Server
+        properties:
+          image: { get_param: image_id }
+          flavor: { get_param: instance_type }
+          key_name: { get_param: key_name }
+          networks:
+            - port: { get_resource: instance_port }
 
     # 透过 heat template 创建虚拟机
 
