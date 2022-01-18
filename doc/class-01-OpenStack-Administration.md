@@ -18,62 +18,57 @@
 | 第 1 天 | 上午 | [1. 实验环境](#1-实验环境) | [实验环境介绍](#1-实验环境) |
 | | | [2. OpenStack 概述](#2-openstack-概述) | [2.1 虚拟化与云计算](#21-虚拟化与云计算) |
 | | | | [2.2 OpenStack 组件架构](#22-openstack-组件架构) |
-| | | | [云计算的技术发展趋势是怎样的？]() |
-| | | | [OpenStack 的参考资料有哪些？]() |
-| | | [Lesson 02：管理身份认证服务 - Keystone](#) | [Keystone 的概念空间中有哪些对象？](#) |
-| | | | [Keystone 能提供哪些服务？]() |
-| | 下午 | [Lesson 03：管理看板服务 - Horizon]() | [如何通过 Dashboard 来管理 OpenStack 平台？](#) |
-| | | | [如何配置 Horizon 来⽀持多 Domain 登录？](#) |
-| | | [Lesson 04：管理计算服务 - Nova](#) | [理解虚拟化](#) |
-| | | | [学习规划硬件计算资源（ 算你需要买多少服务器 ）](#) |
-| | | | [管理 flavor](#) |
-| | | | [管理 compute instance（ 如启动、关闭、终⽌ ）](#) |
-| | | | [管理Nova⽤户密钥对（ keypair ）](#) |
-| | | | [启动⼀个新实例](#) |
-| | | | [关闭⼀个实例](#) |
-| | | | [终⽌实例](#) |
-| | | | [配置⼀个拥有 floating IP 的实例]() |
-| | | | [管理项⽬的安全组规则]() |
-| | | | [分配安全组给实例]() |
-| | | | [分配 floating IP 给实例]() |
-| | | | [从实例上分离 floating IP]() |
-| 第 2 天 | 上午 | | [理解虚拟机从镜像启动和从云盘启动的区别](#) |
-| | | | [nova 管理虚拟机的静态数据的位置](#) |
-| | | | [devstack 服务的管理](#) |
-| | | [Lesson 05：管理镜像服务 - Glance](#) | [理解 OpenStack 中使⽤的镜像](#) |
-| | | | [上传⼀个镜像](#) |
-| | | | [管理镜像类型和后端](#) |
-| | | | [管理镜像（ 如添加、更新、移除 ）](#) |
-| | 下午 | [Lesson 06：管理块存储 - Cinder]() | [理解 Cinder 的作⽤](#) |
-| | | | [统⼀的存储解决⽅案 Ceph 的简介](#) |
-| | | | [管理卷](#) |
-| | | | [创建块存储的卷组](#) |
-| | | | [创建⼀个新的卷并将其安装到 Nova 实例上](#) |
-| | | | [管理配额](#) |
-| | | | [管理卷的配额](#) |
-| | | | [管理卷的备份](#) |
-| | | | [备份和恢复卷](#) |
-| | | [Lesson 07：管理对象存储 - Swift](#) | [理解 Swift 的使⽤场景](#) |
-| | | | [Ring 的设计简介](#) |
-| | | | [管理对象存储的](#) |
-| | | | [管理到期的对象](#) |
-| | | [Lesson 08：管理⽹络服务 - Neutron](#) | [理解 Neutron 的作⽤](#) |
-| | | | [⽣产环境中的实施⽅案](#) |
-| | | | [⽹络加速的技术 dpdk、sr-iov 的介绍](#) |
-| | | | [理解节点的内部⽹络的实现](#) |
-| | | | [管理⽹络资源（ 如路由、⼦⽹ ）](#) |
-| | | | [创建外部⽹络](#) |
-| | | | [创建路由](#) |
-| | | | [在虚拟环境中管理⽹络服务](#) |
-| | | | [管理安全组规则](#) |
-| 第 3 天 | 上午 | [Lesson 09：编排服务 - Heat](#) | [Heat 的模版中的讲解](#) |
-| | | | [通过⼀个模版创建 OpenStack 的资源](#) |
-| | | | [更新⼀个模版](#) |
-| | | | [创建互相依赖 yaml 模版]() |
-| | 下午 | [Lesson 10：模拟管理员练习题]() | [模拟题讲解](#) |
-| | | | [模拟题练习]() |
+| | | | [2.3 云计算的发展趋势](#23-云计算的发展趋势) |
+| | | | [2.4 OpenStack 的通用概念](#24-OpenStack-的通用概念) |
+| | | [Lesson 02：管理身份认证服务 - Keystone](#) | [3.1 Keystone 模块概况](#31-Keystone-模块概况) |
+| | | | [3.2 Keystone 的基本概念有哪些？](#32-Keystone-的基本概念有哪些？) |
+| | | | [3.3 Keystone 各功能的实现机理是怎样的？](#33-Keystone-各功能的实现机理是怎样的？) |
+| | 下午 | [Lesson 03：管理看板服务 - Horizon](#4-Horizon) | [4.1 Horizon 基本概念](#41-Horizon-基本概念) |
+| | | | [4.2 Horizon 基本功能](#42-Horizon-基本功能) |
+| | | | [4.3 通过 Horizion 创建一台虚拟机](#43-通过-Horizion-创建一台虚拟机) |
+| | | | [4.4 其它操作](#44-其它操作) |
+| | | [Lesson 04：管理计算服务 - Nova](#5-Nova) | [5.1 理解虚拟化](#51-理解虚拟化) |
+| | | | [5.2 介绍硬件加速虚拟化 KVM](#52-介绍硬件加速虚拟化-KVM) |
+| | | | [5.3 Nova 基本概念](#53-Nova-基本概念) |
+| | | | [5.4 Nova 的基本功能](#53-Nova-基本功能) |
+| | | | [5.5 Nova 小结](#53-Nova-小结) |
+| 第 2 天 | 上午 |  [Lesson 05：管理镜像服务 - Glance](#6-Glance) | [6.1 理解 OpenStack 中使⽤的镜像](#61-理解-OpenStack-中使⽤的镜像) |
+| | | | [6.2 Glance 基本概念](#62-Glance-基本概念) |
+| | | | [6.3 Glance 小结](#62-Glance-小结) |
+| | | | [6.4 Glance 基本功能](#62-Glance-基本功能) |
+| | 下午 | [Lesson 06：管理块存储 - Cinder](#7-Cinder) | [7.1理解 Cinder 的作⽤](#71理解-Cinder-的作⽤) |
+| | | | [7.2 Cinder 基本概念](#72-Cinder-基本概念) |
+| | | | [7.3 统⼀的存储解决⽅案 Ceph 的简介](#73-统⼀的存储解决⽅案-Ceph-的简介) |
+| | | | [7.4 管理卷](#74-管理卷) |
+| | | | [7.5 Cinder 基本功能](#75-Cinder-基本功能) |
+| | | | [7.6 Cinder 小结](#76-Cinder-小结) |
+| | | | [7.7 备份与快照的差别](#77-备份与快照的差别) |
+| | | [Lesson 07：管理⽹络服务 - Neutron](#8-Neutron) | [8.1理解 Neutron 的作⽤](#81理解-Neutron-的作⽤) |
+| | | | [8.2 网络概念](#82-网络概念) |
+| | | | [8.3 Neutron 基本概念](#83-Neutron-基本概念) |
+| | | | [8.4 ⽣产环境中的实施⽅案](#84-⽣产环境中的实施⽅案) |
+| | | | [8.5 理解节点的内部⽹络的实现](#85-理解节点的内部⽹络的实现) |
+| | | | [8.6 [可选] Distributed Virtual Router](#86-可选-distributed-virtual-router) |
+| | | | [8.7 [可选] ⽹络加速的技术 dpdk、sr-iov、TSN 的介绍](#87-可选-络加速的技术-dpdksr-iovtsn-的介绍) |
+| | | | [8.8 Neutron 基本功能](#88-Neutron-基本功能) |
+| | | | [8.9管理安全组规则](#89-管理安全组规则) |
+| 第 3 天 | 上午 | [Lesson 08：编排服务 -  devstack 服务的管理](#9-devstack-服务的管理) | [9.1 理解 devstack 的作⽤](#91-理解-devstack-的作⽤) |
+| | | | [9.2 Devstack 基本概念](#92-Devstack-基本概念) |
+| | | | [9.3 Devstack 基本功能](#93-Devstack-基本功能) |
+| | | | [9.4 Debug Cinder](94-Debug-Cinder) |
+| | 下午 | [Lesson 10：Swift](#10-Swift) | [10.1 理解 Swift 的使⽤场景](#101-理解-Swift-的使⽤场景) |
+| | | | [10.3 Swift 基本功能](#103-Swift-基本功能) |
+| | | | [10.4 [可选] 管理到期的对象](#104-可选-管理到期的对象) |
+| | | [Lesson 11：编排服务 - Heat](#11-Heat) | [11.1 Heat 的模版中的讲解](#)111-Heat-的模版中的讲解 |
+| | | | [11.2 Heat 基本概念](#112-Heat-基本概念) |
+| | | | [11.3 Heat 基本功能](#113-Heat-基本功能) |
+| | | | [11.4 其它](#114-其它) |
+| | | [Lesson 12：Quiz](#12-Quiz) | [模拟题讲解](#模拟题讲解) |
+| | | | [模拟题练习](#模拟题练习) |
 
 ## 1. 实验环境
+
+[Catalog](#catalog)
 
 - [实验环境访问方式](/src/ansible-cloudlab-centos/README.md)
 - [可选] [如何自己动手搭建 DevStack 实验环境？](devstack-aio.md)
@@ -84,9 +79,11 @@
 
 ### 2.1 虚拟化与云计算
 
+[Catalog](#catalog)
+
 1. 什么是虚拟化？虚拟化的发展历程如何？
     - 60-70 IBM
-    - 80-90 VMWare
+    - 80-90 VMWares
     - 2005-2010 Amazon
     - 2010 NASA Nebula & RackSpace Cloud Storage
 1. 计算的发展历经了哪些阶段？
@@ -105,6 +102,8 @@
     - OpenStack 是一个开源的云平台, 他属于云计算当中我们常说的 IaaS(infrastructure as a service), 简单的讲他是来管理我们的硬件设施的, 我们在我们的设备上部署 Linux 与 OpenStack, 然后由 OpenStack 来帮助我们决定哪些虚拟机应该启动在哪些物理的计算节点上
 
 ### 2.2 OpenStack 组件架构
+
+[Catalog](#catalog)
 
 1. OpenStack 的核心项目有哪些？Keystone / Nova / Glance / Cinder / Neutron
 
@@ -133,6 +132,8 @@
 
 ### 2.3 云计算的发展趋势
 
+[Catalog](#catalog)
+
 1. 私有云、公有云、混合云的发展趋势如何？AWS / Azure / Aliyun / Huawei
 1. IaaS & CaaS 谁会是未来的主流？
     - VM、容器、裸机的编排需求长期共存
@@ -145,6 +146,8 @@
     - 软件定义网络：SDN -- Neutron Server，控制转发分离 集中控制 虚拟化
 
 ### 2.4 OpenStack 的通用概念
+
+[Catalog](#catalog)
 
 1. 官方文档在哪里？
 1. 有哪些推荐的入门书？《每天五分钟玩转 OpenStack》，《OpenStack 设计与实现》
@@ -193,6 +196,8 @@ Openstack 以 Python 语法实现 IaaS 架构, 在各组件调度资源的过程
 
 ### 3.1 Keystone 模块概况
 
+[Catalog](#catalog)
+
 1. keystone 在 openstack 扮演什么角色
     - **认证**：用户的身份认证服务包括组件和组件之间的身份认证
     - **鉴权**：提供 RBAC（Role Based Access Control） 权限体系
@@ -200,7 +205,9 @@ Openstack 以 Python 语法实现 IaaS 架构, 在各组件调度资源的过程
 1. 参考官方文件
     - <https://docs.openstack.org/keystone/latest/>
 
-### 3.2 Keystone 的基本概念有哪些？
+### 3.2 Keystone 的基本概念有哪些？、
+
+[Catalog](#catalog)
 
 1. 什么是 User / Group / Project / Tenant / domain？
     - User: 最基本的用户, 一个通常意义上的账号有用户名和密码还有一些相关的比如邮件等信息, 在 OpenStack 中只是创建一个用户是不可以使用 OpenStack 中的资源的
@@ -231,6 +238,8 @@ Openstack 以 Python 语法实现 IaaS 架构, 在各组件调度资源的过程
     ![](/img/api3flow.png)
 
 ### 3.3 Keystone 各功能的实现机理是怎样的？
+
+[Catalog](#catalog)
 
 1. Keystone 怎么处理服务注册和服务发现？
     - 练习: 如何添加一个新的服务终端?
@@ -289,11 +298,15 @@ Openstack 以 Python 语法实现 IaaS 架构, 在各组件调度资源的过程
 
 ### 4.1 Horizon 基本概念
 
+[Catalog](#catalog)
+
 Horizon 为 OpenStack 提供了界面管理服务, 让 OpenStack 管理员和用户都能来通过界面的方式来管理 OpenStack, 而不是纯粹的命令行管理, 因为一般用户很难接受使用命令行的方式来使用和管理他们在 OpenStack 中创建的资源
 
 一般 Horizon 会安装在 OpenStack 的控制器上面, 我们只需要打开浏览器输入 http://controllerip/dashboard 即可访问你的的 Horizon 的界面。
 
 ### 4.2 Horizon 基本功能
+
+[Catalog](#catalog)
 
 - Django 是 python 的开源的做 web 技术, 基于mvc框架 (model、view、controller) 的 web framework。
 - AngulaJS 前端 javascript 脚本, 是谷歌研发的, 为了在浏览器端来提高用户互动体验的一套 javascript 框架。
@@ -302,6 +315,8 @@ Horizon 为 OpenStack 提供了界面管理服务, 让 OpenStack 管理员和用
 - [可选] 配置 Horizon 来⽀持多 Domain 登录
 
 ### 4.3 通过 Horizion 创建一台虚拟机
+
+[Catalog](#catalog)
 
 - 管理 flavor
 - 管理 Nova ⽤户密钥对（ keypair ）
@@ -314,6 +329,8 @@ Horizon 为 OpenStack 提供了界面管理服务, 让 OpenStack 管理员和用
 - 从实例上分离 floating IP
 
 ### 4.4 其它操作
+
+[Catalog](#catalog)
 
 - 管理 compute instance（ 如启动、关闭、终⽌ ）
 - nova 管理虚拟机的静态数据的位置
@@ -347,6 +364,8 @@ Horizon 为 OpenStack 提供了界面管理服务, 让 OpenStack 管理员和用
 
 ### 5.2 介绍硬件加速虚拟化 KVM
 
+[Catalog](#catalog)
+
 - kvm: kernel virtual machine 他属于硬件加速的虚拟化，他依赖于 cpu 的虚拟化功能 intel—vt 或者 amd—v 等技术, 可以对 NUMA 的框架的 CPU 做定制的调优
 - qemu-kvm: 帮助 kvm 进行 io 模拟的虚拟机监控器，主要负责模拟 io(input/output)
 
@@ -357,6 +376,8 @@ Horizon 为 OpenStack 提供了界面管理服务, 让 OpenStack 管理员和用
     ![](/img/virtual4.png)
 
 ### 5.3 Nova 基本概念
+
+[Catalog](#catalog)
 
 1. 我们回到 nova，之前提到 openstack 使用的 hypervisor 是用 kvm , 除此之外还可以支持其他的 hypervisor 比如 virtual box、vmware、xen、qemu 当我们的计算的节点的 cpu 不支持硬件加速的时候我们可以使用 qemu 来代替
 
@@ -387,6 +408,8 @@ Horizon 为 OpenStack 提供了界面管理服务, 让 OpenStack 管理员和用
     ![](/img/virtual8.png)
 
 ### 5.4 Nova 的基本功能
+
+[Catalog](#catalog)
 
 1. nova 计算资源池的划分方式
 
@@ -476,6 +499,8 @@ Horizon 为 OpenStack 提供了界面管理服务, 让 OpenStack 管理员和用
 
 ### 5.5 Nova 小结
 
+[Catalog](#catalog)
+
 ![](/img/virtual9.png)
 
 - [可选] 学习规划硬件计算资源（算你需要买多少服务器）
@@ -486,9 +511,13 @@ Horizon 为 OpenStack 提供了界面管理服务, 让 OpenStack 管理员和用
 
 ### 6.1 理解 OpenStack 中使⽤的镜像
 
+[Catalog](#catalog)
+
 1. glance 是为 nova 提供镜像服务，以便成功的启动实例，这些镜像是预建的，一般都会预装 cloud-init 的组件，你可以访问 <https://docs.openstack.org/image-guide/obtain-images.html> 来获得更多镜像，默认 glance 会把镜像都放在本地文件系统/var/lib/glance/images/，默认 glance 会把镜像存放在本地文件夹中，当然这样就没有高可用性了，所以 glance 支持对存储后端的配置，我们可以将存储的后台改为 ceph、swift 甚至 aws 的 s3
 
 ### 6.2 Glance 基本概念
+
+[Catalog](#catalog)
 
 1. 镜像是一个物件存储
 1. 镜像格式
@@ -509,9 +538,13 @@ Horizon 为 OpenStack 提供了界面管理服务, 让 OpenStack 管理员和用
 
 ### 6.3 Glance 小结
 
+[Catalog](#catalog)
+
 - ![](/img/glance2.png)
 
 ### 6.4 Glance 基本功能
+
+[Catalog](#catalog)
 
 1. 从 OpenStack 下载镜像
 
@@ -548,9 +581,13 @@ Horizon 为 OpenStack 提供了界面管理服务, 让 OpenStack 管理员和用
 
 ### 7.1 理解 Cinder 的作⽤
 
+[Catalog](#catalog)
+
 1. Cinder 为 OpenStack 提供磁盘的服务，当然在 openstack 最小化安装中，您可以选择不安装 cinder，所有的虚拟机的磁盘的数据都会写入到这个虚拟机所启动在的计算节点上的本地磁盘中，就像你使用 kvm 启动一个虚拟机一样有一个虚拟机磁盘文件。但是这样会面临数据丢失的风险，如果这个计算节点上的硬盘坏掉了，那么这个虚拟机的数据就完全丢失了，显然在生产环境中这种情况是非常致命的，所以我们需要 san 的机制将虚拟机的磁盘和计算节点分离开，这样既安全又方便迁移，存储设备很多所以 cinder 需要支持各种存储设备的文件系统. 类似 AWS 的 EBS
 
 ### 7.2 Cinder 基本概念
+
+[Catalog](#catalog)
 
 1. cinder 为虚拟机提供管理块存储服务
 1. cinder 所支持的存储的文件系统
@@ -571,6 +608,8 @@ Horizon 为 OpenStack 提供了界面管理服务, 让 OpenStack 管理员和用
 
 ### 7.3 统⼀的存储解决⽅案 Ceph 的简介
 
+[Catalog](#catalog)
+
 1. Ceph 作为 SDS 的解决方案已经是大家公认的做法了，当成本有限的时候 SDS 可以带来很好性能和成本之间的平衡, 一般我们的做法是将 glance、cinder 都集成到 ceph 当中
 
     ![](/img/ceph1.png)
@@ -578,6 +617,8 @@ Horizon 为 OpenStack 提供了界面管理服务, 让 OpenStack 管理员和用
     ![](/img/ceph2.png)
 
 ### 7.4 管理卷
+
+[Catalog](#catalog)
 
 1. cinder-volume 可以类比 nova-compute，运行在存储节点（ 定期主动上报容量 ）。cinder-api 运行在控制节点。cinder-schedule（ 默认用空闲容量计算权重 ）类比 nova-schedule（ 默认用空闲内存计算权重 ）。
 1. cinder-provider（ 类比 hypervisor ）是独立的，cinder-volume 通过 driver（ 使用哪个 provider 通过 cinder.conf 确定 ） 和 provider 通信。如果有两个 provider，就需要两个不同的 cinder-volume。
@@ -589,6 +630,8 @@ Horizon 为 OpenStack 提供了界面管理服务, 让 OpenStack 管理员和用
 1. NFS provider 里，volume 就是文件
 
 ### 7.5 Cinder 基本功能
+
+[Catalog](#catalog)
 
 1. 创建一个附加卷
 
@@ -647,9 +690,13 @@ Horizon 为 OpenStack 提供了界面管理服务, 让 OpenStack 管理员和用
     ```
 ### 7.6 Cinder 小结
 
+[Catalog](#catalog)
+
 ![](/img/cinder2.png)
 
 ### 7.7 备份与快照的差别
+
+[Catalog](#catalog)
 
 1. qcow2 快照 copy-on-write
 
@@ -669,11 +716,15 @@ Horizon 为 OpenStack 提供了界面管理服务, 让 OpenStack 管理员和用
 
 ### 8.1 理解 Neutron 的作⽤
 
+[Catalog](#catalog)
+
 1. 一个优秀的 SDN 落地方案
 
 1. neutron 是 OpenStack 项目中负责提供网络服务的组件，它基于软件定义网络的思想，实现了网络虚拟化下的资源管理，在实现上充分利用了 Linux 系统上的各种网络相关的技术, 并支持很多第三方的插件
 
 ### 8.2 网络概念
+
+[Catalog](#catalog)
 
 1. OSI 架构介绍
 
@@ -799,6 +850,8 @@ Horizon 为 OpenStack 提供了界面管理服务, 让 OpenStack 管理员和用
 
 ### 8.3 Neutron 基本概念
 
+[Catalog](#catalog)
+
 1. neutron 核心组件
     - neutron-server: 提供 API 接口，并把对 API 的调用请求传给已经配置好的插件进行后续处理. 插件需要访问数据库来维护各种配置数据和对应关系，例如路由器、网络、子网、端口、floating ip、安全组等等
     - (neutron-)plugin: 维护逻辑网络状态, 调用 agent, 处理 sever 请求
@@ -854,9 +907,13 @@ Horizon 为 OpenStack 提供了界面管理服务, 让 OpenStack 管理员和用
 
 ### 8.4 ⽣产环境中的实施⽅案
 
+[Catalog](#catalog)
+
 1. Linux Bridge 支持 vlan & vxlan
 
 ### 8.5 理解节点的内部⽹络的实现
+
+[Catalog](#catalog)
 
 1. neutron 术语
     - br-int: 综合网桥当我们使用 ovs 的时候，ovs 会根据配置文件创建一个综合网桥，目的是把虚拟机的流量引向这座综合网桥
@@ -876,6 +933,8 @@ Horizon 为 OpenStack 提供了界面管理服务, 让 OpenStack 管理员和用
     ![](/img/neutron12.png)
 
 ### 8.6 [可选] Distributed Virtual Router
+
+[Catalog](#catalog)
 
 1. Before
     - Neutron Routing: Neutron Server 透过 Linux IP Stack 和 iptables 執行 L3 轉發和 NAT Neutron Server 与 Network Node交互实现 高可用性
@@ -911,6 +970,8 @@ Horizon 为 OpenStack 提供了界面管理服务, 让 OpenStack 管理员和用
     ```
 
 ### 8.7 [可选] ⽹络加速的技术 dpdk、sr-iov、TSN 的介绍
+
+[Catalog](#catalog)
 
 1. DPDK 是什么?
 1. 为什么要整 DPDK? OVS had kernel overhead and kernel bottleneck
@@ -949,6 +1010,8 @@ Horizon 为 OpenStack 提供了界面管理服务, 让 OpenStack 管理员和用
 
 ### 8.8 Neutron 基本功能
 
+[Catalog](#catalog)
+
 1. 创建外部网络
 
     ```console
@@ -971,6 +1034,8 @@ Horizon 为 OpenStack 提供了界面管理服务, 让 OpenStack 管理员和用
 
 ### 8.9 管理安全组规则
 
+[Catalog](#catalog)
+
 ## 9. devstack 服务的管理
 
 [Catalog](#catalog)
@@ -980,15 +1045,21 @@ Horizon 为 OpenStack 提供了界面管理服务, 让 OpenStack 管理员和用
 
 ### 9.1 理解 devstack 的作⽤
 
+[Catalog](#catalog)
+
 1. DevStack 是一系列可扩展的脚本，用于基于 git master 的最新版本快速调出完整的 OpenStack 环境。它以交互方式用作开发环境和 OpenStack 项目大部分功能测试的基础。
 
 ### 9.2 Devstack 基本概念
+
+[Catalog](#catalog)
 
 1. devstack 透过执行 stack.sh 脚本, 搭建 openstack 环境, 依据 local.conf 参数, 决定提供哪些服务
 1. 使用 systemd 来管理 devstack 部署的 OpenStack
 1. DevStack 插件。支持额外的 Openstack 服务, 以插件接口的概念, 扩展 openstack 服务
 
 ### 9.3 Devstack 基本功能
+
+[Catalog](#catalog)
 
 1. 重启 glance api 服务
 
@@ -1033,6 +1104,8 @@ Horizon 为 OpenStack 提供了界面管理服务, 让 OpenStack 管理员和用
 
 ### 9.4 Debug Cinder
 
+[Catalog](#catalog)
+
 1. 场景：创建一个 port，固定 IP & MAC，MAC 11:22:33:44:55:66，创建 VM，指定这个 Port，会报错。
 
     ```bash
@@ -1051,10 +1124,14 @@ Horizon 为 OpenStack 提供了界面管理服务, 让 OpenStack 管理员和用
 
 ### 10.1 理解 Swift 的使⽤场景
 
+[Catalog](#catalog)
+
 1. Swift 为 Openstack 提供对象存储，透过调用 API 实现存储和检索大量数据。 Swift 将数据存储为二进制对象。像 AWS S3。
 
 
 ### 10.2 Swift 基本概念
+
+[Catalog](#catalog)
 
 1. swift 核心组件
     - Proxy service: 一个管理接口, 处理 REST API 请求
@@ -1072,6 +1149,8 @@ Horizon 为 OpenStack 提供了界面管理服务, 让 OpenStack 管理员和用
     ![](/img/swift3.png)
 
 ### 10.3 Swift 基本功能
+
+[Catalog](#catalog)
 
 1. 查询 swift 状态
 
@@ -1110,6 +1189,8 @@ Horizon 为 OpenStack 提供了界面管理服务, 让 OpenStack 管理员和用
 
 ### 10.4 [可选] 管理到期的对象
 
+[Catalog](#catalog)
+
 
 ## 11. Heat
 
@@ -1117,9 +1198,13 @@ Horizon 为 OpenStack 提供了界面管理服务, 让 OpenStack 管理员和用
 
 ### 11.1 Heat 的模版中的讲解
 
+[Catalog](#catalog)
+
 1. heat 是 OpenStack 核心组件中的一个，它可以实现自动的在我们的 OpenStack 环境中创建资源，比如虚拟机、网络、虚拟路由、安全等资源，也是很多 OpenStack 周边的项目需要依赖的项目，比如 Tacker 等等
 
 ### 11.2 Heat 基本概念
+
+[Catalog](#catalog)
 
 1. heat 核心组件
 
@@ -1142,6 +1227,8 @@ Horizon 为 OpenStack 提供了界面管理服务, 让 OpenStack 管理员和用
 
 
 ### 11.3 Heat 基本功能
+
+[Catalog](#catalog)
 
 1. 使用 heat 模版创建 OpenStack 的资源
 
@@ -1239,6 +1326,8 @@ Horizon 为 OpenStack 提供了界面管理服务, 让 OpenStack 管理员和用
 
 ### 11.4 其它
 
+[Catalog](#catalog)
+
 - 更新⼀个模版
 - 创建互相依赖 yaml 模版
 
@@ -1248,4 +1337,8 @@ Horizon 为 OpenStack 提供了界面管理服务, 让 OpenStack 管理员和用
 
 ### 模拟题讲解
 
+[Catalog](#catalog)
+
 ### 模拟题练习
+
+[Catalog](#catalog)

@@ -4,7 +4,7 @@
 
 | Date | Time | Title | Content |
 | ---- | ---- | ----- | ------- |
-| 第 1 天 | 上午 | [1. CI/CD](#1-cicd-相关) | [1.1 OpenStack 基础和质量保证体系](#11-openstack-基础和质量保证体系) |
+| 第 1 天 | 上午 | [1. CI/CD](#1-ci/cd-相关) | [1.1 OpenStack 基础和质量保证体系](#11-openstack-基础和质量保证体系) |
 | | | 从 IDE 到代码仓库 | [1.2 Redmine：非明确，不开始](#12-redmine) |
 | | | | [1.3 Gitlab：万物皆要版本控制](#13-gitlab) |
 | | | | [1.4 Gerrit：Review 是工程也是艺术](#14-gerrit) |
