@@ -20,50 +20,51 @@
 | | | | [2.2 OpenStack 组件架构](#22-openstack-组件架构) |
 | | | | [2.3 云计算的发展趋势](#23-云计算的发展趋势) |
 | | | | [2.4 OpenStack 的通用概念](#24-OpenStack-的通用概念) |
-| | | [Lesson 02：管理身份认证服务 - Keystone](#) | [3.1 Keystone 模块概况](#31-Keystone-模块概况) |
-| | | | [3.2 Keystone 的基本概念有哪些？](#32-Keystone-的基本概念有哪些？) |
-| | | | [3.3 Keystone 各功能的实现机理是怎样的？](#33-Keystone-各功能的实现机理是怎样的？) |
-| | 下午 | [Lesson 03：管理看板服务 - Horizon](#4-Horizon) | [4.1 Horizon 基本概念](#41-Horizon-基本概念) |
-| | | | [4.2 Horizon 基本功能](#42-Horizon-基本功能) |
-| | | | [4.3 通过 Horizion 创建一台虚拟机](#43-通过-Horizion-创建一台虚拟机) |
+| | | [Lesson 02：管理身份认证服务 - Keystone](#3-keystone) | [3.1 Keystone 模块概况](#31-Keystone-模块概况) |
+| | | | [3.2 Keystone 的基本概念有哪些？](#32-keystone-的基本概念有哪些) |
+| | | | [3.3 Keystone 各功能的实现机理是怎样的？](#33-keystone-各功能的实现机理是怎样的) |
+| | 下午 | [Lesson 03：管理看板服务 - Horizon](#4-horizon) | [4.1 Horizon 基本概念](#41-horizon-基本概念) |
+| | | | [4.2 Horizon 基本功能](#42-horizon-基本功能) |
+| | | | [4.3 通过 Horizion 创建一台虚拟机](#43-通过-horizion-创建一台虚拟机) |
 | | | | [4.4 其它操作](#44-其它操作) |
-| | | [Lesson 04：管理计算服务 - Nova](#5-Nova) | [5.1 理解虚拟化](#51-理解虚拟化) |
-| | | | [5.2 介绍硬件加速虚拟化 KVM](#52-介绍硬件加速虚拟化-KVM) |
-| | | | [5.3 Nova 基本概念](#53-Nova-基本概念) |
-| | | | [5.4 Nova 的基本功能](#53-Nova-基本功能) |
-| | | | [5.5 Nova 小结](#53-Nova-小结) |
-| 第 2 天 | 上午 |  [Lesson 05：管理镜像服务 - Glance](#6-Glance) | [6.1 理解 OpenStack 中使⽤的镜像](#61-理解-OpenStack-中使⽤的镜像) |
-| | | | [6.2 Glance 基本概念](#62-Glance-基本概念) |
-| | | | [6.3 Glance 小结](#62-Glance-小结) |
-| | | | [6.4 Glance 基本功能](#62-Glance-基本功能) |
-| | 下午 | [Lesson 06：管理块存储 - Cinder](#7-Cinder) | [7.1理解 Cinder 的作⽤](#71理解-Cinder-的作⽤) |
-| | | | [7.2 Cinder 基本概念](#72-Cinder-基本概念) |
-| | | | [7.3 统⼀的存储解决⽅案 Ceph 的简介](#73-统⼀的存储解决⽅案-Ceph-的简介) |
+| | | [Lesson 04：管理计算服务 - Nova](#5-nova) | [5.1 理解虚拟化](#51-理解虚拟化) |
+| | | | [5.2 介绍硬件加速虚拟化 KVM](#52-介绍硬件加速虚拟化-kvm) |
+| | | | [5.3 Nova 基本概念](#53-nova-基本概念) |
+| | | | [5.4 Nova 的基本功能](#54-nova-的基本功能) |
+| | | | [5.5 Nova 小结](#55-nova-小结) |
+| 第 2 天 | 上午 |  [Lesson 05：管理镜像服务 - Glance](#6-glance) | [6.1 理解 OpenStack 中使⽤的镜像](#61-理解-openstack-中使的镜像) |
+| | | | [6.2 Glance 基本概念](#62-glance-基本概念) |
+| | | | [6.3 Glance 小结](#63-glance-小结) |
+| | | | [6.4 Glance 基本功能](#64-glance-基本功能) |
+| | 下午 | [Lesson 06：管理块存储 - Cinder](#7-cinder) | [7.1理解 Cinder 的作⽤](#71-理解-cinder-的作) |
+| | | | [7.2 Cinder 基本概念](#72-cinder-基本概念) |
+| | | | [7.3 统⼀的存储解决⽅案 Ceph 的简介](#73-统的存储解决案-ceph-的简介) |
 | | | | [7.4 管理卷](#74-管理卷) |
-| | | | [7.5 Cinder 基本功能](#75-Cinder-基本功能) |
-| | | | [7.6 Cinder 小结](#76-Cinder-小结) |
+| | | | [7.5 Cinder 基本功能](#75-cinder-基本功能) |
+| | | | [7.6 Cinder 小结](#76-cinder-小结) |
 | | | | [7.7 备份与快照的差别](#77-备份与快照的差别) |
-| | | [Lesson 07：管理⽹络服务 - Neutron](#8-Neutron) | [8.1理解 Neutron 的作⽤](#81理解-Neutron-的作⽤) |
+| | | [Lesson 07：管理⽹络服务 - Neutron](#8-neutron) | [8.1理解 Neutron 的作⽤](#81-理解-neutron-的作) |
 | | | | [8.2 网络概念](#82-网络概念) |
-| | | | [8.3 Neutron 基本概念](#83-Neutron-基本概念) |
-| | | | [8.4 ⽣产环境中的实施⽅案](#84-⽣产环境中的实施⽅案) |
-| | | | [8.5 理解节点的内部⽹络的实现](#85-理解节点的内部⽹络的实现) |
+| | | | [8.3 Neutron 基本概念](#83-neutron-基本概念) |
+| | | | [8.4 ⽣产环境中的实施⽅案](#84-产环境中的实施案) |
+| | | | [8.5 理解节点的内部⽹络的实现](#85-理解节点的内部络的实现) |
 | | | | [8.6 [可选] Distributed Virtual Router](#86-可选-distributed-virtual-router) |
 | | | | [8.7 [可选] ⽹络加速的技术 dpdk、sr-iov、TSN 的介绍](#87-可选-络加速的技术-dpdksr-iovtsn-的介绍) |
-| | | | [8.8 Neutron 基本功能](#88-Neutron-基本功能) |
-| | | | [8.9管理安全组规则](#89-管理安全组规则) |
-| 第 3 天 | 上午 | [Lesson 08：编排服务 -  devstack 服务的管理](#9-devstack-服务的管理) | [9.1 理解 devstack 的作⽤](#91-理解-devstack-的作⽤) |
+| | | | [8.8 Neutron 基本功能](#88-neutron-基本功能) |
+| | | | [8.9 管理安全组规则](#89-管理安全组规则) |
+| 第 3 天 | 上午 | [Lesson 08：编排服务 -  devstack 服务的管理](#9-devstack-服务的管理) | [9.1 理解 devstack 的作⽤](#91-理解-devstack-的作) |
 | | | | [9.2 Devstack 基本概念](#92-Devstack-基本概念) |
 | | | | [9.3 Devstack 基本功能](#93-Devstack-基本功能) |
-| | | | [9.4 Debug Cinder](94-Debug-Cinder) |
-| | 下午 | [Lesson 10：Swift](#10-Swift) | [10.1 理解 Swift 的使⽤场景](#101-理解-Swift-的使⽤场景) |
-| | | | [10.3 Swift 基本功能](#103-Swift-基本功能) |
+| | | | [9.4 Debug Cinder](#94-debug-cinder) |
+| | | [Lesson 10：Swift](#10-swift) | [10.1 理解 Swift 的使⽤场景](#101-理解-swift-的使场景) |
+| | | | [10.2 Swift 基本概念](#102-swift-基本概念) |
+| | | | [10.3 Swift 基本功能](#103-swift-基本功能) |
 | | | | [10.4 [可选] 管理到期的对象](#104-可选-管理到期的对象) |
-| | | [Lesson 11：编排服务 - Heat](#11-Heat) | [11.1 Heat 的模版中的讲解](#)111-Heat-的模版中的讲解 |
-| | | | [11.2 Heat 基本概念](#112-Heat-基本概念) |
-| | | | [11.3 Heat 基本功能](#113-Heat-基本功能) |
+| | | [Lesson 11：编排服务 - Heat](#11-heat) | [11.1 Heat 的模版中的讲解](#111-heat-的模版中的讲解) |
+| | | | [11.2 Heat 基本概念](#112-heat-基本概念) |
+| | | | [11.3 Heat 基本功能](#113-heat-基本功能) |
 | | | | [11.4 其它](#114-其它) |
-| | | [Lesson 12：Quiz](#12-Quiz) | [模拟题讲解](#模拟题讲解) |
+| | 下午 | [Lesson 12：Quiz](#12-quiz) | [模拟题讲解](#模拟题讲解) |
 | | | | [模拟题练习](#模拟题练习) |
 
 ## 1. 实验环境
@@ -83,7 +84,7 @@
 
 1. 什么是虚拟化？虚拟化的发展历程如何？
     - 60-70 IBM
-    - 80-90 VMWares
+    - 80-90 VMWare
     - 2005-2010 Amazon
     - 2010 NASA Nebula & RackSpace Cloud Storage
 1. 计算的发展历经了哪些阶段？
@@ -205,7 +206,7 @@ Openstack 以 Python 语法实现 IaaS 架构, 在各组件调度资源的过程
 1. 参考官方文件
     - <https://docs.openstack.org/keystone/latest/>
 
-### 3.2 Keystone 的基本概念有哪些？、
+### 3.2 Keystone 的基本概念有哪些？
 
 [Catalog](#catalog)
 
@@ -348,6 +349,8 @@ Horizon 为 OpenStack 提供了界面管理服务, 让 OpenStack 管理员和用
 [Catalog](#catalog)
 
 ### 5.1 理解虚拟化
+
+[Catalog](#catalog)
 
 1. 对物理资源进行池化，允许单个物理硬件创建多个模拟环境或专用资源
 1. 是什么实现了虚拟化? Hypervisor
