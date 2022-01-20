@@ -84,7 +84,7 @@
 
 1. 什么是虚拟化？虚拟化的发展历程如何？
     - 60-70 IBM
-    - 80-90 VMWares
+    - 80-90 VMWare
     - 2005-2010 Amazon
     - 2010 NASA Nebula & RackSpace Cloud Storage
 1. 计算的发展历经了哪些阶段？
