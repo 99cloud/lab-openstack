@@ -3,9 +3,25 @@
 1. MacOS / VMWare Fusion 15，或者 Linux KVM
 1. 6Core / 16G 内存 / 30G 硬盘 1 块 / NAT 网络单张网卡 / 对虚拟机打开 VT 允许嵌套虚拟化
 1. Ubuntu 20.04 Server ISO，安装系统，配置 SSH 密钥登陆，关机，打快照
-1. [可选] 配置 Ubuntu [apt 清华源](https://mirrors.tuna.tsinghua.edu.cn/help/ubuntu/)
+1. 使用国内镜像源（可选）
+
+    对于 Ubuntu 系统就是修改 APT 源，比如阿里云镜像源，只需修改 `/etc/apt/source.list` 配置文件即可，替换为需要使用的镜像源，如
+
+    ```conf
+    deb http://mirrors.aliyun.com/ubuntu/ focal main restricted universe multiverse
+    deb-src http://mirrors.aliyun.com/ubuntu/ focal main restricted universe multiverse
+    deb http://mirrors.aliyun.com/ubuntu/ focal-security main restricted universe multiverse
+    deb-src http://mirrors.aliyun.com/ubuntu/ focal-security main restricted universe multiverse
+    deb http://mirrors.aliyun.com/ubuntu/ focal-updates main restricted universe multiverse
+    deb-src http://mirrors.aliyun.com/ubuntu/ focal-updates main restricted universe multiverse
+    deb http://mirrors.aliyun.com/ubuntu/ focal-proposed main restricted universe multiverse
+    deb-src http://mirrors.aliyun.com/ubuntu/ focal-proposed main restricted universe multiverse
+    deb http://mirrors.aliyun.com/ubuntu/ focal-backports main restricted universe multiverse
+    deb-src http://mirrors.aliyun.com/ubuntu/ focal-backports main restricted universe multiverse
+    ```
+
 1. `apt-get update -y && apt-get upgrade -y`
-1. [DevStack 单机版本官方文档](https://docs.openstack.org/devstack/latest/guides/single-machine.html)，当前最新的稳定版本是 Victoria。注意各版本的 devstack 都只保证兼容其发布时间节点上的最近两个的 Linux 主流 LTS 发行版本。或者参考这个[官方文档](https://docs.openstack.org/devstack/latest/)。
+1. [DevStack 单机版本官方文档](https://docs.openstack.org/devstack/latest/guides/single-machine.html)。注意各版本的 devstack 都只保证兼容其发布时间节点上的最近两个的 Linux 主流 LTS 发行版本。或者参考这个[官方文档](https://docs.openstack.org/devstack/latest/)。
 1. 创建 stack 用户
 
     ```bash
@@ -14,7 +30,7 @@
     sudo -u stack -i
     ```
 
-1. 配置 pip 豆瓣源
+1. 配置 pip 国内源（可选）
 
     只需在用户 stack 家目录中 .pip 目录内创建 pip.conf 配置文件，以使用阿里云为例，配置文件内容如下
 
@@ -25,6 +41,8 @@
     trusted-host=mirrors.aliyun.com
     ```
 
+    如果在后续 ./stack.sh 过程中，遇到某个 pip 模块下载不下来，可以把这里的 pip.conf 文件删除。继续跑一次 ./stack.sh 试试
+
 1. 如果每次执行 sudo 都很慢的话，需要把你的主机名加到 `/etc/hosts`，类似：`127.0.0.1 yourhostname`，参考：[Terminal command with sudo takes a long time](https://askubuntu.com/questions/322514/terminal-command-with-sudo-takes-a-long-time)。
 1. 下载 Wallaby 版 Devstack 源码
 
@@ -34,7 +52,7 @@
     cd devstack
     ```
 
-1. 提前下载一些在安装过程中需要用到的大文件
+1. 提前下载一些在安装过程中需要用到的大文件（可选）
     - 从 [github](https://github.com/etcd-io/etcd/releases/download/v3.3.12/etcd-v3.3.12-linux-amd64.tar.gz) 下载 `etcd-v3.3.12-linux-amd64.tar.gz` 下了一小时，可以提前下好从 [华为镜像](https://mirrors.huaweicloud.com/etcd/v3.3.12/etcd-v3.3.12-linux-amd64.tar.gz) 提前下好放到：`/opt/stack/devstack/files/etcd-v3.3.12-linux-amd64.tar.gz`
 
         ```bash
@@ -81,7 +99,7 @@
     GIT_BASE=http://git.trystack.cn
     NOVNC_REPO=http://git.trystack.cn/kanaka/noVNC.git
     SPICE_REPO=http://git.trystack.cn/git/spice/spice-html5.git
-    enable_service s-proxy s-object s-container s-account h-eng h-api h-api-cfn h- api-cw q-svc q-dhcp q-meta q-agt q-l3 c-bak n-spice
+    enable_service s-proxy s-object s-container s-account h-eng h-api h-api-cfn h-api-cw q-svc q-dhcp q-meta q-agt q-l3 c-bak n-spice
     enable_plugin heat http://git.trystack.cn/openstack/heat stable/wallaby
     enable_plugin heat-dashboard http://git.trystack.cn/openstack/heat-dashboard stable/wallaby
     LOGFILE=$DEST/logs/stack.sh.log
@@ -90,6 +108,8 @@
     SWIFT_REPLICAS=1
     SWIFT_DATA_DIR=$DEST/data
     ```
+
+    **自 Xena 版本开始，q- 服务和 ovn 会有冲突，enable_service 里写 q-agt 的话，会在跑 ./stack.sh 时提示需要 disable ovn 才行**
 
 1. [可选] 创建 Volume Group，[参考](https://developer.aliyun.com/article/311612)
 
@@ -116,8 +136,8 @@
     stack    112380 111853  0 00:53 ?        00:00:00 /usr/bin/python3.6 /usr/local/bin/swift-container-server /etc/swift/container-server/1.conf -v
 
     stack@u1804:~/glance$ git status
-    On branch stable/victoria
-    Your branch is up to date with 'origin/stable/victoria'.
+    On branch stable/wallaby
+    Your branch is up to date with 'origin/stable/wallaby'.
 
     nothing to commit, working tree clean
     ```
