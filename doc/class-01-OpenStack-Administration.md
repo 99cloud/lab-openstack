@@ -52,7 +52,7 @@
 | | | | [8.7 [可选] ⽹络加速的技术 dpdk、sr-iov、TSN 的介绍](#87-可选-络加速的技术-dpdksr-iovtsn-的介绍) |
 | | | | [8.8 Neutron 基本功能](#88-neutron-基本功能) |
 | | | | [8.9 管理安全组规则](#89-管理安全组规则) |
-| 第 3 天 | 上午 | [9. 编排服务 -  devstack 服务的管理](#9-devstack-服务的管理) | [9.1 理解 devstack 的作⽤](#91-理解-devstack-的作) |
+| 第 3 天 | 上午 | [9. Devstack 服务的管理](#9-devstack-服务的管理) | [9.1 理解 Devstack 的作⽤](#91-理解-devstack-的作) |
 | | | | [9.2 Devstack 基本概念](#92-Devstack-基本概念) |
 | | | | [9.3 Devstack 基本功能](#93-Devstack-基本功能) |
 | | | | [9.4 Debug Cinder](#94-debug-cinder) |
@@ -84,7 +84,7 @@
 
 1. 什么是虚拟化？虚拟化的发展历程如何？
     - 60-70 IBM
-    - 80-90 VMWare
+    - 80-90 **VMWare**
     - 2005-2010 Amazon
     - 2010 NASA Nebula & RackSpace Cloud Storage
 1. 计算的发展历经了哪些阶段？
@@ -99,14 +99,14 @@
 
 1. 云计算发展历程是怎样的？
     - 最初的概念是”网络即是电脑”
-    - 尔后 Amazon 推出的弹性云计算 (EC2) 提供用户使用资源并且收费, 大致顶定了云计算的商业用途。
-    - OpenStack 是一个开源的云平台, 他属于云计算当中我们常说的 IaaS(infrastructure as a service), 简单的讲他是来管理我们的硬件设施的, 我们在我们的设备上部署 Linux 与 OpenStack, 然后由 OpenStack 来帮助我们决定哪些虚拟机应该启动在哪些物理的计算节点上
+    - 尔后 Amazon 推出的弹性云计算 (EC2) 提供用户使用资源并且收费, 大致奠定了云计算的商业用途。**阿里云**、OpenStack 都是 Amazon Web Services (AWS) 的追随者。
+    - OpenStack 是一个开源的云平台, 它属于云计算当中我们常说的 IaaS（infrastructure as a service）。**OpenStack 是一个云管理操作系统，用来控制数据中心中的计算、存储、网络资源池**，管理员通过 API / CLI 和 Web 界面为用户提供所需的资源。
 
 ### 2.2 OpenStack 组件架构
 
 [Catalog](#catalog)
 
-1. OpenStack 的核心项目有哪些？Keystone / Nova / Glance / Cinder / Neutron
+1. OpenStack 的核心项目有哪些？Keystone / Nova / Glance / Neutron / Cinder
 
     ![simpleOpenstackArch](/img/simpleOpenstackArch.png)
 
@@ -118,16 +118,17 @@
 
     ![](/img/openstack-arch-kilo-logical-v1.png)
 
-1. [Conceptual architecture](https://docs.openstack.org/ocata/admin-guide/common/get-started-conceptual-architecture.html)
+1. [概念架构图](https://docs.openstack.org/ocata/admin-guide/common/get-started-conceptual-architecture.html)
 
     ![](https://docs.openstack.org/ocata/admin-guide/_images/openstack_kilo_conceptual_arch.png)
 
 1. OpenStack 的发展过程？模块化 & 服务化，核心项目 & 集成项目 => Big Tent
-1. 平均6个月版本更新, 每个版本维护18个月, bugfix
-1. [stackalytics](https://www.stackalytics.com/)
+1. 平均 6 个月版本更新, 每个版本维护 18 个月, bugfix
+1. [OpenStack 组件官网](https://www.openstack.org/software/project-navigator/openstack-components#openstack-services)
+1. [Stackalytics](https://www.stackalytics.io/)
 1. [Source code](https://opendev.org/openstack)
-1. [launchpad](https://bugs.launchpad.net/)
-1. [review](https://review.opendev.org/)
+1. [Launchpad](https://bugs.launchpad.net/)
+1. [Review](https://review.opendev.org/)
 
     ![](/img/qualityfordevelop.png)
 
@@ -138,7 +139,7 @@
 1. 私有云、公有云、混合云的发展趋势如何？AWS / Azure / Aliyun / Huawei
 1. IaaS & CaaS 谁会是未来的主流？
     - VM、容器、裸机的编排需求长期共存
-    - OpenStack 擅长 VM & 裸机编排，以及存储和网络虚拟化。在容器化方面，Magnum 和 Kata 都看不到成为主流的趋势
+    - OpenStack 擅长 VM & 裸机编排，以及存储和网络虚拟化。在容器化方面，Magnum 和 Kata 短时间内都看不到成为主流的趋势
     - K8S 擅长容器编排，通过插件支持 VM 编排和网络多平面，但仍显稚嫩
 1. OpenStack 的优势和发展趋势？
     - Ironic 裸机云的加强
