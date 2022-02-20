@@ -217,6 +217,10 @@
 
 1. 网络虚拟化
 
+    网络虚拟化是虚拟化技术中最复杂的部分，下图是[计算节点（可以理解为 KVM 宿主机）虚拟网络的逻辑图](references/Neutron-Network-Namespaces-and-IPtables-Technical-deep-dive.pdf)。
+
+    ![](/img/network-virtualization-on-compute-node.png)
+
 ### 2.2 OpenStack 组件架构
 
 [Catalog](#catalog)
