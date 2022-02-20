@@ -223,7 +223,7 @@ Openstack 以 Python 语法实现 IaaS 架构, 在各组件调度资源的过程
     - 服务终点即一个服务提供的地址比如 http://192.168.100.20:5000/v3, 这就是一个服务终点, 服务终点是用来提供基于 http 请求的 API 方法的一个地址
 1. 什么是目录服务？
     - 之前提到 OpenStack 有很多个核心组件组合而成的, 每个组件都有一个或多个管理接口, 每个管理接口提供服务都是以 web 服务的形式出现的, 那么他们都有一个服务的终点地址比如 keystone 的(http://ip:5000/v3), 我们怎么才能找到每个组件的终端呢？因为这些服务可以很方便的迁移到任何网络可达的物理服务器上, 所有这里我们要一个机制来集中管理服务的终点, 就像服务终点的路由器一样
-1. 什么是 tokenid ?
+1. 什么是 token ?
     - 令牌, 由 keystone 认证后发放, 可以透过此令牌在其他 openstack service 发出请求提供服务
     - 发放与使用流程
         - Client obtains token from the Keystone (by user password)
@@ -344,6 +344,10 @@ Horizon 为 OpenStack 提供了界面管理服务, 让 OpenStack 管理员和用
         instances_path = /opt/stack/data/nova/instances
         state_path = /opt/stack/data/nova
     ```
+
+### 4.5 新一代界面 Skyline
+
+参考：<https://opendev.org/openstack/skyline-apiserver>
 
 ## 5. Nova
 
