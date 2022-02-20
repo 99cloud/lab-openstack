@@ -122,7 +122,100 @@
 
     **KVM 内核模块叫 kvm.ko，只用于管理 VM 的 CPU 和内存。IO 虚拟化由 Linux 内核和 QEMU 来实现**。
 
-    Libvirt 是 KVM 的管理工具，除了能管理 KVM，还能管理 XEN、VirtualBox 等。OpenStack 底层通过 Libvirt 来简介管理 KVM。**Libvirt 包含：后台 Daemon 程序 libvirtd、API（virt-manager 就是基于 libvirt API 开发）和命令行工具 virsh**。
+    Libvirt 是 KVM 的管理工具，除了能管理 KVM，还能管理 XEN、VirtualBox 等。OpenStack 底层通过 Libvirt 来简介管理 KVM。**Libvirt 包含：后台 Daemon 程序 libvirtd、API（virt-manager 就是基于 libvirt API 开发）和命令行工具 virsh**。可以通过 virt-manager 对虚拟机进行创建、删除、开关机、快照等管理操作，也可以通过 virsh 命令行管理，比如：`virsh list`。
+
+    - virt-manager 可以选 import exist disk image，通过 cirros（特制很小的 linux 镜像）启动（<http://download.cirros-cloud.net>），KVM 默认在 `/var/lib/libvirt/images` 位置查找。100 M，1 Core 就可以运行了。
+    - virt-manager 也可以从 iso 安装 Guest OS
+    - virt-manager 也可以通过 File / Add Connection 连接远程 Host 主机上的 Guest VM。远程宿主机上的 libvirt 需要允许远程管理。
+
+        ```conf
+        以 ubuntu 14.04 为例
+
+        # /etc/default/libvirt-bin
+        start_libvirtd="yes"
+        libvirtd_opts="-d -l"
+
+        # /etc/libvirt/libvirtd.conf
+        listen_tls = 0
+        listen_tcp = 1
+        unix_sock_group = "libvirtd"
+        unix_sock_ro_perms = "0777"
+        unix_sock_rw_perms = "0770"
+        auth_unix_rw = "none"
+        auth_tcp = "none"
+        ```
+
+        然后重启 libvirtd：`service libvirt-bin restart`
+
+1. 计算虚拟化：CPU 和内存
+
+    现在用到的 Intel 和 AMD CPU 都支持 VT 硬件虚拟化了，可以用 `egrep -o '(vmx|svm)' /proc/cpuio` 命令检查确认。**一个 KVM VM 在 Host 上其实是一个 qemu-kvm 进程，VM 中的每一个 vCPU 则对应 qemu-kvm 进程中的一个线程**。因此，vCPU 的总量可以超过物理 CPU 的总量，这叫做 CPU 超配（overcommit）。超配使得 VM 可以充分使用 Host 的 CPU 资源，前提是在同一时刻，不是所有的 VM 都 CPU 满负荷运行。
+
+    KVM 需要完成 VA（虚拟内存）-> PA（物理内存）-> MA（机器内存）之间的地址转换。其中，Guest OS 完成 VA -> PA，KVM 完成 PA -> MA。内存也可以 overcommit，但是要小心测试和实时监控，避免 OOM（Out of Memory，内存溢出）。
+
+1. 存储虚拟化
+
+    KVM 的存储虚拟化是通过存储池（Storage Pool）和卷（Volume）来管理的。Storage Pool 是 Host 上可以看到的一片存储空间。Volume 是在 Storage Pool 中划分出的一块空间，Host 将 Volume 分配给主机，在 VM 中看到的就是一块硬盘。Storage Pool 可以是多种类型：目录，LVM，iSCSI（使原来用于本机的 SCSI 协议可以通过 TCP/IP 扩展，方便存储集成、灾难恢复），Ceph，参考：<http://libvirt.org/storage.html>
+
+    - 文件目录类型的 Storage Pool
+
+        **KVM 将 Host 的 `/var/lib/libvirt/images/` 作为默认的 Storage Pool。其中的一个文件就是一个 Volume**。
+
+        KVM 所有可使用的 Storage Pool 都定义在 Host 的 `/etc/libvirt/storage` 目录下，每一个 Pool 对应一个 xml 文件，默认有一个 default.xml。
+
+        ```console
+        [root@lab-c2009 storage]# pwd
+        /etc/libvirt/storage
+
+        [root@lab-c2009 storage]# ls
+        autostart  default.xml  images.xml
+        ```
+
+        ```xml
+        [root@lab-c2009 storage]# cat default.xml 
+        <!--
+        WARNING: THIS IS AN AUTO-GENERATED FILE. CHANGES TO IT ARE LIKELY TO BE
+        OVERWRITTEN AND LOST. Changes to this xml configuration should be made using:
+        virsh pool-edit default
+        or other application using the libvirt API.
+        -->
+
+        <pool type='dir'>
+        <name>default</name>
+        <uuid>06a9233b-c82b-4232-b65c-019f217b6383</uuid>
+        <capacity unit='bytes'>0</capacity>
+        <allocation unit='bytes'>0</allocation>
+        <available unit='bytes'>0</available>
+        <source>
+        </source>
+        <target>
+            <path>/var/lib/libvirt/images</path>
+        </target>
+        </pool>
+        ```
+
+        可以看到 pool type 是目录，路径是 `/var/lib/libvirt/images`
+
+        ```console
+        [root@lab-c2009 storage]# ls /var/lib/libvirt/images/
+        lab-c2009-devstack-aio.qcow2
+        ```
+
+        使用文件做 Volume 有很多优点：**存储方便、移植性好、可复制、可远程访问**。可远程访问的意思是 Volume 文件可以存储在 NFS 或者分布式文件系统 GlusterFS，这样**镜像文件就可以在多个 Host 之间共享，便于 VM 在不同宿主机之间 Live Migration。如果是分布式文件系统，多副本的特性还可以保证镜像文件的高可用**。
+
+        KVM 支持多种 Volume 文件格式：
+
+        - raw 是默认格式，即原始磁盘格式，移植性好，性能好，但大小固定，不能节省磁盘空间。**如果是 Ceph 作为存储后端，应该用 raw 格式，因为用 qcow2 也不会节省空间，反而会影响性能**
+        - qcow2 是推荐格式，cow 表示 copy on write，能够节省磁盘空间，支持 AES 加密，支持 zlib 压缩，支持多快照。
+        - vmdk 是 VMWare 的虚拟磁盘格式，因此 VMWare 虚拟机可以直接在 KVM 上运行。
+
+    - [可选] LVM 类型的 Storage Pool
+
+        Host 上的 VG（Volume Group）中的 LV（Logic Volume） 也可以作为虚拟磁盘分配给 VM 使用，但 **LV 没有磁盘的 MBR 引导记录，不能作为虚拟机的启动盘，只能作为数据盘使用**。这种配置下，VG 就是 Storage Pool，LV 就是 Volume。
+
+        LV 的优点是性能较好，缺点是管理和移动性方面不如镜像文件，而且不能通过网络远程使用。
+
+1. 网络虚拟化
 
 ### 2.2 OpenStack 组件架构
 
