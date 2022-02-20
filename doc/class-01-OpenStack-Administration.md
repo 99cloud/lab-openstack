@@ -413,20 +413,38 @@ Openstack 以 Python 语法实现 IaaS 架构, 在各组件调度资源的过程
     ```
 
 1. Keystone 怎么处理认证、鉴权和授权？角色、RBAC、Cloud Admin / Domain Admin
-    - 练习: 只允许admin创建云盘
+
+    练习: 只允许 admin 创建云盘
+
+    参考 <https://docs.openstack.org/cinder/latest//configuration/block-storage/samples/policy.yaml.html>，默认的 policy 文件在 /etc/cinder/policy.yaml。也可以在 cinder.conf 文件的 `[oslo_policy]` 块 `policy_file` 配置项指定 policy 文件路径。
 
     ```console
-    # 检查/etc/cinder/ 路径下面有无policy,如果没有就新增一个
+    # 检查 /etc/cinder/ 路径下面有无 policy 文件，如果没有就新增一个
+    $ oslopolicy-sample-generator --namespace cinder --output-file policy.yaml
+    $ sudo cp policy.yaml /etc/cinder/policy.yaml
+
+    # 修改 policy rule 权限
+    "context_is_admin": "role:admin"
+    "volume:create": "rule:context_is_admin"
+
+    # 重启服务
+    $ systemctl restart devstack@c-api
+    ```
+
+    *在 Victoria 版本中依然可以使用 json 格式的 policy 文件，参考 <https://docs.openstack.org/oslo.policy/victoria/cli/oslopolicy-policy-generator.html>，所以上述命令在 Victoria 版本中没有问题。但是 [wallaby](https://docs.openstack.org/oslo.policy/wallaby/cli/oslopolicy-policy-generator.html) 以后，policy 格式被废弃，不再有 format 参数，默认就是 yaml 格式，参考：<https://docs.openstack.org/oslo.policy/latest/cli/oslopolicy-policy-generator.html>。*
+
+    ```console
+    # 检查 /etc/cinder/ 路径下面有无 policy 文件，如果没有就新增一个
     $ oslopolicy-sample-generator --namespace cinder --format json --output-file policy.json
     $ sudo cp policy.json /etc/cinder/policy.json
 
-    # 添加或是修改policy路径到cinder.conf
+    # 添加或是修改 policy 路径到 cinder.conf
     [oslo_policy]
     policy_file = /etc/cinder/policy.json
 
-    # 修改policy rule权限
+    # 修改 policy rule 权限
     "context_is_admin": "role:admin"
-    "volume:create": "rule:context_is_admin",
+    "volume:create": "rule:context_is_admin"
 
     # 重启服务
     $ systemctl restart devstack@c-api
