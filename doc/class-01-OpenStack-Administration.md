@@ -172,7 +172,7 @@
         ```
 
         ```xml
-        [root@lab-c2009 storage]# cat default.xml 
+        [root@lab-c2009 storage]# cat default.xml
         <!--
         WARNING: THIS IS AN AUTO-GENERATED FILE. CHANGES TO IT ARE LIKELY TO BE
         OVERWRITTEN AND LOST. Changes to this xml configuration should be made using:
@@ -220,6 +220,25 @@
     网络虚拟化是虚拟化技术中最复杂的部分，下图是[计算节点（可以理解为 KVM 宿主机）虚拟网络的逻辑图](references/Neutron-Network-Namespaces-and-IPtables-Technical-deep-dive.pdf)。
 
     ![](/img/network-virtualization-on-compute-node.png)
+
+    Host 有一块连接外网的 eth0，上面跑了 1 个 虚拟机 VM1，如何能让 VM1 访问外网？
+
+    - 将物理网卡 eth0 直接分配给 VM1。这样 Host 和其它 VM2 就没有网卡，无法访问外网了。
+    - 给 VM1 分配一个虚拟网卡 vnet0，通过 Linux Bridge（简单理解为二层交换机） br0 将 eth0 和 vnet0 连接起来。
+
+        ![](/img/linux-bridge.png)
+
+        br0 会将 eth0/vnet0/vnet1 数据转发分享，使得 VM1 和 VM2 可以彼此通信，也能透过 eth0 与外部网络通信。
+
+    - virbr0 是 KVM 默认创建的一个 Bridge，其作用是为连接其上的虚拟网卡提供 NAT 访问外网的功能。参考：<https://wiki.libvirt.org/page/VirtualNetworking>。这个和 br0 不一样，在 br0 的情况下，VM1 通过自己的 IP 直接与外网通信，不会经过 NAT 地址转换。
+
+        ![](/img/Host_with_a_virtual_network_switch_in_nat_mode_and_two_guests.png)
+
+    - Linux Bridge + VLAN
+
+        ![](/img/linux-bridge-vlan.png)
+
+        **eth0 相当于 Trunk 口，vnet0 / brvlan10 / eth0.10 都是 vlan10 的 Access 口**。Access 口（网卡和交换机之间）只能属于一个 VLAN，数据包流入 Access 口后，会被打上所在 VLAN 的标签。数据包在通过 Trunk 口（交换机和交换机之间）时，始终带着自己的 VLAN 标签。
 
 ### 2.2 OpenStack 组件架构
 
