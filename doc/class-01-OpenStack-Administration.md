@@ -83,7 +83,20 @@
 
 [Catalog](#catalog)
 
-1. 什么是虚拟化？虚拟化的发展历程如何？
+1. 什么是虚拟化？
+
+    虚拟化是云计算的基础。简单地说，**虚拟化使得在一台物理服务器上可以跑多台虚拟机**。虚拟化的目的：**1. 资源隔离，2. 资源限制**
+
+    - 虚拟化共享物理机的 CPU、内存、IO 硬件资源，但逻辑上虚拟机之间是相互隔离的
+    - 物理机我们一般称为宿主机（Host），宿主机上面的虚拟机称为客户机（Guest）
+
+    Hypervisor 程序将 Host 的硬件虚拟化，并提供给 Guest 使用，分为：全虚拟化（一型虚拟化）和半虚拟化（二型虚拟化）。
+
+    - **全虚拟化 Hypervisor 是一个特殊定制的 Linux 系统**，直接安装在物理机上。比如 Xen 和 VMWare 的 EXSi。全虚拟化一般对硬件虚拟化功能做了特别优化，性能更好。
+    - 半虚拟化先安装标准操作系统，Hypervisor 作为 OS 上的一个程序模块运行，并对虚拟机进行管理。比如 KVM，VirtualBox，VMWare WorkStation，VMWare Player，VMWare Fusion 等。半虚拟化基于普通操作系统，比较灵活，比如支持虚拟机嵌套（在 KVM 虚拟机中再运行 KVM）。
+
+1. 虚拟化的发展历程如何？
+
     - 60-70 IBM
     - 80-90 **VMWare**
     - 2005-2010 Amazon
@@ -102,6 +115,14 @@
     - 最初的概念是”网络即是电脑”
     - 尔后 Amazon 推出的弹性云计算 (EC2) 提供用户使用资源并且收费, 大致奠定了云计算的商业用途。**阿里云**、OpenStack 都是 Amazon Web Services (AWS) 的追随者。
     - OpenStack 是一个开源的云平台, 它属于云计算当中我们常说的 IaaS（infrastructure as a service）。**OpenStack 是一个云管理操作系统，用来控制数据中心中的计算、存储、网络资源池**，管理员通过 API / CLI 和 Web 界面为用户提供所需的资源。
+
+1. KVM 基础
+
+    KVM（Kernel-Based Virtual Machine）是 x86 平台上应用最广泛的虚拟化方案。AWS / 阿里云都从最初的 XEN 转向了 KVM；OpenStack 对 KVM 支持得也最好。
+
+    **KVM 内核模块叫 kvm.ko，只用于管理 VM 的 CPU 和内存。IO 虚拟化由 Linux 内核和 QEMU 来实现**。
+
+    Libvirt 是 KVM 的管理工具，除了能管理 KVM，还能管理 XEN、VirtualBox 等。OpenStack 底层通过 Libvirt 来简介管理 KVM。**Libvirt 包含：后台 Daemon 程序 libvirtd、API（virt-manager 就是基于 libvirt API 开发）和命令行工具 virsh**。
 
 ### 2.2 OpenStack 组件架构
 
