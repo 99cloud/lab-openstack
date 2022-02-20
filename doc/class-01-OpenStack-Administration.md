@@ -27,6 +27,7 @@
 | | | | [4.2 Horizon 基本功能](#42-horizon-基本功能) |
 | | | | [4.3 通过 Horizion 创建一台虚拟机](#43-通过-horizion-创建一台虚拟机) |
 | | | | [4.4 其它操作](#44-其它操作) |
+| | | | [4.5 [可选] 新一代 Web 界面：Skyline](#45-可选-新一代-web-界面-skyline) |
 | | | [5. 管理计算服务 - Nova](#5-nova) | [5.1 理解虚拟化](#51-理解虚拟化) |
 | | | | [5.2 介绍硬件加速虚拟化 KVM](#52-介绍硬件加速虚拟化-kvm) |
 | | | | [5.3 Nova 基本概念](#53-nova-基本概念) |
@@ -345,7 +346,7 @@ Horizon 为 OpenStack 提供了界面管理服务, 让 OpenStack 管理员和用
         state_path = /opt/stack/data/nova
     ```
 
-### 4.5 新一代界面 Skyline
+### 4.5 [可选] 新一代 Web 界面：Skyline
 
 参考：<https://opendev.org/openstack/skyline-apiserver>
 
