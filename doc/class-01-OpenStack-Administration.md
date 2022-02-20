@@ -348,6 +348,8 @@ Horizon 为 OpenStack 提供了界面管理服务, 让 OpenStack 管理员和用
 
 ### 4.5 [可选] 新一代 Web 界面：Skyline
 
+[Catalog](#catalog)
+
 参考：<https://opendev.org/openstack/skyline-apiserver>
 
 ## 5. Nova
@@ -494,7 +496,7 @@ Horizon 为 OpenStack 提供了界面管理服务, 让 OpenStack 管理员和用
         EOF
     ```
 
-    - ![](/img/cloudinit.png)
+    ![](/img/cloudinit.png)
 
 1. nova 创建虚拟机
 
@@ -543,13 +545,13 @@ Horizon 为 OpenStack 提供了界面管理服务, 让 OpenStack 管理员和用
     - glance-api: 和其他核心项目组件一样都一个管理接口
     - glance-registry: 在 v2 版本, 提供存储镜像 metadata 与查找的服务, 在 v3 版本被 glance-api 取代
 
-    - ![](/img/glance1.png)
+    ![](/img/glance1.png)
 
 ### 6.3 Glance 小结
 
 [Catalog](#catalog)
 
-- ![](/img/glance2.png)
+![](/img/glance2.png)
 
 ### 6.4 Glance 基本功能
 
@@ -697,6 +699,7 @@ Horizon 为 OpenStack 提供了界面管理服务, 让 OpenStack 管理员和用
     ```bash
     openstack volume create --snapshot [myvol_ss] --size 2 [myvol2]
     ```
+
 ### 7.6 Cinder 小结
 
 [Catalog](#catalog)
@@ -709,7 +712,7 @@ Horizon 为 OpenStack 提供了界面管理服务, 让 OpenStack 管理员和用
 
 1. qcow2 快照 copy-on-write
 
-    - ![](/img/cinder3.png)
+    ![](/img/cinder3.png)
 
 1. 透过 snapshot 做 rollback 和 rebuild
 
@@ -855,7 +858,7 @@ Horizon 为 OpenStack 提供了界面管理服务, 让 OpenStack 管理员和用
 1. 透过 neutron 创建两台虚机能互通的网络
     - Neutron ML2.OVS_agent, L3_agent, dhcp_agent 疯了...
 
-    - ![](/img/neutron5.png)
+    ![](/img/neutron5.png)
 
 ### 8.3 Neutron 基本概念
 
@@ -869,7 +872,7 @@ Horizon 为 OpenStack 提供了界面管理服务, 让 OpenStack 管理员和用
     - neutron-dhcp-agent: 通过 dnsmasq 进程（轻量级服务器，可以提供 dns、dhcp、tftp 等服务）来实现的，该进程绑定到 dhcp 命名空间中的 br-int 的接口上, 可以查看相关的进程
     - neutron-l3-agent: 负责项目(租户)网络和 floating ip 之间的地址转换的服务，它通过 Linux iptables 的 SNAT、DNAT 来完成地址的双向转换
 
-    - ![](/img/neutron6.png)
+    ![](/img/neutron6.png)
 
 1. Plugin 和 Agents
     - Q: plugin 和 agents 是否是一对? 是的
@@ -886,7 +889,7 @@ Horizon 为 OpenStack 提供了界面管理服务, 让 OpenStack 管理员和用
     - Type Driver: 决定逻辑网络类型
     - Techanism Driver: 决定如何在 provider 实现网络类型的办法
 
-    - ![](/img/neutron7.png)
+    ![](/img/neutron7.png)
 
     ```console
     $ cat plugins/ml2/ml2_conf.init
@@ -1147,7 +1150,8 @@ Horizon 为 OpenStack 提供了界面管理服务, 让 OpenStack 管理员和用
     - Accounts service: 一组 account database 管理 container 列表
     - Containers service: 一组 container database 管理 object 列表
     - Objects service: 数据本身
-    - ![](/img/swift1.png)
+
+    ![](/img/swift1.png)
 
 1. 每个存储节点上的设备被 swift 暴露出来称为一个存储设备，swift 通过 ring 的算法将每个设备 hash 得到一个值，很多设备从最小的 hash 到最大组成了一个环，然后将要上传对象的 Account、Container 和 Object 一起 hash 出来一个值，放入环中，按照向左的原则找到一个存储 Driver 对应的设备的 ip 地址和位置，将文件存入
 
@@ -1329,9 +1333,9 @@ Horizon 为 OpenStack 提供了界面管理服务, 让 OpenStack 管理员和用
       (empty)
     ```
 
-    - ![](/img/heat2.png)
-    - ![](/img/heat3.png)
+    ![](/img/heat2.png)
 
+    ![](/img/heat3.png)
 
 ### 11.4 其它
 
