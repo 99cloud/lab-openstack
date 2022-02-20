@@ -338,10 +338,11 @@ Openstack 以 Python 语法实现 IaaS 架构, 在各组件调度资源的过程
 
 [Catalog](#catalog)
 
-1. keystone 在 openstack 扮演什么角色
+1. Keystone 在 OpenStack 中起什么作用？
+    - **用户、租户和权限管理**
     - **认证**：用户的身份认证服务包括组件和组件之间的身份认证
     - **鉴权**：提供 RBAC（Role Based Access Control） 权限体系
-    - **服务注册和服务发现**：为 OpenStack 提供目录服务
+    - **服务注册和服务发现**：为 OpenStack 提供目录服务，维护 OpenStack Services 的 Endpoint
 1. 参考官方文件
     - <https://docs.openstack.org/keystone/latest/>
 
@@ -349,29 +350,63 @@ Openstack 以 Python 语法实现 IaaS 架构, 在各组件调度资源的过程
 
 [Catalog](#catalog)
 
-1. 什么是 User / Group / Project / Tenant / domain？
-    - User: 最基本的用户, 一个通常意义上的账号有用户名和密码还有一些相关的比如邮件等信息, 在 OpenStack 中只是创建一个用户是不可以使用 OpenStack 中的资源的
-    - group: 组顾名思义就是一个用户的集合, 一般我们会把一个用户关联到一个项目中, 每次关联的时候都要设置一个角色比较麻烦, 有了组以后我们可以把组加到租户当中去并关联一个角色, 以后所以加入到这个组当中的用户就继承了这个组在这个租户当中的角色
-    - project/tenant: project 顾名思义是项目的意思或者用我们熟知的话就是租户, 在本书中我们都会称之为项目而不是租户, 租户是 OpenStack 中一个核心的概念, 基本上所有的资源都是按照租户隔离, 比如网络、实例、路由等资源, 所以我们可以想象一个用户必须要先关联到一个项目中去才能正确使用 OpenStack 资源
-    - domain: 在 OpenStack 当中域是用来实现真正的多项目/租户模式的一种方法, 在没有域出现之前 OpenStack 有着一个权限的场景, 当你把一个用户任何一个项目/租户当中去的时候，你如果关联的是  admin 的角色的话, 这个时候这个用户突然就成为了 OpenStack 超级管理员, 这并非我们所希望的场景, 使用了域以后我们就可以实现真正意义上的多项目/租户模式了, 把一个用户加到 default 以外的域中的项目并关联到 admin 的时候, 这个用户就不再是整个 OpenStack 的管理员了, 他只能管理这个域下面的所有的项目/租户, 当然你要开启多项目/租户模式你得替换掉 /etc/keystone/policy.json 文件来开启
+Keystone 的核心概念包括：
 
-        ![](/img/DomainUserProjectRole.png)
+- User（用户）
+- Role（角色）
+- Credential（凭证）
+- Authentication（认证）
+- Endpoint（端点）
+- Service（服务）
+- Project / Tenant（项目/租户）
+- Token（令牌）
+- ...
+
+逐一来看：
+
+1. User 指使用 OpenStack 的实体，可以是真正的用户（用户 peter），其它系统（云管管理系统 CMP 等）或者服务（OpenStack 为 nova/cinder 等服务创建了相应的 User 作为服务账号）。
+
+    当 User 请求访问 OpenStack 时，Keystone 会对其进行身份认证和鉴权。
+
+    Horizon 在 Identity -> Users 中可以管理用户。
+
+1. Credentials 是 User 用来证明自己身份的信息，可以是：
+    - 用户名 / 密码
+    - Token
+    - API Key
+    - 其它高级方式
+1. Authentication 是 Keystone 验证 User 身份的过程。比如，User 访问 OpenStack 时向 Keystone 提交用户和密码形式的 Credentials，Keystone 验证通过后会给 User 签发一个 Token 作为后续访问用的 Credentials。
+1. Token 是由数字和字母组成的字符串，User 成功 Authentication 后，由 Keystone 分配给 User。
+    - Token 用作访问 Service 的 Credential
+    - Service 会通过 Keystone 验证 Token 的有效性
+    - Token 的有效期默认是 24 小时，这个时长可以在 Keystone 配置文件中设置
+
+    发放与使用流程：
+
+    - Client obtains token from the Keystone (by user password)
+    - Client sends request to Nova API to launch VM instance
+    - Nova API verifies token in Keystone
+    - Nova requests Keystone to get all available quotas for project/user. Nova calculates amount of used resources and allows or permits operation
+    - Nova API calls nova-compute via RPC to launch VM instance.
+
+    ![](/img/token.png)
+
+1. Project / Tenant 就是项目（租户），用于将 OpenStack 资源（计算、存储、网络）进行分组和隔离。
+    - 资源的所有权属于 Project 而不是 User
+    - 在 OpenStack 中，Tenant / Project / Account 术语通用，最常用的是 Project
+    - 每个 User（包括 admin）必须以某个权限绑定到 Project 里才能访问该 Project 的资源。一个 User 可以以不同权限绑定到多个 Project。一个 Project 也可以以不同权限被多个用户绑定。
+    - amdin 相当于 root 用户，具有 Project 中的最高权限。
+
+    在 Horizon 中，我们通过 Manage Members 将用户绑定到 Project 中。
+1. Group 组顾名思义就是一个 User 的集合, 一般我们会把一个用户关联到一个项目中, 每次关联的时候都要设置一个角色比较麻烦, 有了组以后我们可以把组加到租户当中去并关联一个角色, 以后所以加入到这个组当中的用户就继承了这个组在这个租户当中的角色
+1. 什么是 Domain: 在 OpenStack 当中域是用来实现真正的多项目/租户模式的一种方法, 在没有域出现之前 OpenStack 有着一个权限的场景, 当你把一个用户任何一个项目/租户当中去的时候，你如果关联的是  admin 的角色的话, 这个时候这个用户突然就成为了 OpenStack 超级管理员, 这并非我们所希望的场景, 使用了域以后我们就可以实现真正意义上的多项目/租户模式了, 把一个用户加到 default 以外的域中的项目并关联到 admin 的时候, 这个用户就不再是整个 OpenStack 的管理员了, 他只能管理这个域下面的所有的项目/租户, 当然你要开启多项目/租户模式你得替换掉 /etc/keystone/policy.json 文件来开启
+
+    ![](/img/DomainUserProjectRole.png)
 
 1. 什么是服务终端 service endpoint？
     - 服务终点即一个服务提供的地址比如 http://192.168.100.20:5000/v3, 这就是一个服务终点, 服务终点是用来提供基于 http 请求的 API 方法的一个地址
 1. 什么是目录服务？
     - 之前提到 OpenStack 有很多个核心组件组合而成的, 每个组件都有一个或多个管理接口, 每个管理接口提供服务都是以 web 服务的形式出现的, 那么他们都有一个服务的终点地址比如 keystone 的(http://ip:5000/v3), 我们怎么才能找到每个组件的终端呢？因为这些服务可以很方便的迁移到任何网络可达的物理服务器上, 所有这里我们要一个机制来集中管理服务的终点, 就像服务终点的路由器一样
-1. 什么是 token ?
-    - 令牌, 由 keystone 认证后发放, 可以透过此令牌在其他 openstack service 发出请求提供服务
-    - 发放与使用流程
-        - Client obtains token from the Keystone (by user password)
-        - Client sends request to Nova API to launch VM instance
-        - Nova API verifies token in Keystone
-        - Nova requests Keystone to get all available quotas for project/user. Nova calculates amount of used resources and allows or permits operation
-        - Nova API calls nova-compute via RPC to launch VM instance.
-
-        ![](/img/token.png)
-
 1. 什么是 Role / Policy？
     - keystone 遇到不同的使用者做出不同请求的问题 ( 例如: 创建虚拟机 删除云盘 ) 要透过 role 跟 policy 协作来满足需求, 每一个调度请求都会有一个对应的 policy 里面存有多向属性, 其中一个就是 role。 再来, 每个被创建的使用者都会被绑定一个 role (admin / member), 当使用者发出请求调度服务的时后, keystone 收到后会确认这个服务的policy role 是不是这个使用者可以有权利访问的, 如果有才可以继续, 反之拒绝
 
