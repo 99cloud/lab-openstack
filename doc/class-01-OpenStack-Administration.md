@@ -444,7 +444,7 @@ Keystone 的核心概念包括：
     $ openstack user show john
 
     # 将用户关联到项目/租户
-    $ openstack role add --user john --project demo admin
+    $ openstack role add --user john --project demo member
     ```
 
 1. Keystone 怎么处理认证、鉴权和授权？角色、RBAC、Cloud Admin / Domain Admin
