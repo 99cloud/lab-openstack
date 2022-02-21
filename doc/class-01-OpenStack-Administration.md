@@ -19,8 +19,8 @@
 | | | [2. OpenStack 概述](#2-openstack-概述) | [2.1 虚拟化与云计算](#21-虚拟化与云计算) |
 | | | | [2.2 OpenStack 组件架构](#22-openstack-组件架构) |
 | | | | [2.3 云计算的发展趋势](#23-云计算的发展趋势) |
-| | | | [2.4 OpenStack 的通用概念](#24-OpenStack-的通用概念) |
-| | | [3. 管理身份认证服务 - Keystone](#3-keystone) | [3.1 Keystone 模块概况](#31-Keystone-模块概况) |
+| | | | [2.4 OpenStack 的通用概念](#24-openstack-的通用概念) |
+| | | [3. 管理身份认证服务 - Keystone](#3-keystone) | [3.1 Keystone 模块概况](#31-keystone-模块概况) |
 | | | | [3.2 Keystone 的基本概念有哪些？](#32-keystone-的基本概念有哪些) |
 | | | | [3.3 Keystone 各功能的实现机理是怎样的？](#33-keystone-各功能的实现机理是怎样的) |
 | | 下午 | [4. 管理看板服务 - Horizon](#4-horizon) | [4.1 Horizon 基本概念](#41-horizon-基本概念) |
@@ -395,7 +395,7 @@ Keystone 的核心概念包括：
     - 资源的所有权属于 Project 而不是 User
     - 在 OpenStack 中，Tenant / Project / Account 术语通用，最常用的是 Project
     - 每个 User（包括 admin）必须以某个权限绑定到 Project 里才能访问该 Project 的资源。一个 User 可以以不同权限绑定到多个 Project。一个 Project 也可以以不同权限被多个用户绑定。
-    - amdin 相当于 root 用户，具有 Project 中的最高权限。
+    - admin 相当于 root 用户，具有 Project 中的最高权限。
 
     在 Horizon 中，我们通过 Manage Members 将用户绑定到 Project 中。
 1. Group 组顾名思义就是一个 User 的集合, 一般我们会把一个用户关联到一个项目中, 每次关联的时候都要设置一个角色比较麻烦, 有了组以后我们可以把组加到租户当中去并关联一个角色, 以后所以加入到这个组当中的用户就继承了这个组在这个租户当中的角色
@@ -408,7 +408,7 @@ Keystone 的核心概念包括：
 1. 什么是目录服务？
     - 之前提到 OpenStack 有很多个核心组件组合而成的, 每个组件都有一个或多个管理接口, 每个管理接口提供服务都是以 web 服务的形式出现的, 那么他们都有一个服务的终点地址比如 keystone 的(http://ip:5000/v3), 我们怎么才能找到每个组件的终端呢？因为这些服务可以很方便的迁移到任何网络可达的物理服务器上, 所有这里我们要一个机制来集中管理服务的终点, 就像服务终点的路由器一样
 1. 什么是 Role / Policy？
-    - keystone 遇到不同的使用者做出不同请求的问题 ( 例如: 创建虚拟机 删除云盘 ) 要透过 role 跟 policy 协作来满足需求, 每一个调度请求都会有一个对应的 policy 里面存有多向属性, 其中一个就是 role。 再来, 每个被创建的使用者都会被绑定一个 role (admin / member), 当使用者发出请求调度服务的时后, keystone 收到后会确认这个服务的policy role 是不是这个使用者可以有权利访问的, 如果有才可以继续, 反之拒绝
+    - keystone 遇到不同的使用者做出不同请求的问题 ( 例如: 创建虚拟机 删除云盘 ) 要透过 role 跟 policy 协作来满足需求, 每一个调度请求都会有一个对应的 policy 里面存有多向属性, 其中一个就是 role。 再来, 每个被创建的使用者都会被绑定一个 role (admin / member), 当使用者发出请求调度服务的时后, keystone 收到后会确认这个服务的 policy role 是不是这个使用者可以有权利访问的, 如果有才可以继续, 反之拒绝
 
     ![](/img/api3flow.png)
 
