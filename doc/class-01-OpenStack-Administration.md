@@ -1474,9 +1474,15 @@ Horizon 为 OpenStack 提供了界面管理服务，让 OpenStack 管理员和�
           networks:
             - port: { get_resource: instance_port }
 
+    outputs:
+      instance_name:
+        value: { get_attr: [cirros_instance, name] }
+      instance_ip:
+        value: { get_attr: [cirros_instance, first_address] }
+
     # 透过 heat template 创建虚拟机
 
-    $ openstack stack create -f yaml -t cirros_heat_template.yaml  teststack
+    $ openstack stack create -t cirros_heat_template.yaml teststack
       id: a5a78571-5f47-4d09-ac9a-5a547c8d0927
       stack_name: teststack
       description: create a cirros vm through heat template
@@ -1515,6 +1521,22 @@ Horizon 为 OpenStack 提供了界面管理服务，让 OpenStack 管理员和�
       +--------------------------------------+----------------------------------------+--------+-----------------------+--------------------------+---------+
       | 587a8c5c-2041-4d09-bde0-a04c5ed67e7f | teststack-cirros_instance-ojqijaffb2pm | ACTIVE | public=192.168.191.44 | cirros-0.5.1-x86_64-disk | m1.tiny |
       +--------------------------------------+----------------------------------------+--------+-----------------------+--------------------------+---------+
+
+    $ openstack stack output show --all teststack
+    +---------------+------------------------------------------------------------+
+    | Field         | Value                                                      |
+    +---------------+------------------------------------------------------------+
+    | instance_name | {                                                          |
+    |               |   "output_key": "instance_name",                           |
+    |               |   "description": "No description given",                   |
+    |               |   "output_value": "teststack-cirros_instance-ouyeeodkjq2r" |
+    |               | }                                                          |
+    | instance_ip   | {                                                          |
+    |               |   "output_key": "instance_ip",                             |
+    |               |   "description": "No description given",                   |
+    |               |   "output_value": "172.25.0.231"                           |
+    |               | }                                                          |
+    +---------------+------------------------------------------------------------+
 
     $ openstack stack delete teststack
       Are you sure you want to delete this stack(s) [y/N]? y
