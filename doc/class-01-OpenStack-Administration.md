@@ -1380,8 +1380,8 @@ Horizon 为 OpenStack 提供了界面管理服务，让 OpenStack 管理员和�
 1. 上传下载一对象
 
     ```console
-    $ openstack object create coa.txt
-    $ openstack object save coa.txt
+    $ openstack object create --name test.txt my_container coa.txt
+    $ openstack object save --file test.txt my_container test.txt
     ```
 
     ```console
