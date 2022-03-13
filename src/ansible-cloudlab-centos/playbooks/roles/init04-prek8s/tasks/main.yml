@@ -5,4 +5,4 @@
     src: "{{ item }}"
     dest: "{{ cloudlab_dir }}"
   loop:
-    - "calico_v3.10.yaml"
+    - "calico-1.20.1.yaml"
