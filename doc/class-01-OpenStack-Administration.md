@@ -729,8 +729,8 @@ Horizon 为 OpenStack 提供了界面管理服务，让 OpenStack 管理员和�
     - iso: 一个归档的格式的光盘镜像格式
     - qcow2: 被 Qemu 使用的格式，支持复制中写入
     - aki: 表示镜像是亚马逊的 Amazon kernel image
-    - ami: 表示镜像是亚马逊的 Amazon ramdisk image
-    - ari: 表示镜像是亚马逊的 Amazon machine image
+    - ami: 表示镜像是亚马逊的 Amazon machine image
+    - ari: 表示镜像是亚马逊的 Amazon ramdisk image
 1. glance 核心组件
     - glance-api: 和其他核心项目组件一样都一个管理接口
     - glance-registry: 在 v2 版本，提供存储镜像 metadata 与查找的服务，在 v3 版本被 glance-api 取代
