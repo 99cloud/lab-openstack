@@ -1443,10 +1443,6 @@ Horizon 为 OpenStack 提供了界面管理服务，让 OpenStack 管理员和�
     description: create a cirros vm through heat template
 
     parameters:
-      key_name:
-        type: string
-        description: Enable SSH access to instance
-        default: heat_key
       instance_type:
         type: string
         description: Instance type for WordPress server
@@ -1470,7 +1466,6 @@ Horizon 为 OpenStack 提供了界面管理服务，让 OpenStack 管理员和�
         properties:
           image: { get_param: image_id }
           flavor: { get_param: instance_type }
-          key_name: { get_param: key_name }
           networks:
             - port: { get_resource: instance_port }
 
