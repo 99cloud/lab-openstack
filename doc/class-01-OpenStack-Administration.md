@@ -420,31 +420,34 @@ Keystone 的核心概念包括：
     - 练习: 如何添加一个新的服务终端?
     - 我们为 OpenStack 写了一个新的服务，并且已经和开发团队约定好我们的服务以 Rest API 的方式部署，我们的服务名称叫 myService，我们的服务终端的地址为 http://172.25.0.10:3838。
 
-    ```console
-    $ openstack service create --name myService --description "helloworld" myService
-    $ openstack endpoint create --region RegionOne myService public/internal/admin http://172.25.0.10:3838
+    ```bash
+    openstack service create --name myService --description "helloworld" myService
+
+    openstack endpoint create --region RegionOne myService public http://172.25.0.10:3838
+    openstack endpoint create --region RegionOne myService internal http://172.25.0.10:3838
+    openstack endpoint create --region RegionOne myService admin http://172.25.0.10:3838
     ```
 
 1. Keystone 怎么处理组织和用户管理？用户、用户组、项目、配额
 
-    ```console
+    ```bash
     # 创建一个用户
-    $ openstack user create --password johnpassword john
+    openstack user create --password johnpassword john
 
     # 更新一个用户
-    $ openstack user set --password newpassword john
+    openstack user set --password newpassword john
 
     # 删除一个用户
-    $ openstack user delete john
+    openstack user delete john
 
     # 用户列表
-    $ openstack user list
+    openstack user list
 
     # 查看详细
-    $ openstack user show john
+    openstack user show john
 
     # 将用户关联到项目/租户
-    $ openstack role add --user john --project demo member
+    openstack role add --user john --project demo member
     ```
 
 1. Keystone 怎么处理认证、鉴权和授权？角色、RBAC、Cloud Admin / Domain Admin
@@ -453,36 +456,48 @@ Keystone 的核心概念包括：
 
     参考 <https://docs.openstack.org/cinder/latest//configuration/block-storage/samples/policy.yaml.html>，默认的 policy 文件在 /etc/cinder/policy.yaml。也可以在 cinder.conf 文件的 `[oslo_policy]` 块 `policy_file` 配置项指定 policy 文件路径。
 
-    ```console
+    ```bash
     # 检查 /etc/cinder/ 路径下面有无 policy 文件，如果没有就新增一个
-    $ oslopolicy-sample-generator --namespace cinder --output-file policy.yaml
-    $ sudo cp policy.yaml /etc/cinder/policy.yaml
+    oslopolicy-sample-generator --namespace cinder --output-file policy.yaml
+    sudo cp policy.yaml /etc/cinder/policy.yaml
+    ```
 
+    ```yamml
     # 修改 policy rule 权限
     "context_is_admin": "role:admin"
     "volume:create": "rule:context_is_admin"
+    ```
 
+    ```bash
     # 重启服务
-    $ systemctl restart devstack@c-api
+    systemctl restart devstack@c-api
     ```
 
     *在 Victoria 版本中依然可以使用 json 格式的 policy 文件，参考 <https://docs.openstack.org/oslo.policy/victoria/cli/oslopolicy-policy-generator.html>，所以上述命令在 Victoria 版本中没有问题。但是 [wallaby](https://docs.openstack.org/oslo.policy/wallaby/cli/oslopolicy-policy-generator.html) 以后，policy 格式被废弃，不再有 format 参数，默认就是 yaml 格式，参考：<https://docs.openstack.org/oslo.policy/latest/cli/oslopolicy-policy-generator.html>。*
 
-    ```console
+    ```bash
     # 检查 /etc/cinder/ 路径下面有无 policy 文件，如果没有就新增一个
-    $ oslopolicy-sample-generator --namespace cinder --format json --output-file policy.json
-    $ sudo cp policy.json /etc/cinder/policy.json
+    oslopolicy-sample-generator --namespace cinder --format json --output-file policy.json
+    sudo cp policy.json /etc/cinder/policy.json
+    ```
 
-    # 添加或是修改 policy 路径到 cinder.conf
+    添加或是修改 policy 路径到 cinder.conf
+
+    ```ini
     [oslo_policy]
     policy_file = /etc/cinder/policy.json
-
-    # 修改 policy rule 权限
+    ```
+    
+    修改 policy rule 权限
+    
+    ```yaml
     "context_is_admin": "role:admin"
     "volume:create": "rule:context_is_admin"
+    ```
 
+    ```bash
     # 重启服务
-    $ systemctl restart devstack@c-api
+    systemctl restart devstack@c-api
     ```
 
 ## 4. Horizon
