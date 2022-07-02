@@ -1243,38 +1243,38 @@ Horizon 为 OpenStack 提供了界面管理服务，让 OpenStack 管理员和�
 
 1. 租户网络实验
 
-```bash
-# 1. 创建私有网络（子网)
-openstack network create testNetwork2
-openstack subnet create --network testNetwork2 --subnet-range 192.168.20.0/24 testSubnet2
+    ```bash
+    # 1. 创建私有网络（子网)
+    openstack network create testNetwork2
+    openstack subnet create --network testNetwork2 --subnet-range 192.168.20.0/24 testSubnet2
 
-# 2. 基于子网创建 VM（这个之前做过，可以用界面完成）
+    # 2. 基于子网创建 VM（这个之前做过，可以用界面完成）
 
-# 3. 创建路由
-openstack router create testRouter2
-openstack router set --external-gateway public --enable-snat testRouter2
+    # 3. 创建路由
+    openstack router create testRouter2
+    openstack router set --external-gateway public --enable-snat testRouter2
 
-# 4. 路由增加接口绑定到私有网络子网
-openstack router add subnet testRouter2 testSubnet2
-```
+    # 4. 路由增加接口绑定到私有网络子网
+    openstack router add subnet testRouter2 testSubnet2
+    ```
 
 1. 浮动 IP 实验
 
-```bash
-# 1. 创建 FIP
-openstack floating ip create public
+    ```bash
+    # 1. 创建 FIP
+    openstack floating ip create public
 
-# 2. 绑定 FIP
-openstack server add floating ip [testInstance2] [172.25.0.99]
+    # 2. 绑定 FIP
+    openstack server add floating ip [testInstance2] [172.25.0.99]
 
-# 3. [可选]此时可以进 router 的 network namespace 看到 DNAT，以及 FIP 实际配置在 router 上
-ip netns list
-ip netns exec [qrouter-9dd0fd27-17c7-4e41-a4dc-9612d23266c9] iptables -t nat -L -v -n
-ip netns exec [qrouter-9dd0fd27-17c7-4e41-a4dc-9612d23266c9] ip a
+    # 3. [可选]此时可以进 router 的 network namespace 看到 DNAT，以及 FIP 实际配置在 router 上
+    ip netns list
+    ip netns exec [qrouter-9dd0fd27-17c7-4e41-a4dc-9612d23266c9] iptables -t nat -L -v -n
+    ip netns exec [qrouter-9dd0fd27-17c7-4e41-a4dc-9612d23266c9] ip a
 
-# 4. 解绑 FIP
-openstack server remove floating ip testInstance222 172.25.0.99
-```
+    # 4. 解绑 FIP
+    openstack server remove floating ip testInstance222 172.25.0.99
+    ```
 
 ### 8.9 管理安全组规则
 
