@@ -282,7 +282,7 @@
 1. OpenStack 的优势和发展趋势？
     - Ironic 裸机云的加强
     - 容器化部署和运维：kolla-ansible & openstack-helm
-    - 软件定义存储：SDS -- Ceph and Cinder-volume，高性能 高可用性 高可扩展性 支持三种存储接口(文件，块，物件)
+    - 软件定义存储：SDS -- Ceph and Cinder-volume，高性能 高可用性 高可扩展性 支持三种存储接口(文件，块，对象)
     - 软件定义网络：SDN -- Neutron Server，控制转发分离 集中控制 虚拟化
 
 ### 2.4 OpenStack 的通用概念
@@ -582,7 +582,7 @@ Horizon 为 OpenStack 提供了界面管理服务，让 OpenStack 管理员和�
 
 [Catalog](#catalog)
 
-- kvm: kernel virtual machine 他属于硬件加速的虚拟化，他依赖于 cpu 的虚拟化功能 intel—vt 或者 amd—v 等技术，可以对 NUMA 的框架的 CPU 做定制的调优
+- kvm: kernel virtual machine 他属于硬件加速的虚拟化，他依赖于 cpu 的虚拟化功能 intel-vt 或者 amd-v 等技术，可以对 NUMA 的框架的 CPU 做定制的调优
 - qemu-kvm: 帮助 kvm 进行 io 模拟的虚拟机监控器，主要负责模拟 io(input/output)
 
     ![](/img/virtual2.png)
@@ -735,7 +735,7 @@ Horizon 为 OpenStack 提供了界面管理服务，让 OpenStack 管理员和�
 
 [Catalog](#catalog)
 
-1. 镜像是一个物件存储
+1. 镜像的后端存储一般对接的是一个对象存储系统
 1. 镜像格式
     - raw: 无格式的镜像
     - vhd: 常用的格式，经常被 VMWare，Xen，Microsoft，VirtualBox 来使用的格式
@@ -765,13 +765,13 @@ Horizon 为 OpenStack 提供了界面管理服务，让 OpenStack 管理员和�
 1. 从 OpenStack 下载镜像
 
     ```bash
-    openstack image save --file cirros—disk_x86_64.img cirros-0.5.1-x86_64-disk
+    openstack image save --file cirros-disk_x86_64.img cirros-0.5.1-x86_64-disk
     ```
 
 1. 从本地上传镜像
 
     ```bash
-    openstack image create --file cirros—disk_x86_64.img  --container-format bare --disk-format qcow2 myimage
+    openstack image create --file cirros-disk_x86_64.img  --container-format bare --disk-format qcow2 myimage
     ```
 
 1. 更新镜像
@@ -852,7 +852,7 @@ Horizon 为 OpenStack 提供了界面管理服务，让 OpenStack 管理员和�
 1. 创建一个附加卷
 
     ```bash
-    openstack volume create ——size 2 myvol
+    openstack volume create --size 2 myvol
     ```
 
 1. 创建一个启动卷，这样一来虚拟机的root disk就在云盘上了，就不用担心因为计算节点的硬盘损坏带来的数据丢失的风险
@@ -893,7 +893,7 @@ Horizon 为 OpenStack 提供了界面管理服务，让 OpenStack 管理员和�
     ```bash
     openstack volume backup restore [myvol_backup] [myvol1]
     ```
-1. 创建一卷的快照
+1. 创建：卷的快照
 
     ```bash
     openstack volume snapshot create --volume [myvol] [myvol_snapshot]
@@ -919,12 +919,12 @@ Horizon 为 OpenStack 提供了界面管理服务，让 OpenStack 管理员和�
 
     ![](/img/cinder3.png)
 
-1. 透过 snapshot 做 rollback 和 rebuild
+1. 透过 snapshot 做 rollback 和 rebuild（VM 必须是 boot from image。boot from volume 的 VM 创建的快照 size=0，只能用来重新创建一个 VM，不能原地 rebuild）
 
-    ```console
-    $ openstack server image create --name my-snapshot --wait my-vm
-    $ openstack image show --fit-width my-snapshot
-    $ openstack server rebuild --image my-snapshot my-vm
+    ```bash
+    openstack server image create --name my-snapshot --wait my-vm
+    openstack image show --fit-width my-snapshot
+    openstack server rebuild --image my-snapshot my-vm
     ```
 
 ## 8. Neutron
@@ -1231,23 +1231,50 @@ Horizon 为 OpenStack 提供了界面管理服务，让 OpenStack 管理员和�
 
 1. 创建外部网络
 
-    ```console
-    $ openstack network create --enable --provider-network-type [flat]  --provider-physical-network [br-ex name] --project admin --external  [network-name]
+    ```bash
+    openstack network create --enable --provider-network-type [flat]  --provider-physical-network [br-ex name] --project admin --external  [network-name]
     ```
 
 1. 创建外部网络的子网
 
-    ```console
-    $ openstack subnet create --subnet-range [192.168.100.0/24] --gateway [192.168.100.1] --dhcp --network [public] [pubsub]
+    ```bash
+    openstack subnet create --subnet-range [192.168.100.0/24] --gateway [192.168.100.1] --dhcp --network [public] [pubsub]
     ```
 
-1. 将租户网络和外部链接
+1. 租户网络实验
 
-    ```console
-    $ openstack router create [虚拟路由器名字]
-    $ neutron router-gateway-set [虚拟路由器名字] [外部网络的名称]
-    $ neutron router-interface-add [虚拟路由器名字] [租户网络的名称]
-    ```
+```bash
+# 1. 创建私有网络（子网)
+openstack network create testNetwork2
+openstack subnet create --network testNetwork2 --subnet-range 192.168.20.0/24 testSubnet2
+
+# 2. 基于子网创建 VM（这个之前做过，可以用界面完成）
+
+# 3. 创建路由
+openstack router create testRouter2
+openstack router set --external-gateway public --enable-snat testRouter2
+
+# 4. 路由增加接口绑定到私有网络子网
+openstack router add subnet testRouter2 testSubnet2
+```
+
+1. 浮动 IP 实验
+
+```bash
+# 1. 创建 FIP
+openstack floating ip create public
+
+# 2. 绑定 FIP
+openstack server add floating ip [testInstance2] [172.25.0.99]
+
+# 3. [可选]此时可以进 router 的 network namespace 看到 DNAT，以及 FIP 实际配置在 router 上
+ip netns list
+ip netns exec [qrouter-9dd0fd27-17c7-4e41-a4dc-9612d23266c9] iptables -t nat -L -v -n
+ip netns exec [qrouter-9dd0fd27-17c7-4e41-a4dc-9612d23266c9] ip a
+
+# 4. 解绑 FIP
+openstack server remove floating ip testInstance222 172.25.0.99
+```
 
 ### 8.9 管理安全组规则
 
