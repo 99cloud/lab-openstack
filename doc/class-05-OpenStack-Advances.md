@@ -125,21 +125,35 @@
 
 [返回目录](#课程目录)
 
-#### 3.4.1 MarialDB
+#### 3.4.1 MariaDB
 
 [返回目录](#课程目录)
+
+MariaDB 的一般操作：
+
+1. 检查和判断数据库服务是否健康
+1. 备份 & 恢复
+1. HA & 部分节点下线后修复
+1. 断电自动修复
 
 #### 3.4.2 RabbitMQ
 
 [返回目录](#课程目录)
 
+1. 检查和判断消息队列是否健康
+1. 常见错误和修复方法
+
 #### 3.4.3 Prometheus
 
 [返回目录](#课程目录)
 
+参考 [监控和告警](class-03-OpenStack-Maintenance.md#4-监控和告警)
+
 #### 3.4.4 EFK
 
 [返回目录](#课程目录)
+
+参考 [ElasticSearch](class-03-OpenStack-Maintenance.md#8-elastic-search)
 
 ## 4. 排错
 
@@ -149,14 +163,27 @@
 
 [返回目录](#课程目录)
 
+参考 [Cinder 服务报错排错](class-01-OpenStack-Administration.md#94-debug-cinder)
+
+参考 [老版本中 Python2 中文处理问题](http://blog.wuwenxiang.net/OpenStack-Debug)
+
 ### 4.2 服务异常检测
 
 [返回目录](#课程目录)
+
+1. 如何检查和判断 OpenStack 服务发生异常？
+1. 一般错误和修复方案（重启 Docker 容器等）
 
 ### 4.3 存储异常
 
 [返回目录](#课程目录)
 
+1. 如何检查和判断 Ceph 发生异常？
+1. 一般错误和修复方案
+
 ### 4.4 网络异常
 
 [返回目录](#课程目录)
+
+1. 如何检查和判断基础网络发生异常？如何修复
+1. 如何检查和判断租户网络发生异常？如何修复
