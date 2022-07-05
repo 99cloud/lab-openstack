@@ -37,3 +37,4 @@
 - [课程 2：OpenStack API 和运维开发](doc/class-02-OpenStack-API-and-Development.md)
 - [课程 3：OpenStack 部分组件、监控和日志](doc/class-03-OpenStack-Maintenance.md)
 - [课程 4：OpenStack 开发指南](doc/class-04-OpenStack-Development.md)
+- [课程 5：OpenStack 实操进阶](doc/class-05-OpenStack-Advances.md)
