@@ -95,9 +95,13 @@
 
 [返回目录](#课程目录)
 
+参考：[DevStack 部署环境](devstack-aio.md)
+
 ### 2.3 Kolla Ansible
 
 [返回目录](#课程目录)
+
+参考：[Wallaby 版本 Kolla Ansible 部署](kolla/kolla-ansible-wallaby.md)
 
 ## 3. 运维
 
@@ -106,6 +110,8 @@
 ### 3.1 OpenStack Ansible
 
 [返回目录](#课程目录)
+
+参考：[OpenStack Ansible 组件](class-02-OpenStack-API-and-Development.md#openstack-ansible-provider--catalog-)
 
 ### 3.2 小版本升级
 
