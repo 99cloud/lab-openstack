@@ -133,102 +133,101 @@ MariaDB 的一般操作：
 
 1. 检查和判断数据库服务是否健康
 
-查看 docker 状态及 log
+    查看 docker 状态及 log
 
-```
-docker ps|grep mariadb
-docker logs mariadb
-```
+    ```
+    docker ps|grep mariadb
+    docker logs mariadb
+    ```
 
-查看系统状态
+    查看系统状态
 
-```
-docker exec -it mariadb bash
-mysql -u root -p
-SHOW GLOBAL STATUS;
-```
+    ```
+    docker exec -it mariadb bash
+    mysql -u root -p
+    SHOW GLOBAL STATUS;
+    ```
 
-查看缓存状态
+    查看缓存状态
 
-```
-SHOW STATUS LIKE 'Qcache%';
-```
+    ```
+    SHOW STATUS LIKE 'Qcache%';
+    ```
 
 1. 备份 & 恢复
 
-备份
+    备份
 
-```
-mkdir –p /opt/mariadb-backup
-cp –rf /var/lib/docker/volumes/mariadb/ /opt/mariadb-backup
-```
+    ```
+    mkdir –p /opt/mariadb-backup
+    cp –rf /var/lib/docker/volumes/mariadb/ /opt/mariadb-backup
+    ```
 
-恢复
+    恢复
 
-将 /opt/mariadb-backup 恢复至 mariadb 挂载目录即可
+    将 /opt/mariadb-backup 恢复至 mariadb 挂载目录即可
 
 1. HA & 部分节点下线后修复
 
-MariaDB 支持 ha，采用 galera cluster 多主结构，通过 sst(State Snapshot Transfer) 同步数据
+    MariaDB 支持 ha，采用 galera cluster 多主结构，通过 sst(State Snapshot Transfer) 同步数据
 
-可在 mariadb 配置文件 galera.cnf 查看具体配置信息
+    可在 mariadb 配置文件 galera.cnf 查看具体配置信息
 
-```
-wsrep_sst_method = mariabackup
-wsrep_on = ON
-```
+    ```
+    wsrep_sst_method = mariabackup
+    wsrep_on = ON
+    ```
 
-查看集群状态
+    查看集群状态
 
-```
-SHOW GLOBAL STATUS LIKE 'wsrep%';
-```
+    ```
+    SHOW GLOBAL STATUS LIKE 'wsrep%';
+    ```
 
-- wsrep_cluster_state_uuid: 集群的 state UUID
-- wsrep_cluster_size: 集群中节点的个数
-- wsrep_cluster_status: 集群里节点的主状态
-- wsrep_ready: 节点是否可以接受 query
-- wsrep_connected: 节点的网络连接
-- wsrep_local_state_comment: 节点的状态
+    - wsrep_cluster_state_uuid: 集群的 state UUID
+    - wsrep_cluster_size: 集群中节点的个数
+    - wsrep_cluster_status: 集群里节点的主状态
+    - wsrep_ready: 节点是否可以接受 query
+    - wsrep_connected: 节点的网络连接
+    - wsrep_local_state_comment: 节点的状态
 
-查看 grastate.dat，一般文件路径为 /var/lib/docker/volumes/mariadb/_data/grastate.dat，
-如果该节点数据库服务正在运行，则 seqno 值为 -1
+    查看 grastate.dat，一般文件路径为 /var/lib/docker/volumes/mariadb/_data/grastate.dat，
+    如果该节点数据库服务正在运行，则 seqno 值为 -1
 
-```
-# GALERA saved state
-version: 2.1
-uuid:    4776eea5-fc98-11ec-9bac-26114b55c543
-seqno:   -1
-safe_to_bootstrap: 0
-```
+    ```
+    # GALERA saved state
+    version: 2.1
+    uuid:    4776eea5-fc98-11ec-9bac-26114b55c543
+    seqno:   -1
+    safe_to_bootstrap: 0
+    ```
 
-如果某节点数据库服务停止运行，则 seqno 值改变，如：
+    如果某节点数据库服务停止运行，则 seqno 值改变，如：
 
-```
-# GALERA saved state
-version: 2.1
-uuid:    4776eea5-fc98-11ec-9bac-26114b55c543
-seqno:   342591
-safe_to_bootstrap: 0
-```
+    ```
+    # GALERA saved state
+    version: 2.1
+    uuid:    4776eea5-fc98-11ec-9bac-26114b55c543
+    seqno:   342591
+    safe_to_bootstrap: 0
+    ```
 
-如果集群只剩下一个节点数据库服务正常运行，则该正常运行的节点 safe_to_bootstrap 值变为 1，如：
+    如果集群只剩下一个节点数据库服务正常运行，则该正常运行的节点 safe_to_bootstrap 值变为 1，如：
 
-```
-# GALERA saved state
-version: 2.1
-uuid:    4776eea5-fc98-11ec-9bac-26114b55c543
-seqno:   -1
-safe_to_bootstrap: 1
-```
+    ```
+    # GALERA saved state
+    version: 2.1
+    uuid:    4776eea5-fc98-11ec-9bac-26114b55c543
+    seqno:   -1
+    safe_to_bootstrap: 1
+    ```
 
-如果集群所有节点同时崩溃，所有节点的 grastate.dat 文件 safe_to_bootstrap 值全部为 0，则会造成集群无法启动
+    如果集群所有节点同时崩溃，所有节点的 grastate.dat 文件 safe_to_bootstrap 值全部为 0，则会造成集群无法启动
 
 1. 断电自动修复
 
-- 若只有部分节点故障，一般只需要重启该节点即可
-
-- 若全部节点同时断电故障，则需要选择最新节点作为集群启动节点来恢复
+    - 若只有部分节点故障，一般只需要重启该节点即可
+    - 若全部节点同时断电故障，则需要选择最新节点作为集群启动节点来恢复
 
     备份所有节点数据
 
@@ -249,37 +248,37 @@ safe_to_bootstrap: 1
 
 1. 检查和判断消息队列是否健康
 
-查看 docker 状态及 log
+    查看 docker 状态及 log
 
-```
-docker ps|grep rabbitmq
-docker logs rabbitmq
-```
+    ```
+    docker ps|grep rabbitmq
+    docker logs rabbitmq
+    ```
 
-查看 rabbitmq 状态
+    查看 rabbitmq 状态
 
-```
-docker exec -it rabbitmq rabbitmqctl status
-```
+    ```
+    docker exec -it rabbitmq rabbitmqctl status
+    ```
 
-查看 rabbitmq 集群状态
+    查看 rabbitmq 集群状态
 
-```
-docker exec -it rabbitmq rabbitmqctl cluster_status
-```
+    ```
+    docker exec -it rabbitmq rabbitmqctl cluster_status
+    ```
 
-查看 rabbitmq 管理界面 `http://<ip>:15672`
-默认用户名及密码均为`guest`
+    查看 rabbitmq 管理界面 `http://<ip>:15672`
+    默认用户名及密码均为`guest`
 
 1. 常见错误和修复方法
 
-- 若 rabbitmq 未开启管理界面，则需要执行以下命令
+    若 rabbitmq 未开启管理界面，则需要执行以下命令
 
     ```
     rabbitmq-plugins enable rabbitmq_management
     ```
 
-- 若使用 guest 账号登录提示 `User can only log in via localhost`，则需配置一个允许远程访问的用户
+    若使用 guest 账号登录提示 `User can only log in via localhost`，则需配置一个允许远程访问的用户
 
     ```
     rabbitmqctl add_user <username> <password>
@@ -287,7 +286,7 @@ docker exec -it rabbitmq rabbitmqctl cluster_status
     rabbitmqctl set_permissions -p "/" <username> ".*" ".*" ".*"
     ```
 
-- 若 rabbitmq 服务报错
+    若 rabbitmq 服务报错
 
     ```
     docker restart rabbitmq
@@ -326,26 +325,26 @@ docker exec -it rabbitmq rabbitmqctl cluster_status
 
 1. 如何检查和判断 OpenStack 服务发生异常？
 
-查看 docker 状态及 log
+    查看 docker 状态及 log
 
-```
-docker ps|grep <server>
-docker logs <sever>
-```
+    ```
+    docker ps|grep <server>
+    docker logs <sever>
+    ```
 
-尝试 curl API，查看返回值是否正常，API 详情:[openstack API 文档](https://docs.openstack.org/zh_CN/api-quick-start/)
+    尝试 curl API，查看返回值是否正常，API 详情:[openstack API 文档](https://docs.openstack.org/zh_CN/api-quick-start/)
 
-查看组件日志 /var/log/kolla/<server>，是否有 ERROR 报错
+    查看组件日志 /var/log/kolla/<server>，是否有 ERROR 报错
 
 1. 一般错误和修复方案
 
-重启 docker
+    重启 docker
 
-```
-docker restart <server>
-```
+    ```
+    docker restart <server>
+    ```
 
-开启组件 LOG DEBUG 配置，查看日志详情分析错误原因
+    开启组件 LOG DEBUG 配置，查看日志详情分析错误原因
 
 ### 4.3 存储异常
 
@@ -353,68 +352,68 @@ docker restart <server>
 
 1. 如何检查和判断 Ceph 发生异常？
 
-查看 docker 状态
+    查看 docker 状态
 
-```
-docker ps -a|grep ceph 
-```
+    ```
+    docker ps -a|grep ceph 
+    ```
 
-health 检查
+    health 检查
 
-```
-ceph health
-```
+    ```
+    ceph health
+    ```
 
-查看 ceph 状态
+    查看 ceph 状态
 
-```
-ceph status
-```
+    ```
+    ceph status
+    ```
 
-查看 mon 状态
+    查看 mon 状态
 
-```
-ceph mon stat
-```
+    ```
+    ceph mon stat
+    ```
 
-使用状态检查
+    使用状态检查
 
-```
-ceph osd df
-ceph df
-```
+    ```
+    ceph osd df
+    ceph df
+    ```
 
 1. 一般错误和修复方案
 
-- 查看 ceph 健康状态时报错 HEALTH_WARN mons are allowing insecure global_id reclaim
+    - 查看 ceph 健康状态时报错 HEALTH_WARN mons are allowing insecure global_id reclaim
 
-    禁用不安全模式
-    
-    ```
-    ceph config set mon auth_allow_insecure_global_id_reclaim false
-    ```
+        禁用不安全模式
+        
+        ```
+        ceph config set mon auth_allow_insecure_global_id_reclaim false
+        ```
 
-- ceph 集群报错 daemons have recently crashed
+    - ceph 集群报错 daemons have recently crashed
 
-    ceph 归档检查
+        ceph 归档检查
 
-    ```
-    ceph crash ls
-    ceph crash archive <id>
-    ceph crash archive-all
-    
-    ceph -s
-    ```
+        ```
+        ceph crash ls
+        ceph crash archive <id>
+        ceph crash archive-all
+        
+        ceph -s
+        ```
 
-- ceph osd 空间不足
+    - ceph osd 空间不足
 
-    尝试释放部分磁盘空间或部署新的 osd 以增加磁盘空间
+        尝试释放部分磁盘空间或部署新的 osd 以增加磁盘空间
 
-    数据平衡
-    
-    ```
-    ceph osd crush reweight <osd> <weight>
-    ```
+        数据平衡
+        
+        ```
+        ceph osd crush reweight <osd> <weight>
+        ```
 
 ### 4.4 网络异常
 
@@ -422,23 +421,23 @@ ceph df
 
 1. 如何检查和判断基础网络发生异常？如何修复
 
-查看网络组件状态和 log，若有异常状态，则重启对应组件
+    查看网络组件状态和 log，若有异常状态，则重启对应组件
 
-```
-openstack network list
-openstack network agent list
-```
+    ```
+    openstack network list
+    openstack network agent list
+    ```
 
-测试基础网络是否互通，若所有路由均异常，则尝试重启如下组件修复
+    测试基础网络是否互通，若所有路由均异常，则尝试重启如下组件修复
 
-```
-docker restart neutron_l3_agent neutron_dhcp_agent
-```
+    ```
+    docker restart neutron_l3_agent neutron_dhcp_agent
+    ```
 
 1. 如何检查和判断租户网络发生异常？如何修复
 
-查看 neutron log 记录，是否有 ERROR 记录
+    查看 neutron log 记录，是否有 ERROR 记录
 
-若为某网络路由 ERROR，则尝试重建对应路由等
+    若为某网络路由 ERROR，则尝试重建对应路由等
 
-若路由正常，查看虚机内网络 ifconfig 和路由 route 状态，尝试修复虚机路由或手动启动 dhcp
+    若路由正常，查看虚机内网络 ifconfig 和路由 route 状态，尝试修复虚机路由或手动启动 dhcp
