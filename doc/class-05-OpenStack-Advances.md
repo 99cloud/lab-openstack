@@ -117,9 +117,13 @@
 
 [返回目录](#课程目录)
 
+参考：[Kolla Ansible 操作](https://docs.openstack.org/kolla-ansible/latest/user/operating-kolla.html)
+
 ### 3.3 扩缩容
 
 [返回目录](#课程目录)
+
+参考：[Kolla Ansible 增加和删除节点](https://docs.openstack.org/kolla-ansible/latest/user/adding-and-removing-hosts.html)
 
 ### 3.4 基础组件运维
 
