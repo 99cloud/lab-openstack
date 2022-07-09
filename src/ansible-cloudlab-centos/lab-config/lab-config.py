@@ -20,6 +20,6 @@ for i in labs:
     print(i[0])
 
 # ansible -i lab.ini coalab -m ping
-# ansible -i lab.ini coalab -m shell -a 'virsh list'
+# ansible -i lab.ini coalab -m shell -a 'virsh list --all'
 # ansible -i lab.ini coalab -m shell -a 'virsh snapshot-list openstack-devstack'
 # ansible -i lab.ini coalab -m shell -a 'virsh snapshot-revert openstack-devstack --snapshotname openstack-ready'

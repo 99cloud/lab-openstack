@@ -48,7 +48,7 @@ iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 可以 Revert KVM Snapshot
 
 ```console
-[root@coa-student-batchc-3 ~]# virsh list
+[root@coa-student-batchc-3 ~]# virsh list --all
  Id    Name                           State
 ----------------------------------------------------
  1     openstack-devstack             running

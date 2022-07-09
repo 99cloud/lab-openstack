@@ -122,7 +122,7 @@
 
     **KVM 内核模块叫 kvm.ko，只用于管理 VM 的 CPU 和内存。IO 虚拟化由 Linux 内核和 QEMU 来实现**。
 
-    Libvirt 是 KVM 的管理工具，除了能管理 KVM，还能管理 XEN、VirtualBox 等。OpenStack 底层通过 Libvirt 来简介管理 KVM。**Libvirt 包含：后台 Daemon 程序 libvirtd、API（virt-manager 就是基于 libvirt API 开发）和命令行工具 virsh**。可以通过 virt-manager 对虚拟机进行创建、删除、开关机、快照等管理操作，也可以通过 virsh 命令行管理，比如：`virsh list`。
+    Libvirt 是 KVM 的管理工具，除了能管理 KVM，还能管理 XEN、VirtualBox 等。OpenStack 底层通过 Libvirt 来简介管理 KVM。**Libvirt 包含：后台 Daemon 程序 libvirtd、API（virt-manager 就是基于 libvirt API 开发）和命令行工具 virsh**。可以通过 virt-manager 对虚拟机进行创建、删除、开关机、快照等管理操作，也可以通过 virsh 命令行管理，比如：`virsh list --all`。
 
     - virt-manager 可以选 import exist disk image，通过 cirros（特制很小的 linux 镜像）启动（<http://download.cirros-cloud.net>），KVM 默认在 `/var/lib/libvirt/images` 位置查找。100 M，1 Core 就可以运行了。
     - virt-manager 也可以从 iso 安装 Guest OS
