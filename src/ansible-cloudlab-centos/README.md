@@ -61,5 +61,5 @@ iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
  ready-to-devstack    2021-07-21 14:51:34 +0800 shutoff
 
 
-[root@coa-student-batchc-3 ~]# virsh snapshot-revert openstack-devstack --snapshotname openstack-ready
+[root@coa-student-batchc-3 ~]# virsh snapshot-revert openstack-devstack --snapshotname openstack-ready --force
 ```
