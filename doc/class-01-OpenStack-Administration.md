@@ -1309,7 +1309,7 @@ Horizon 为 OpenStack 提供了界面管理服务，让 OpenStack 管理员和�
 
     ```console
     # 检查服务
-    $ systemctl list-units | grep -rn "devstack@*"
+    $ systemctl list-unit-files | grep "devstack@*"
 
     # 重启 glance api 服务
     $ systemctl restart "devstack@g-api"
