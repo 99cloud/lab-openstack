@@ -723,7 +723,8 @@
 1. Ansible Hello World
 
     ```console
-    pip3 install ansible==2.7.11
+    # pip3 install ansible==2.7.11
+    pip install ansible==2.9.27
 
     $ cat /etc/ansible/hosts
     [testservers]

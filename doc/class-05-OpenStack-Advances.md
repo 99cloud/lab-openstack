@@ -101,6 +101,8 @@
 
 [返回目录](#课程目录)
 
+参考：[Ansible 基础](class-02-OpenStack-API-and-Development.md#ansible-as-a-plus--catalogcatalog)
+
 参考：[Wallaby 版本 Kolla Ansible 部署](kolla/kolla-ansible-wallaby.md)
 
 ## 3. 运维
