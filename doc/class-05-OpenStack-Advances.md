@@ -105,6 +105,10 @@
 
 参考：[Wallaby 版本 Kolla Ansible 部署](kolla/kolla-ansible-wallaby.md)
 
+`ssh root@192.168.33.192`
+
+![](kolla/images/lab-kolla-aio.svg)
+
 ## 3. 运维
 
 [返回目录](#课程目录)
