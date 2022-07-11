@@ -97,6 +97,8 @@
 
 参考：[DevStack 部署环境](devstack-aio.md)
 
+参考：[DevStack 问题排查](class-01-OpenStack-Administration.md#94-debug)
+
 ### 2.3 Kolla Ansible
 
 [返回目录](#课程目录)
@@ -324,8 +326,6 @@ MariaDB 的一般操作：
 ### 4.1 日志查询
 
 [返回目录](#课程目录)
-
-参考 [Cinder 服务报错排错](class-01-OpenStack-Administration.md#94-debug-cinder)
 
 参考 [老版本中 Python2 中文处理问题](http://blog.wuwenxiang.net/OpenStack-Debug)
 
