@@ -3,8 +3,8 @@
 ## Prefix
 
 - 授课时长：
-    - 上午：9:30 至 11:30
-    - 下午：13:30 至 16:30
+    - 上午：9:00 至 12:00
+    - 下午：14:00 至 17:00
 - Prerequisite
     - vim 基础操作 -- 编辑、修改、保存文件
     - 网络基础知识 -- 网段 cidr、vlan、vxlan、配置 linux 网卡等等
@@ -428,7 +428,13 @@ Keystone 的核心概念包括：
     openstack endpoint create --region RegionOne myService admin http://172.25.0.10:3838
     ```
 
-1. Keystone 怎么处理组织和用户管理？用户、用户组、项目、配额
+    注意，**这里 `--region` 后面只能写 `RegionOne`**，RegionOne 是在部署当前 OpenStack 环境，创建基础服务 endpoint 时就默认填写的。
+
+    注意，创建完 endpoint 后，只有 public 类型的 endpoint 会在 Horizon 界面上可以看到。但 **Horizon 界面有缓存，需要切换项目，或者退出重新登录**，才能显示出来。
+
+    ![](/img/horizon-endpoint-list.png)
+
+1. Keystone 怎么处理组织和用户管理？用户、在项目中绑定角色
 
     ```bash
     # 创建一个用户
@@ -436,9 +442,6 @@ Keystone 的核心概念包括：
 
     # 更新一个用户
     openstack user set --password newpassword john
-
-    # 删除一个用户
-    openstack user delete john
 
     # 用户列表
     openstack user list
@@ -448,6 +451,9 @@ Keystone 的核心概念包括：
 
     # 将用户关联到项目/租户
     openstack role add --user john --project demo member
+
+    # 删除一个用户
+    openstack user delete john
     ```
 
 1. Keystone 怎么处理认证、鉴权和授权？角色、RBAC、Cloud Admin / Domain Admin
@@ -470,6 +476,15 @@ Keystone 的核心概念包括：
 
     ```bash
     # 重启服务
+    systemctl restart devstack@c-api
+    ```
+
+    此时，在 demo 项目中 member 角色的 john 就无法创建云硬盘（卷 volume）了，创建时会返回 403，说 volume:create 不被允许。只有对应 project 下 admin 权限的用户可以创建卷。
+
+    如果删除 `/etc/cinder/policy.yaml` 文件，然后重启 cinder api 服务，那么 member 角色会恢复可以创建卷的能力。可以自己试一下
+
+    ```bash
+    rm -rf /etc/cinder/policy.yaml
     systemctl restart devstack@c-api
     ```
 
@@ -533,6 +548,29 @@ Horizon 为 OpenStack 提供了界面管理服务，让 OpenStack 管理员和�
 - 分配安全组规则给实例
 - 理解虚拟机从镜像启动和从云盘启动的区别
 - 启动⼀个新实例
+
+    ![](/img/horizon-createvm-01-launch.png)
+
+    ![](/img/horizon-createvm-02-name.png)
+
+    ![](/img/horizon-createvm-03-image.png)
+
+    ![](/img/horizon-createvm-04-image-selected.png)
+
+    ![](/img/horizon-createvm-05-flavor.png)
+
+    ![](/img/horizon-createvm-06-flavor-selected.png)
+
+    ![](/img/horizon-createvm-07-network.png)
+
+    创建好 VM 之后，可以访问其 web console
+
+    ![](/img/horizon-vm-01-detail.png)
+
+    ![](/img/horizon-vm-02-console.png)
+
+    ![](/img/horizon-vm-03-novnc.png)
+
 - 分配 floating IP 给实例
 - 从实例上分离 floating IP
 
@@ -616,8 +654,8 @@ Horizon 为 OpenStack 提供了界面管理服务，让 OpenStack 管理员和�
     - nova-api: 和其他核心项目组件一样都一个管理接口
     - nova-scheduler: 将虚拟机分配到具体的计算节点的服务
     - nova-conductor: 负责虚拟机的监控与分配整逻辑实现
-    - nova-compute: 运行在计算节点上的服务，负责调度libvirt启动虚拟机的服务
-    - RabbitMQ: 是世界上比较主流的消息队列被广泛使用比
+    - nova-compute: 运行在计算节点上的服务，负责调度 libvirt 启动虚拟机的服务
+    - RabbitMQ: 是世界上比较主流的消息队列被广泛使用
 
     ![](/img/virtual7.png)
 
@@ -785,7 +823,8 @@ Horizon 为 OpenStack 提供了界面管理服务，让 OpenStack 管理员和�
     ```bash
     openstack image delete myimage
     ```
-1. 创建快照
+
+1. 创建虚拟机快照（虚拟机快照也是一种镜像）
 
     ```bash
     openstack server image create --name [instance_snapshot] [instance1]

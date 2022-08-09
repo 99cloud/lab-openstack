@@ -2,7 +2,7 @@
 
 ## 1. Topo 结构图
 
-![](image/coalab-devstack.png)
+![](image/coalab-devstack.svg)
 
 ## 2. 环境访问方式
 
@@ -12,9 +12,10 @@
 
     ![](image/jumpserver.png)
 
+    ![](image/jumpserver-confirm.png)
+
 - 然后登陆内部 openstack 主机：`ssh trystack@172.25.0.10`，密码：trystack
 - 内部 openstack 主机切换 root：`sudo -s`，密码 trystack
-- openstack 网页 admin 帐号：admin，密码：trystack
 
 ### 2.2 访问 OpenStack
 
@@ -28,8 +29,9 @@
     root@openstack:~# openstack token issue
     ```
 
-1. 访问网页界面 Horizon Dashboard，比如 http://211.152.62.6:10119
-1. 访问虚拟机 novnc
+1. 访问网页界面 Horizon Dashboard，比如 `http://211.152.62.6:10119`，这里的 IP 和端口号需要按实际分配到的项来填写。
+
+    openstack 网页，帐号：`admin`，密码：`trystack`
 
 ## 3. 如何恢复环境？
 
