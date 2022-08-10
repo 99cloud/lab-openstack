@@ -25,7 +25,7 @@
 | | | | [3.3 Keystone 各功能的实现机理是怎样的？](#33-keystone-各功能的实现机理是怎样的) |
 | | 下午 | [4. 管理看板服务 - Horizon](#4-horizon) | [4.1 Horizon 基本概念](#41-horizon-基本概念) |
 | | | | [4.2 Horizon 基本功能](#42-horizon-基本功能) |
-| | | | [4.3 通过 Horizion 创建一台虚拟机](#43-通过-horizion-创建一台虚拟机) |
+| | | | [4.3 通过 Horizon 创建一台虚拟机](#43-通过-horizon-创建一台虚拟机) |
 | | | | [4.4 其它操作](#44-其它操作) |
 | | | | [4.5 [可选] 新一代 Web 界面：Skyline](#45-可选-新一代-web-界面skyline) |
 | | | [5. 管理计算服务 - Nova](#5-nova) | [5.1 理解虚拟化](#51-理解虚拟化) |
@@ -537,7 +537,7 @@ Horizon 为 OpenStack 提供了界面管理服务，让 OpenStack 管理员和�
 - 检验 Dashboard 的运⾏
 - [可选] 配置 Horizon 来⽀持多 Domain 登录
 
-### 4.3 通过 Horizion 创建一台虚拟机
+### 4.3 通过 Horizon 创建一台虚拟机
 
 [Catalog](#catalog)
 
@@ -830,6 +830,14 @@ Horizon 为 OpenStack 提供了界面管理服务，让 OpenStack 管理员和�
     openstack server image create --name [instance_snapshot] [instance1]
     ```
 
+    boot from image 的虚拟机，没有云硬盘，系统盘直接落在宿主机上。创建虚拟机快照时，会将系统盘整个变成镜像放到 glance 中，镜像 size 大于 0
+
+    ![](/img/horizon-boot-from-image.png)
+
+    boot from volume 的虚拟机，有云硬盘，系统盘是一个云硬盘（卷 volume）。创建虚拟机快照时，会先创建云硬盘的快照，然后把云硬盘快照 ID 等元数据存入 glance 中，该虚拟机快照里不保存硬盘数据，只保存对应云硬盘快照 ID 等元数据，因此镜像 size 为 0
+
+    ![](/img/horizon-boot-from-volume.png)
+
 ## 7. Cinder
 
 [Catalog](#catalog)
@@ -888,19 +896,19 @@ Horizon 为 OpenStack 提供了界面管理服务，让 OpenStack 管理员和�
 
 [Catalog](#catalog)
 
-1. 创建一个附加卷
+1. 创建一个空白卷
 
     ```bash
     openstack volume create --size 2 myvol
     ```
 
-1. 创建一个启动卷，这样一来虚拟机的root disk就在云盘上了，就不用担心因为计算节点的硬盘损坏带来的数据丢失的风险
+1. 创建一个可以启动的卷（创建卷，并且将 image 中的操作系统复制到新创建的卷中）。该卷可以直接启动 VM，这样一来虚拟机的 root disk 就在云盘上了，就不用担心因为计算节点的硬盘损坏带来的数据丢失的风险
 
     ```bash
     openstack volume create --size 2 --image [cirros] [myvol]
     ```
 
-1. 为虚拟机添加一附加卷
+1. 为虚拟机添加卷（插入硬盘）
 
     ```bash
     openstack server add volume [instance1] [vol1]
@@ -912,11 +920,11 @@ Horizon 为 OpenStack 提供了界面管理服务，让 OpenStack 管理员和�
 
 
     ```bash
-    sudo mkfs.ext3 /dev/vdb
-    sudo mount /dev/vdb /mnt
+    sudo mkfs.ext3 /dev/vdb   # 格式化硬盘
+    sudo mount /dev/vdb /mnt  # 挂载硬盘
     ```
 
-1. 从虚拟机删除一附加卷
+1. 从虚拟机删除卷（拔出硬盘）
 
     ```bash
     openstack server remove volume [instance1] [vol1]
@@ -1274,11 +1282,17 @@ Horizon 为 OpenStack 提供了界面管理服务，让 OpenStack 管理员和�
     openstack network create --enable --provider-network-type [flat]  --provider-physical-network [br-ex name] --project admin --external  [network-name]
     ```
 
+    ![](/img/horizon-external-network.png)
+
 1. 创建外部网络的子网
 
     ```bash
     openstack subnet create --subnet-range [192.168.100.0/24] --gateway [192.168.100.1] --dhcp --network [public] [pubsub]
     ```
+
+    ![](/img/horizon-external-subnet.png)
+
+    ![](/img/horizon-external-ip-range.png)
 
 1. 租户网络实验
 
@@ -1291,11 +1305,17 @@ Horizon 为 OpenStack 提供了界面管理服务，让 OpenStack 管理员和�
 
     # 3. 创建路由
     openstack router create testRouter2
+
+    # 4. 为路由器设置网关（连接到外网）
     openstack router set --external-gateway public --enable-snat testRouter2
 
-    # 4. 路由增加接口绑定到私有网络子网
+    # 5. 路由增加接口绑定到私有网络（租户网络）的子网
     openstack router add subnet testRouter2 testSubnet2
     ```
+
+    第 5 步对应到界面是（注意，**第 4 步为路由器设置网关不要和第 5 步连接租户网络混淆，连接外网必须用设置网关，不能在路由器上添加对外网的接口**）：
+
+    ![](/img/horizon-router-add-interface.png)
 
 1. 浮动 IP 实验
 
