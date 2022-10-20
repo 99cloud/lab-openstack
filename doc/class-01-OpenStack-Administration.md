@@ -612,7 +612,7 @@ Horizon 为 OpenStack 提供了界面管理服务，让 OpenStack 管理员和�
     - 管理虚拟机生命周期
 1. 虚拟化的类型
     - Type1: installed directly on top of physical，named as bare metal hypervisors (ex: VMware ESXi，Microsoft Hyper-V，KVM)
-    - Type2: installed on Host OS which sits between physical serer and hypervisor，named as hosted hypervisors(VMware Workstation，VirtualBox)
+    - Type2: installed on Host OS which sits between physical server and hypervisor，named as hosted hypervisors(VMware Workstation，VirtualBox)
 
     ![](/img/virtual1.png)
 
@@ -1118,7 +1118,7 @@ Horizon 为 OpenStack 提供了界面管理服务，让 OpenStack 管理员和�
 
 1. neutron 核心组件
     - neutron-server: 提供 API 接口，并把对 API 的调用请求传给已经配置好的插件进行后续处理. 插件需要访问数据库来维护各种配置数据和对应关系，例如路由器、网络、子网、端口、floating ip、安全组等等
-    - (neutron-)plugin: 维护逻辑网络状态，调用 agent，处理 sever 请求
+    - (neutron-)plugin: 维护逻辑网络状态，调用 agent，处理 server 请求
     - neutron-agent: 负责在 network-provider 上实现网络拓璞，处理 plugin 请求
     - network-provider: 网络设备，可以是物理或是虚拟，提供网络服务
     - neutron-dhcp-agent: 通过 dnsmasq 进程（轻量级服务器，可以提供 dns、dhcp、tftp 等服务）来实现的，该进程绑定到 dhcp 命名空间中的 br-int 的接口上，可以查看相关的进程
