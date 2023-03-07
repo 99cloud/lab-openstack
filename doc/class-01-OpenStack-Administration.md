@@ -86,162 +86,167 @@
 
 [Catalog](#catalog)
 
-1. 什么是虚拟化？
+#### 2.1.1 什么是虚拟化？
 
-    虚拟化是云计算的基础。简单地说，**虚拟化使得在一台物理服务器上可以跑多台虚拟机**。虚拟化的目的：**1. 资源隔离，2. 资源限制**
+虚拟化是云计算的基础。简单地说，**虚拟化使得在一台物理服务器上可以跑多台虚拟机**。虚拟化的目的：**1. 资源隔离，2. 资源限制**
 
-    - 虚拟化共享物理机的 CPU、内存、IO 硬件资源，但逻辑上虚拟机之间是相互隔离的
-    - 物理机我们一般称为宿主机（Host），宿主机上面的虚拟机称为客户机（Guest）
+- 虚拟化共享物理机的 CPU、内存、IO 硬件资源，但逻辑上虚拟机之间是相互隔离的
+- 物理机我们一般称为宿主机（Host），宿主机上面的虚拟机称为客户机（Guest）
 
-    Hypervisor 程序将 Host 的硬件虚拟化，并提供给 Guest 使用，分为：全虚拟化（一型虚拟化）和半虚拟化（二型虚拟化）。
+Hypervisor 程序将 Host 的硬件虚拟化，并提供给 Guest 使用，分为：全虚拟化（一型虚拟化）和半虚拟化（二型虚拟化）。
 
-    - **全虚拟化 Hypervisor 是一个特殊定制的 Linux 系统**，直接安装在物理机上。比如 Xen 和 VMWare 的 EXSi。全虚拟化一般对硬件虚拟化功能做了特别优化，性能更好。
-    - 半虚拟化先安装标准操作系统，Hypervisor 作为 OS 上的一个程序模块运行，并对虚拟机进行管理。比如 KVM，VirtualBox，VMWare WorkStation，VMWare Player，VMWare Fusion 等。半虚拟化基于普通操作系统，比较灵活，比如支持虚拟机嵌套（在 KVM 虚拟机中再运行 KVM）。
+- **全虚拟化 Hypervisor 是一个特殊定制的 Linux 系统**，直接安装在物理机上。比如 Xen 和 VMWare 的 EXSi。全虚拟化一般对硬件虚拟化功能做了特别优化，性能更好。
+- 半虚拟化先安装标准操作系统，Hypervisor 作为 OS 上的一个程序模块运行，并对虚拟机进行管理。比如 KVM，VirtualBox，VMWare WorkStation，VMWare Player，VMWare Fusion 等。半虚拟化基于普通操作系统，比较灵活，比如支持虚拟机嵌套（在 KVM 虚拟机中再运行 KVM）。
 
-1. 虚拟化的发展历程如何？
+#### 2.1.2 计算、虚拟化和云计算的发展历程
 
-    - 60-70 IBM
-    - 80-90 **VMWare**
-    - 2005-2010 Amazon
-    - 2010 NASA Nebula & RackSpace Cloud Storage
-1. 计算的发展历经了哪些阶段？
-    - 大型机：集中式计算
-    - 个人 PC：分布式计算
-    - 移动互联网 + 云计算：泛在计算
-1. 云计算的类型有几种类型？
-    - IaaS / PaaS / SaaS
-    - 只有 IaaS 是必须基于虚拟化的
+计算和虚拟化的发展历程
 
-        ![iaas](/img/iaas.png)
+- 60-70 IBM，大型机：集中式计算
+- 80-90 **VMWare**，个人 PC：分布式计算
+- 2005-至今 Amazon，云计算+移动互联网：泛在计算
+- 2010 NASA Nebula & RackSpace Cloud Storage -> **OpenStack**
 
-1. 云计算发展历程是怎样的？
-    - 最初的概念是”网络即是电脑”
-    - 尔后 Amazon 推出的弹性云计算 (EC2) 提供用户使用资源并且收费，大致奠定了云计算的商业用途。**阿里云**、OpenStack 都是 Amazon Web Services (AWS) 的追随者。
-    - OpenStack 是一个开源的云平台，它属于云计算当中我们常说的 IaaS（infrastructure as a service）。**OpenStack 是一个云管理操作系统，用来控制数据中心中的计算、存储、网络资源池**，管理员通过 API / CLI 和 Web 界面为用户提供所需的资源。
+云计算的类型有几种类型？
 
-1. KVM 基础
+- IaaS（大多数云厂商） / PaaS（GAE） / SaaS（Office365）
+- 只有 IaaS 是依赖虚拟化的
 
-    KVM（Kernel-Based Virtual Machine）是 x86 平台上应用最广泛的虚拟化方案。AWS / 阿里云都从最初的 XEN 转向了 KVM；OpenStack 对 KVM 支持得也最好。
+![iaas](/img/iaas.png)
 
-    **KVM 内核模块叫 kvm.ko，只用于管理 VM 的 CPU 和内存。IO 虚拟化由 Linux 内核和 QEMU 来实现**。
+云计算发展历程是怎样的？
 
-    Libvirt 是 KVM 的管理工具，除了能管理 KVM，还能管理 XEN、VirtualBox 等。OpenStack 底层通过 Libvirt 来简介管理 KVM。**Libvirt 包含：后台 Daemon 程序 libvirtd、API（virt-manager 就是基于 libvirt API 开发）和命令行工具 virsh**。可以通过 virt-manager 对虚拟机进行创建、删除、开关机、快照等管理操作，也可以通过 virsh 命令行管理，比如：`virsh list --all`。
+- 最初的概念是”网络即是电脑”
+- 尔后 Amazon 推出的弹性云计算 (EC2) 提供用户使用资源并且收费，大致奠定了云计算的商业用途。**阿里云**、OpenStack 都是 Amazon Web Services (AWS) 的追随者。
+- OpenStack 是一个开源的云平台，它属于云计算当中我们常说的 IaaS（infrastructure as a service）。**OpenStack 是一个云管理操作系统，用来控制数据中心中的计算、存储、网络资源池**，管理员通过 API / CLI 和 Web 界面为用户提供所需的资源。
 
-    - virt-manager 可以选 import exist disk image，通过 cirros（特制很小的 linux 镜像）启动（<http://download.cirros-cloud.net>），KVM 默认在 `/var/lib/libvirt/images` 位置查找。100 M，1 Core 就可以运行了。
-    - virt-manager 也可以从 iso 安装 Guest OS
-    - virt-manager 也可以通过 File / Add Connection 连接远程 Host 主机上的 Guest VM。远程宿主机上的 libvirt 需要允许远程管理。
+#### 2.1.3 KVM 基础
 
-        ```conf
-        以 ubuntu 14.04 为例
+KVM（Kernel-Based Virtual Machine）是 x86 平台上应用最广泛的虚拟化方案。AWS / 阿里云都从最初的 XEN 转向了 KVM；OpenStack 对 KVM 支持得也最好。
 
-        # /etc/default/libvirt-bin
-        start_libvirtd="yes"
-        libvirtd_opts="-d -l"
+**KVM 内核模块叫 kvm.ko，只用于管理 VM 的 CPU 和内存。IO 虚拟化由 Linux 内核和 QEMU 来实现**。
 
-        # /etc/libvirt/libvirtd.conf
-        listen_tls = 0
-        listen_tcp = 1
-        unix_sock_group = "libvirtd"
-        unix_sock_ro_perms = "0777"
-        unix_sock_rw_perms = "0770"
-        auth_unix_rw = "none"
-        auth_tcp = "none"
-        ```
+Libvirt 是 KVM 的管理工具，除了能管理 KVM，还能管理 XEN、VirtualBox 等。OpenStack 底层通过 Libvirt 来简介管理 KVM。**Libvirt 包含：后台 Daemon 程序 libvirtd、API（virt-manager 就是基于 libvirt API 开发）和命令行工具 virsh**。可以通过 virt-manager 对虚拟机进行创建、删除、开关机、快照等管理操作，也可以通过 virsh 命令行管理，比如：`virsh list --all`。
 
-        然后重启 libvirtd：`service libvirt-bin restart`
+virt-manager 可以选 import exist disk image，通过 cirros（特制很小的 linux 镜像）启动（<http://download.cirros-cloud.net>），KVM 默认在 `/var/lib/libvirt/images` 位置查找。100 M，1 Core 就可以运行了。
 
-1. 计算虚拟化：CPU 和内存
+virt-manager 也可以从 iso 安装 Guest OS
 
-    现在用到的 Intel 和 AMD CPU 都支持 VT 硬件虚拟化了，可以用 `egrep -o '(vmx|svm)' /proc/cpuio` 命令检查确认。**一个 KVM VM 在 Host 上其实是一个 qemu-kvm 进程，VM 中的每一个 vCPU 则对应 qemu-kvm 进程中的一个线程**。因此，vCPU 的总量可以超过物理 CPU 的总量，这叫做 CPU 超配（overcommit）。超配使得 VM 可以充分使用 Host 的 CPU 资源，前提是在同一时刻，不是所有的 VM 都 CPU 满负荷运行。
+virt-manager 也可以通过 File / Add Connection 连接远程 Host 主机上的 Guest VM。远程宿主机上的 libvirt 需要允许远程管理。
 
-    KVM 需要完成 VA（虚拟内存）-> PA（物理内存）-> MA（机器内存）之间的地址转换。其中，Guest OS 完成 VA -> PA，KVM 完成 PA -> MA。内存也可以 overcommit，但是要小心测试和实时监控，避免 OOM（Out of Memory，内存溢出）。
+```conf
+以 ubuntu 14.04 为例
 
-1. 存储虚拟化
+# /etc/default/libvirt-bin
+start_libvirtd="yes"
+libvirtd_opts="-d -l"
 
-    KVM 的存储虚拟化是通过存储池（Storage Pool）和卷（Volume）来管理的。Storage Pool 是 Host 上可以看到的一片存储空间。Volume 是在 Storage Pool 中划分出的一块空间，Host 将 Volume 分配给主机，在 VM 中看到的就是一块硬盘。Storage Pool 可以是多种类型：目录，LVM，iSCSI（使原来用于本机的 SCSI 协议可以通过 TCP/IP 扩展，方便存储集成、灾难恢复），Ceph，参考：<http://libvirt.org/storage.html>
+# /etc/libvirt/libvirtd.conf
+listen_tls = 0
+listen_tcp = 1
+unix_sock_group = "libvirtd"
+unix_sock_ro_perms = "0777"
+unix_sock_rw_perms = "0770"
+auth_unix_rw = "none"
+auth_tcp = "none"
+```
 
-    - 文件目录类型的 Storage Pool
+然后重启 libvirtd：`service libvirt-bin restart`
 
-        **KVM 将 Host 的 `/var/lib/libvirt/images/` 作为默认的 Storage Pool。其中的一个文件就是一个 Volume**。
+#### 2.1.4 计算虚拟化：CPU 和内存
 
-        KVM 所有可使用的 Storage Pool 都定义在 Host 的 `/etc/libvirt/storage` 目录下，每一个 Pool 对应一个 xml 文件，默认有一个 default.xml。
+现在用到的 Intel 和 AMD 等 x86 架构 CPU 都支持 VT 硬件虚拟化了（**ARM 服务器则不一定**），可以用 `egrep -o '(vmx|svm)' /proc/cpuio` 命令检查确认。**一个 KVM VM 在 Host 上其实是一个 qemu-kvm 进程，VM 中的每一个 vCPU 则对应 qemu-kvm 进程中的一个线程**。因此，vCPU 的总量可以超过物理 CPU 的总量，这叫做 CPU 超配（overcommit）。超配使得 VM 可以充分使用 Host 的 CPU 资源，前提是在同一时刻，不是所有的 VM 都 CPU 满负荷运行。
 
-        ```console
-        [root@lab-c2009 storage]# pwd
-        /etc/libvirt/storage
+KVM 需要完成 VA（虚拟内存）-> PA（物理内存）-> MA（机器内存）之间的地址转换。其中，Guest OS 完成 VA -> PA，KVM 完成 PA -> MA。内存也可以 overcommit，但是要小心测试和实时监控，避免 OOM（Out of Memory，内存溢出）。
 
-        [root@lab-c2009 storage]# ls
-        autostart  default.xml  images.xml
-        ```
+#### 2.1.5 存储虚拟化
 
-        ```xml
-        [root@lab-c2009 storage]# cat default.xml
-        <!--
-        WARNING: THIS IS AN AUTO-GENERATED FILE. CHANGES TO IT ARE LIKELY TO BE
-        OVERWRITTEN AND LOST. Changes to this xml configuration should be made using:
-        virsh pool-edit default
-        or other application using the libvirt API.
-        -->
+KVM 的存储虚拟化是通过存储池（Storage Pool）和卷（Volume）来管理的。Storage Pool 是 Host 上可以看到的一片存储空间。Volume 是在 Storage Pool 中划分出的一块空间，Host 将 Volume 分配给主机，在 VM 中看到的就是一块硬盘。Storage Pool 可以是多种类型：目录，LVM，iSCSI（使原来用于本机的 SCSI 协议可以通过 TCP/IP 扩展，方便存储集成、灾难恢复），Ceph，参考：<http://libvirt.org/storage.html>
 
-        <pool type='dir'>
-        <name>default</name>
-        <uuid>06a9233b-c82b-4232-b65c-019f217b6383</uuid>
-        <capacity unit='bytes'>0</capacity>
-        <allocation unit='bytes'>0</allocation>
-        <available unit='bytes'>0</available>
-        <source>
-        </source>
-        <target>
-            <path>/var/lib/libvirt/images</path>
-        </target>
-        </pool>
-        ```
+1. **文件目录类型的 Storage Pool**
 
-        可以看到 pool type 是目录，路径是 `/var/lib/libvirt/images`
+    **KVM 将 Host 的 `/var/lib/libvirt/images/` 作为默认的 Storage Pool。其中的一个文件就是一个 Volume**。
 
-        ```console
-        [root@lab-c2009 storage]# ls /var/lib/libvirt/images/
-        lab-c2009-devstack-aio.qcow2
-        ```
+    KVM 所有可使用的 Storage Pool 都定义在 Host 的 `/etc/libvirt/storage` 目录下，每一个 Pool 对应一个 xml 文件，默认有一个 default.xml。
 
-        使用文件做 Volume 有很多优点：**存储方便、移植性好、可复制、可远程访问**。可远程访问的意思是 Volume 文件可以存储在 NFS 或者分布式文件系统 GlusterFS，这样**镜像文件就可以在多个 Host 之间共享，便于 VM 在不同宿主机之间 Live Migration。如果是分布式文件系统，多副本的特性还可以保证镜像文件的高可用**。
+    ```console
+    [root@lab-c2009 storage]# pwd
+    /etc/libvirt/storage
 
-        KVM 支持多种 Volume 文件格式：
+    [root@lab-c2009 storage]# ls
+    autostart  default.xml  images.xml
+    ```
 
-        - raw 是默认格式，即原始磁盘格式，移植性好，性能好，但大小固定，不能节省磁盘空间。**如果是 Ceph 作为存储后端，应该用 raw 格式，因为用 qcow2 也不会节省空间，反而会影响性能**
-        - qcow2 是推荐格式，cow 表示 copy on write，能够节省磁盘空间，支持 AES 加密，支持 zlib 压缩，支持多快照。
-        - vmdk 是 VMWare 的虚拟磁盘格式，因此 VMWare 虚拟机可以直接在 KVM 上运行。
+    ```xml
+    [root@lab-c2009 storage]# cat default.xml
+    <!--
+    WARNING: THIS IS AN AUTO-GENERATED FILE. CHANGES TO IT ARE LIKELY TO BE
+    OVERWRITTEN AND LOST. Changes to this xml configuration should be made using:
+    virsh pool-edit default
+    or other application using the libvirt API.
+    -->
 
-    - [可选] LVM 类型的 Storage Pool
+    <pool type='dir'>
+    <name>default</name>
+    <uuid>06a9233b-c82b-4232-b65c-019f217b6383</uuid>
+    <capacity unit='bytes'>0</capacity>
+    <allocation unit='bytes'>0</allocation>
+    <available unit='bytes'>0</available>
+    <source>
+    </source>
+    <target>
+        <path>/var/lib/libvirt/images</path>
+    </target>
+    </pool>
+    ```
 
-        Host 上的 VG（Volume Group）中的 LV（Logic Volume） 也可以作为虚拟磁盘分配给 VM 使用，但 **LV 没有磁盘的 MBR 引导记录，不能作为虚拟机的启动盘，只能作为数据盘使用**。这种配置下，VG 就是 Storage Pool，LV 就是 Volume。
+    可以看到 pool type 是目录，路径是 `/var/lib/libvirt/images`
 
-        LV 的优点是性能较好，缺点是管理和移动性方面不如镜像文件，而且不能通过网络远程使用。
+    ```console
+    [root@lab-c2009 storage]# ls /var/lib/libvirt/images/
+    lab-c2009-devstack-aio.qcow2
+    ```
 
-1. 网络虚拟化
+    使用文件做 Volume 有很多优点：**存储方便、移植性好、可复制、可远程访问**。可远程访问的意思是 Volume 文件可以存储在 NFS 或者分布式文件系统 GlusterFS，这样**镜像文件就可以在多个 Host 之间共享，便于 VM 在不同宿主机之间 Live Migration。如果是分布式文件系统，多副本的特性还可以保证镜像文件的高可用**。
 
-    网络虚拟化是虚拟化技术中最复杂的部分，下图是[计算节点（可以理解为 KVM 宿主机）虚拟网络的逻辑图](references/Neutron-Network-Namespaces-and-IPtables-Technical-deep-dive.pdf)。
+    KVM 支持多种 Volume 文件格式：
 
-    ![](/img/network-virtualization-on-compute-node.png)
+    - raw 是默认格式，即原始磁盘格式，移植性好，性能好，但大小固定，不能节省磁盘空间。**如果是 Ceph 作为存储后端，应该用 raw 格式，因为用 qcow2 也不会节省空间，反而会影响性能**
+    - qcow2 是推荐格式，cow 表示 copy on write，能够节省磁盘空间，支持 AES 加密，支持 zlib 压缩，支持多快照。
+    - vmdk 是 VMWare 的虚拟磁盘格式，因此 VMWare 虚拟机可以直接在 KVM 上运行。
 
-    Host 有一块连接外网的 eth0，上面跑了 1 个 虚拟机 VM1，如何能让 VM1 访问外网？
+2. [可选] LVM 类型的 Storage Pool
 
-    - 将物理网卡 eth0 直接分配给 VM1。这样 Host 和其它 VM2 就没有网卡，无法访问外网了。
-    - 给 VM1 分配一个虚拟网卡 vnet0，通过 Linux Bridge（简单理解为二层交换机） br0 将 eth0 和 vnet0 连接起来。
+    Host 上的 VG（Volume Group）中的 LV（Logic Volume） 也可以作为虚拟磁盘分配给 VM 使用，但 **LV 没有磁盘的 MBR 引导记录，不能作为虚拟机的启动盘，只能作为数据盘使用**。这种配置下，VG 就是 Storage Pool，LV 就是 Volume。
 
-        ![](/img/linux-bridge.png)
+    LV 的优点是性能较好（因为是块设备文件，不是文件系统中的文件），缺点是管理和移动性方面不如镜像文件，而且不能通过网络远程使用。
 
-        br0 会将 eth0/vnet0/vnet1 数据转发分享，使得 VM1 和 VM2 可以彼此通信，也能透过 eth0 与外部网络通信。
+3. 其他类型的 Storage Pool：iSCSI 或者 Ceph
 
-    - virbr0 是 KVM 默认创建的一个 Bridge，其作用是为连接其上的虚拟网卡提供 NAT 访问外网的功能。参考：<https://wiki.libvirt.org/page/VirtualNetworking>。这个和 br0 不一样，在 br0 的情况下，VM1 通过自己的 IP 直接与外网通信，不会经过 NAT 地址转换。
+#### 2.1.6 网络虚拟化
 
-        ![](/img/Host_with_a_virtual_network_switch_in_nat_mode_and_two_guests.png)
+网络虚拟化是虚拟化技术中最复杂的部分，下图是[计算节点（可以理解为 KVM 宿主机）虚拟网络的逻辑图](references/Neutron-Network-Namespaces-and-IPtables-Technical-deep-dive.pdf)。
 
-    - Linux Bridge + VLAN
+![](/img/network-virtualization-on-compute-node.png)
 
-        ![](/img/linux-bridge-vlan.png)
+Host 有一块连接外网的 eth0，上面跑了 1 个 虚拟机 VM1，如何能让 VM1 访问外网？
 
-        **eth0 相当于 Trunk 口，vnet0 / brvlan10 / eth0.10 都是 vlan10 的 Access 口**。Access 口（网卡和交换机之间）只能属于一个 VLAN，数据包流入 Access 口后，会被打上所在 VLAN 的标签。数据包在通过 Trunk 口（交换机和交换机之间）时，始终带着自己的 VLAN 标签。
+- 将物理网卡 eth0 直接分配给 VM1。这样 Host 和其它 VM2 就没有网卡，无法访问外网了。
+- 给 VM1 分配一个虚拟网卡 vnet0，通过 Linux Bridge（简单理解为二层交换机） br0 将 eth0 和 vnet0 连接起来。
+
+    ![](/img/linux-bridge.png)
+
+    br0 会将 eth0/vnet0/vnet1 数据转发分享，使得 VM1 和 VM2 可以彼此通信，也能透过 eth0 与外部网络通信。
+
+- virbr0 是 KVM 默认创建的一个 Bridge，其作用是为连接其上的虚拟网卡提供 NAT 访问外网的功能。参考：<https://wiki.libvirt.org/page/VirtualNetworking>。这个和 br0 不一样，在 br0 的情况下，VM1 通过自己的 IP 直接与外网通信，不会经过 NAT 地址转换。
+
+    ![](/img/Host_with_a_virtual_network_switch_in_nat_mode_and_two_guests.png)
+
+- Linux Bridge + VLAN
+
+    ![](/img/linux-bridge-vlan.png)
+
+    **eth0 相当于 Trunk 口，vnet0 / brvlan10 / eth0.10 都是 vlan10 的 Access 口**。Access 口（网卡和交换机之间）只能属于一个 VLAN，数据包流入 Access 口后，会被打上所在 VLAN 的标签。数据包在通过 Trunk 口（交换机和交换机之间）时，始终带着自己的 VLAN 标签。
 
 ### 2.2 OpenStack 组件架构
 
