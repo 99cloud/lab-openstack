@@ -26,6 +26,20 @@
     ```console
     root@openstack:~# source /home/devstack/openrc admin
 
+    root@openstack:~# senv | grep OS_
+    OS_USER_DOMAIN_ID=default
+    OS_AUTH_URL=http://172.25.0.10/identity
+    OS_PROJECT_DOMAIN_ID=default
+    OS_REGION_NAME=RegionOne
+    OS_PROJECT_NAME=demo
+    OS_IDENTITY_API_VERSION=3
+    OS_TENANT_NAME=demo
+    OS_AUTH_TYPE=password
+    OS_PASSWORD=trystack
+    OS_USERNAME=admin
+    OS_VOLUME_API_VERSION=3
+    OS_CACERT=
+
     root@openstack:~# openstack token issue
     ```
 
