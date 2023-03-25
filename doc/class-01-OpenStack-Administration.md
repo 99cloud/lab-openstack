@@ -79,8 +79,9 @@
 
 [Catalog](#catalog)
 
-1. 云计算分为 IaaS / CaaS / SaaS 三种，其中 IaaS 云计算是主流，我们在课程中只讨论 IaaS 云计算
-1. 以 AWS 为代表的 IaaS 云计算是一种基于**虚拟化**技术的**自助式**服务平台，其它云计算厂商均以 AWS 为模版
+云计算分为 IaaS（大多数云厂商）/ PaaS（GAE） / SaaS（Office 365） 三种，其中 IaaS 云计算是主流，我们在课程中只讨论 IaaS 云计算
+
+以 AWS 为代表的 IaaS 云计算是一种基于**虚拟化**技术的**自助式**服务平台（AWS 同时也提供一些 PaaS 和 SaaS 服务）。
 
 ### 2.1 虚拟化与云计算
 
@@ -106,11 +107,6 @@ Hypervisor 程序将 Host 的硬件虚拟化，并提供给 Guest 使用，分�
 - 80-90 **VMWare**，个人 PC：分布式计算
 - 2005-至今 Amazon，云计算+移动互联网：泛在计算
 - 2010 NASA Nebula & RackSpace Cloud Storage -> **OpenStack**
-
-云计算的类型有几种类型？
-
-- IaaS（大多数云厂商） / PaaS（GAE） / SaaS（Office365）
-- 只有 IaaS 是依赖虚拟化的
 
 ![iaas](/img/iaas.png)
 
@@ -415,48 +411,49 @@ Keystone 的核心概念包括：
     - 服务终点即一个服务提供的地址比如 http://192.168.100.20:5000/v3，这就是一个服务终点，服务终点是用来提供基于 http 请求的 API 方法的一个地址
 1. 什么是目录服务？
     - 之前提到 OpenStack 有很多个核心组件组合而成的，每个组件都有一个或多个管理接口，每个管理接口提供服务都是以 web 服务的形式出现的，那么他们都有一个服务的终点地址比如 keystone 的(http://ip:5000/v3)，我们怎么才能找到每个组件的终端呢？因为这些服务可以很方便的迁移到任何网络可达的物理服务器上，所有这里我们要一个机制来集中管理服务的终点，就像服务终点的路由器一样
-    ```console
-    openstack endpoint list
 
-    +----------------------------------+-----------+--------------+----------------+---------+-----------+------------------------------------------------+
-    | ID                               | Region    | Service Name | Service Type   | Enabled | Interface | URL                                            |
-    +----------------------------------+-----------+--------------+----------------+---------+-----------+------------------------------------------------+
-    | 00ae738f891440609389b4965d692b60 | RegionOne | cinderv3     | volumev3       | True    | public    | http://172.25.0.10/volume/v3/$(project_id)s    |
-    | 01d83d04233b47f39a67106ff354b10f | RegionOne | heat-cfn     | cloudformation | True    | public    | http://172.25.0.10/heat-api-cfn/v1             |
-    | 024bed8ba1c744dca750cf81fd0714b5 | RegionOne | keystone     | identity       | True    | admin     | http://172.25.0.10/identity                    |
-    | 03a4a17f5be741f195c18809c935c3c2 | RegionOne | placement    | placement      | True    | public    | http://172.25.0.10/placement                   |
-    | 388b0f830ec8407abf0cdcf0b886268e | RegionOne | keystone     | identity       | True    | public    | http://172.25.0.10/identity                    |
-    | 67d74297781e4d43bab3f6bb4d76011f | RegionOne | glance       | image          | True    | public    | http://172.25.0.10/image                       |
-    | 6f3c5686721348b6a3886e11dae79b73 | RegionOne | cinderv2     | volumev2       | True    | public    | http://172.25.0.10/volume/v2/$(project_id)s    |
-    | 74d9aef214ad4e8ea1ddcbfc55e875a1 | RegionOne | swift        | object-store   | True    | public    | http://172.25.0.10:8080/v1/AUTH_$(project_id)s |
-    | 97f0c066d8a340d096380fd596eb7574 | RegionOne | nova         | compute        | True    | public    | http://172.25.0.10/compute/v2.1                |
-    | 992c3a3f2fc7459d855255030f5c13f0 | RegionOne | neutron      | network        | True    | public    | http://172.25.0.10:9696/                       |
-    | bf18e166d9b84e768cacad4b291dc942 | RegionOne | heat         | orchestration  | True    | public    | http://172.25.0.10/heat-api/v1/$(project_id)s  |
-    | e1db80458c93450e972aae8b02f83704 | RegionOne | swift        | object-store   | True    | admin     | http://172.25.0.10:8080                        |
-    | e70efec3e8f24239b70edb62b73aa8e1 | RegionOne | nova_legacy  | compute_legacy | True    | public    | http://172.25.0.10/compute/v2/$(project_id)s   |
-    | f706a1ba0cae4b468d0045d53b4b339c | RegionOne | cinder       | block-storage  | True    | public    | http://172.25.0.10/volume/v3/$(project_id)s    |
-    +----------------------------------+-----------+--------------+----------------+---------+-----------+------------------------------------------------+
+        ```console
+        $ openstack endpoint list
 
-    openstack service list
+        +----------------------------------+-----------+--------------+----------------+---------+-----------+------------------------------------------------+
+        | ID                               | Region    | Service Name | Service Type   | Enabled | Interface | URL                                            |
+        +----------------------------------+-----------+--------------+----------------+---------+-----------+------------------------------------------------+
+        | 00ae738f891440609389b4965d692b60 | RegionOne | cinderv3     | volumev3       | True    | public    | http://172.25.0.10/volume/v3/$(project_id)s    |
+        | 01d83d04233b47f39a67106ff354b10f | RegionOne | heat-cfn     | cloudformation | True    | public    | http://172.25.0.10/heat-api-cfn/v1             |
+        | 024bed8ba1c744dca750cf81fd0714b5 | RegionOne | keystone     | identity       | True    | admin     | http://172.25.0.10/identity                    |
+        | 03a4a17f5be741f195c18809c935c3c2 | RegionOne | placement    | placement      | True    | public    | http://172.25.0.10/placement                   |
+        | 388b0f830ec8407abf0cdcf0b886268e | RegionOne | keystone     | identity       | True    | public    | http://172.25.0.10/identity                    |
+        | 67d74297781e4d43bab3f6bb4d76011f | RegionOne | glance       | image          | True    | public    | http://172.25.0.10/image                       |
+        | 6f3c5686721348b6a3886e11dae79b73 | RegionOne | cinderv2     | volumev2       | True    | public    | http://172.25.0.10/volume/v2/$(project_id)s    |
+        | 74d9aef214ad4e8ea1ddcbfc55e875a1 | RegionOne | swift        | object-store   | True    | public    | http://172.25.0.10:8080/v1/AUTH_$(project_id)s |
+        | 97f0c066d8a340d096380fd596eb7574 | RegionOne | nova         | compute        | True    | public    | http://172.25.0.10/compute/v2.1                |
+        | 992c3a3f2fc7459d855255030f5c13f0 | RegionOne | neutron      | network        | True    | public    | http://172.25.0.10:9696/                       |
+        | bf18e166d9b84e768cacad4b291dc942 | RegionOne | heat         | orchestration  | True    | public    | http://172.25.0.10/heat-api/v1/$(project_id)s  |
+        | e1db80458c93450e972aae8b02f83704 | RegionOne | swift        | object-store   | True    | admin     | http://172.25.0.10:8080                        |
+        | e70efec3e8f24239b70edb62b73aa8e1 | RegionOne | nova_legacy  | compute_legacy | True    | public    | http://172.25.0.10/compute/v2/$(project_id)s   |
+        | f706a1ba0cae4b468d0045d53b4b339c | RegionOne | cinder       | block-storage  | True    | public    | http://172.25.0.10/volume/v3/$(project_id)s    |
+        +----------------------------------+-----------+--------------+----------------+---------+-----------+------------------------------------------------+
 
-    +----------------------------------+-------------+----------------+
-    | ID                               | Name        | Type           |
-    +----------------------------------+-------------+----------------+
-    | 001f4379182b42f8842dd72859eac39d | keystone    | identity       |
-    | 2c352f2049ab43429afd9c5a4708ebec | cinder      | block-storage  |
-    | 39a9095dad1f472089ed1e1e759886b1 | nova_legacy | compute_legacy |
-    | 418d821715bd42e0b1271beab78fdb33 | neutron     | network        |
-    | 545c0ed7e578465084543d10eeedff9c | glance      | image          |
-    | 55e850934f1943208c9fb4319879dca8 | heat        | orchestration  |
-    | 6b4ceb37abae4a85aa5ba9922c9cf2d6 | cinderv3    | volumev3       |
-    | 79ec501090ff48deb7be3aba01a66ee4 | swift       | object-store   |
-    | 7b1f08acae684c86ac33bcf6b9321c49 | placement   | placement      |
-    | 9f270ea9cd294f7f81f3d08d295e2582 | heat-cfn    | cloudformation |
-    | aff55c4ac72d4409987a8d9703f484c7 | cinderv2    | volumev2       |
-    | db41400624524d17a605c5a8f895ea5a | nova        | compute        |
-    +----------------------------------+-------------+----------------+
-    ```
-1. 什么是 Role / Policy？
+        $ openstack service list
+
+        +----------------------------------+-------------+----------------+
+        | ID                               | Name        | Type           |
+        +----------------------------------+-------------+----------------+
+        | 001f4379182b42f8842dd72859eac39d | keystone    | identity       |
+        | 2c352f2049ab43429afd9c5a4708ebec | cinder      | block-storage  |
+        | 39a9095dad1f472089ed1e1e759886b1 | nova_legacy | compute_legacy |
+        | 418d821715bd42e0b1271beab78fdb33 | neutron     | network        |
+        | 545c0ed7e578465084543d10eeedff9c | glance      | image          |
+        | 55e850934f1943208c9fb4319879dca8 | heat        | orchestration  |
+        | 6b4ceb37abae4a85aa5ba9922c9cf2d6 | cinderv3    | volumev3       |
+        | 79ec501090ff48deb7be3aba01a66ee4 | swift       | object-store   |
+        | 7b1f08acae684c86ac33bcf6b9321c49 | placement   | placement      |
+        | 9f270ea9cd294f7f81f3d08d295e2582 | heat-cfn    | cloudformation |
+        | aff55c4ac72d4409987a8d9703f484c7 | cinderv2    | volumev2       |
+        | db41400624524d17a605c5a8f895ea5a | nova        | compute        |
+        +----------------------------------+-------------+----------------+
+        ```
+2. 什么是 Role / Policy？
     - keystone 遇到不同的使用者做出不同请求的问题 ( 例如: 创建虚拟机 删除云盘 ) 要透过 role 跟 policy 协作来满足需求，每一个调度请求都会有一个对应的 policy 里面存有多向属性，其中一个就是 role。 再来，每个被创建的使用者都会被绑定一个 role (admin / member)，当使用者发出请求调度服务的时后，keystone 收到后会确认这个服务的 policy role 是不是这个使用者可以有权利访问的，如果有才可以继续，反之拒绝
 
     ![](/img/api3flow.png)
@@ -619,7 +616,6 @@ Horizon 为 OpenStack 提供了界面管理服务，让 OpenStack 管理员和�
     ![](/img/horizon-vm-02-console.png)
 
     ![](/img/horizon-vm-03-novnc.png)
-
 
 - 添加安全组规则让外网可以访问虚拟机 ( ssh, ping )
 
