@@ -845,6 +845,138 @@ Horizon 为 OpenStack 提供了界面管理服务，让 OpenStack 管理员和�
 
     ![](/img/glance1.png)
 
+1. 常见问题
+
+**Question 1**
+
+*disk format*  
+
+The disk format of a virtual machine image is the format of the underlying disk image.  
+
+*container format*  
+
+The container format refers to whether the virtual machine image is in a file format that also contains metadata about the actual virtual machine.  
+
+- bare  
+This indicates there is no container or metadata envelope for the image
+
+- docker  
+This indicates what is stored in Glance is a Docker tar archive of the container filesystem
+
+**Answer 1**  
+
+```bash
+$ docker images  | grep ubunt
+ubuntu                                                                          latest                 74f2314a03de   2 weeks ago     77.8MB
+$ docker save -o ubuntu_latest.tar ubuntu:latest
+$ tar -tvf ubuntu_latest.tar
+-rw-r--r-- 0/0            2299 2023-03-01 04:38 74f2314a03de34a0a2d552b805411fc9553a02ea71c1291b815b2f645f565683.json
+drwxr-xr-x 0/0               0 2023-03-01 04:38 da09030ae5a11d4874c50fb2282d51e5d877e166b7fac6a366e88acbed9c9c2a/
+-rw-r--r-- 0/0               3 2023-03-01 04:38 da09030ae5a11d4874c50fb2282d51e5d877e166b7fac6a366e88acbed9c9c2a/VERSION
+-rw-r--r-- 0/0            1320 2023-03-01 04:38 da09030ae5a11d4874c50fb2282d51e5d877e166b7fac6a366e88acbed9c9c2a/json
+-rw-r--r-- 0/0        80333312 2023-03-01 04:38 da09030ae5a11d4874c50fb2282d51e5d877e166b7fac6a366e88acbed9c9c2a/layer.tar
+-rw-r--r-- 0/0             202 1970-01-01 00:00 manifest.json
+-rw-r--r-- 0/0              89 1970-01-01 00:00 repositories
+$ openstack image create --is-public=True --container-format=docker --disk-format=raw --name testcontainerformat
+```
+
+
+**Question 2**
+
+我要怎么知道 virtual machine image type
+
+**Answer 2**
+
+```bash
+$ qemu-img  info CentOS-7-x86_64-GenericCloud-2003.qcow2
+image: CentOS-7-x86_64-GenericCloud-2003.qcow2
+file format: qcow2
+virtual size: 8 GiB (8589934592 bytes)
+disk size: 873 MiB
+cluster_size: 65536
+Format specific information:
+    compat: 1.1
+    lazy refcounts: false
+    refcount bits: 16
+    corrupt: false
+
+$ head -c 8  CentOS-7-x86_64-GenericCloud-2003.qcow2 | xxd
+00000000: 5146 49fb 0000 0003                      QFI.....
+
+$ qemu-img  info ubuntu-22.04-live-server-amd64.iso
+image: ubuntu-22.04-live-server-amd64.iso
+file format: raw
+virtual size: 1.37 GiB (1466714112 bytes)
+disk size: 1.37 GiB
+
+$ head -c 64 ubuntu-22.04-live-server-amd64.iso | xxd
+00000000: eb63 9090 9090 9090 9090 9090 9090 9090  .c..............
+00000010: 9090 9090 9090 9090 9090 eb49 2412 0f09  ...........I$...
+00000020: 0052 be1b 7c31 c0cd 1346 8a0c 84c9 7510  .R..|1...F....u.
+00000030: be39 7ce8 7401 e93d 0146 6c6f 7070 7900  .9|.t..=.Floppy.
+ ```
+
+
+**Question 3**
+
+要怎么看 virtual machine image filesystem 
+
+**Answer 3**
+
+```bash
+$ modprobe nbd max_part=16
+$ qemu-nbd --connect=/dev/nbd0  /home/chant/cloudimage/CentOS-7-x86_64-GenericCloud-2003.qcow2
+$ fdisk -l /dev/nbd0
+Disk /dev/nbd0: 8 GiB, 8589934592 bytes, 16777216 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disklabel type: dos
+Disk identifier: 0x000940fd
+
+Device      Boot Start      End  Sectors Size Id Type
+/dev/nbd0p1 *     2048 16777215 16775168   8G 83 Linux
+$ mount /dev/nbd0p1  /imgmnt/
+$ tree -L 1  /imgmnt/
+/imgmnt/
+├── bin -> usr/bin
+├── boot
+├── dev
+├── etc
+├── home
+├── lib -> usr/lib
+├── lib64 -> usr/lib64
+├── media
+├── mnt
+├── opt
+├── proc
+├── root
+├── run
+├── sbin -> usr/sbin
+├── srv
+├── sys
+├── tmp
+├── usr
+└── var
+$ umount /imgmnt/
+$ qemu-nbd --disconnect /dev/nbd0
+
+
+$ mount ubuntu-22.04-live-server-amd64.iso /imgmnt/
+$ tree -L 1 /imgmnt/
+/imgmnt/
+├── boot
+├── boot.catalog
+├── casper
+├── dists
+├── EFI
+├── install
+├── md5sum.txt
+├── pool
+└── ubuntu -> .
+$ umount /imgmnt/
+```
+
 ### 6.3 Glance 小结
 
 [Catalog](#catalog)
@@ -923,6 +1055,161 @@ Horizon 为 OpenStack 提供了界面管理服务，让 OpenStack 管理员和�
     - cinder backup: 负责通过驱动和备份的后台打交道，是我们在使用备份的命令的时候，能在正确的位置备份数据
 
     ![](/img/cinder1.png)
+
+1. LVM 基本功能介绍  
+   
+   **场景假设**
+
+    假设有两块硬盘, 大小是 16MB, 现在我要透过 LVM 将两块盘虚拟化后。创建出一块大小是 24MB 的虚拟卷。借此练习，了解 PV, VG, 以及 LV 的功能。  
+
+```bash
+$ lsblk
+NAME        MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
+...
+nvme1n1     259:3    0 465.8G  0 disk
+
+$ fdisk /dev/nvme1n1
+
+Welcome to fdisk (util-linux 2.34).
+Changes will remain in memory only, until you decide to write them.
+Be careful before using the write command.
+
+
+Command (m for help): n
+Partition number (1-128, default 1):
+First sector (34-976773134, default 2048):
+Last sector, +/-sectors or +/-size{K,M,G,T,P} (2048-976773134, default 976773134): 32768
+
+Created a new partition 1 of type 'Linux filesystem' and of size 15M.
+
+Command (m for help): t
+Selected partition 1
+Partition type (type L to list all types): L
+...
+ 31 Linux LVM                      E6D6D379-F507-44C2-A23C-238F2A3DF928
+...
+Partition type (type L to list all types): 31
+Changed type of partition 'Linux filesystem' to 'Linux LVM'.
+
+Command (m for help): w
+The partition table has been altered.
+Calling ioctl() to re-read partition table.
+Syncing disks.
+
+....(repeat again for creating 2nd partition)
+
+$ partprobe /dev/nvme1n1
+
+$ fdisk -l
+...
+Disk /dev/nvme1n1: 465.78 GiB, 500107862016 bytes, 976773168 sectors
+Disk model: KINGSTON SA2000M8500G
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disklabel type: dos
+Disk identifier: 0x121ea24f
+
+Device         Boot Start   End Sectors Size Id Type
+/dev/nvme1n1p1       2048 32748   30701  15M 8e Linux LVM
+/dev/nvme1n1p2      32768 65536   32769  16M 8e Linux LVM
+
+
+$ pvcreate  /dev/nvme1n1p1
+  Physical volume "/dev/nvme1n1p1" successfully created.
+$ pvcreate  /dev/nvme1n1p2
+  Physical volume "/dev/nvme1n1p2" successfully created.
+
+$ vgcreate coavg /dev/nvme1n1p1 /dev/nvme1n1p2
+  Volume group "coavg" successfully created
+
+$ vgdisplay
+  --- Volume group ---
+  VG Name               coavg
+  System ID
+  Format                lvm2
+  Metadata Areas        1
+  Metadata Sequence No  1
+  VG Access             read/write
+  VG Status             resizable
+  MAX LV                0
+  Cur LV                0
+  Open LV               0
+  Max PV                0
+  Cur PV                1
+  Act PV                1
+  VG Size               <465.76 GiB
+  PE Size               4.00 MiB
+  Total PE              119234
+  Alloc PE / Size       0 / 0
+  Free  PE / Size       119234 / <465.76 GiB
+  VG UUID               dWWQZX-ALdc-d2WX-Gq2J-mHxy-OQo1-dTClEU
+
+$ pvdisplay
+  --- Physical volume ---
+  PV Name               /dev/nvme1n1p1
+  VG Name               coavg
+  PV Size               14.99 MiB / not usable 2.99 MiB
+  Allocatable           yes
+  PE Size               4.00 MiB
+  Total PE              3
+  Free PE               3
+  Allocated PE          0
+  PV UUID               vWRcJA-7eNp-Go2y-XOR5-9o1e-e4Zl-73RcbR
+
+  --- Physical volume ---
+  PV Name               /dev/nvme1n1p2
+  VG Name               coavg
+  PV Size               16.00 MiB / not usable 4.00 MiB
+  Allocatable           yes
+  PE Size               4.00 MiB
+  Total PE              3
+  Free PE               3
+  Allocated PE          0
+  PV UUID               FnLy0k-hurz-iGOp-k38e-lB54-eOv3-NWt9jf
+...
+
+  Create a striped LV (infers --type striped).
+  lvcreate -i|--stripes Number -L|--size Size[m|UNIT] VG
+        [ -l|--extents Number[PERCENT] ]
+        [ -I|--stripesize Size[k|UNIT] ]
+        [ COMMON_OPTIONS ]
+        [ PV ... ]
+
+$ lvcreate -L 24 -i 2 -I64 -n coalv coavg
+  Logical volume "coalv" created.
+  
+$ lvdisplay
+  --- Logical volume ---
+  LV Path                /dev/coavg/coalv
+  LV Name                coalv
+  VG Name                coavg
+  LV UUID                Zf5Yvi-ujrY-FKlx-07wI-Dr6N-wiC9-4pFj38
+  LV Write Access        read/write
+  LV Creation host, time chantjmp, 2023-03-18 15:14:05 +0000
+  LV Status              available
+  # open                 0
+  LV Size                24.00 MiB
+  Current LE             6
+  Segments               1
+  Allocation             inherit
+  Read ahead sectors     auto
+  - currently set to     512
+  Block device           253:0
+
+$ mkfs.ext4 /dev/coavg/coalv
+mke2fs 1.45.5 (07-Jan-2020)
+Discarding device blocks: done
+Creating filesystem with 6144 4k blocks and 6144 inodes
+
+Allocating group tables: done
+Writing inode tables: done
+Creating journal (1024 blocks): done
+Writing superblocks and filesystem accounting information: done
+
+$ mkdir /coalvmtest
+$ mount /dev/coavg/coalv /coalvmtest/
+```
 
 ### 7.3 统⼀的存储解决⽅案 Ceph 的简介
 
