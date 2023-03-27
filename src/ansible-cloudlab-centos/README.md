@@ -26,7 +26,7 @@
     ```console
     root@openstack:~# source /home/devstack/openrc admin
 
-    root@openstack:~# senv | grep OS_
+    root@openstack:~# env | grep OS_
     OS_USER_DOMAIN_ID=default
     OS_AUTH_URL=http://172.25.0.10/identity
     OS_PROJECT_DOMAIN_ID=default
