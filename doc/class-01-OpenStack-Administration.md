@@ -94,10 +94,10 @@
 - 虚拟化共享物理机的 CPU、内存、IO 硬件资源，但逻辑上虚拟机之间是相互隔离的
 - 物理机我们一般称为宿主机（Host），宿主机上面的虚拟机称为客户机（Guest）
 
-Hypervisor 程序将 Host 的硬件虚拟化，并提供给 Guest 使用，分为：全虚拟化（一型虚拟化）和半虚拟化（二型虚拟化）。
+Hypervisor 程序将 Host 的硬件虚拟化，并提供给 Guest 使用，分为：type-1（一型虚拟化）和 type-2（二型虚拟化）。
 
-- **全虚拟化 Hypervisor 是一个特殊定制的 Linux 系统**，直接安装在物理机上。比如 Xen 和 VMWare 的 EXSi。全虚拟化一般对硬件虚拟化功能做了特别优化，性能更好。
-- 半虚拟化先安装标准操作系统，Hypervisor 作为 OS 上的一个程序模块运行，并对虚拟机进行管理。比如 KVM，VirtualBox，VMWare WorkStation，VMWare Player，VMWare Fusion 等。半虚拟化基于普通操作系统，比较灵活，比如支持虚拟机嵌套（在 KVM 虚拟机中再运行 KVM）。
+- **type-1 Hypervisor 是一个特殊定制的 Linux 系统**，直接安装在物理机上。比如 Xen 和 VMWare 的 EXSi。type-1 一般对硬件虚拟化功能做了特别优化，性能更好。
+- type-2 先安装标准操作系统，Hypervisor 作为 OS 上的一个程序模块运行，并对虚拟机进行管理。比如 KVM，VirtualBox，VMWare WorkStation，VMWare Player，VMWare Fusion 等。type-2 基于普通操作系统，比较灵活，比如支持虚拟机嵌套（在 KVM 虚拟机中再运行 KVM）。
 
 #### 2.1.2 计算、虚拟化和云计算的发展历程
 
