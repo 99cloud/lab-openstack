@@ -669,8 +669,6 @@ Horizon 为 OpenStack 提供了界面管理服务，让 OpenStack 管理员和�
     - Type1: installed directly on top of physical，named as bare metal hypervisors (ex: VMware ESXi，Microsoft Hyper-V，KVM)
     - Type2: installed on Host OS which sits between physical server and hypervisor，named as hosted hypervisors(VMware Workstation，VirtualBox)
 
-    ![](/img/virtual1.png)
-
 ### 5.2 介绍硬件加速虚拟化 KVM
 
 [Catalog](#catalog)
